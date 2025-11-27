@@ -1,4 +1,4 @@
-import { getUsageCategories } from '@/services/usage';
+import { getProductCategories } from '@/services/product';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,7 +25,7 @@ export default async function ProductCategoriesPage({
   params,
 }: ProductCategoriesPageProps) {
   const { locale } = await params;
-  const categoriesData = await getUsageCategories();
+  const categoriesData = await getProductCategories();
   const t = getTranslations(locale);
 
   return (
@@ -40,11 +40,11 @@ export default async function ProductCategoriesPage({
           </h1>
         </div>
 
-        {categoriesData.success && categoriesData.data.length > 0 ? (
+        {categoriesData.success && categoriesData.data.categories.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {categoriesData.data.map((category) => (
+            {categoriesData.data.categories.map((category) => (
               <Card
-                key={category.term_id}
+                key={category.id}
                 className="group hover:scale-[1.02] transition-all duration-300 cursor-pointer"
               >
                 <Link href={`/${locale}${locale === 'tr' ? '/urunler/kategori' : '/products/category'}/${category.slug}`}>

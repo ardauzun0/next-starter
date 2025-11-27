@@ -53,3 +53,16 @@ export async function searchProducts(keyword: string): Promise<ProductsResponse>
     throw error;
   }
 }
+
+export async function getProductCategories(): Promise<import('../types/api').ProductCategoriesResponse> {
+  try {
+    return await fetchAPI<import('../types/api').ProductCategoriesResponse>(
+      '/product-category/v1/all'
+    );
+  } catch (error) {
+    if (error instanceof Error && error.message?.includes('404')) {
+      return { success: false, data: { categories: [], total: 0 } } as import('../types/api').ProductCategoriesResponse;
+    }
+    throw error;
+  }
+}

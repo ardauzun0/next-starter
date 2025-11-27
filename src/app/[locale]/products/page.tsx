@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -10,7 +10,6 @@ import { use } from 'react';
 import type { Locale } from '@/i18n/config';
 import type { Product } from '@/types/api';
 import SearchForm from '@/components/search/SearchForm';
-import SearchResults from '@/components/search/SearchResults';
 import { getTranslations } from '@/i18n/getTranslations';
 
 export default function ProductsPage({
@@ -24,10 +23,8 @@ export default function ProductsPage({
   const t = getTranslations(locale);
   const resolvedSearchParams = use(searchParams);
   const router = useRouter();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [searchTerm, setSearchTerm] = useState(resolvedSearchParams.q || '');
-  const [loading, setLoading] = useState(false);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [searchTerm, setSearchTerm] = useState(resolvedSearchParams.q || '');
   const [currentPage] = useState(parseInt(resolvedSearchParams.page || '1', 10));
   const [loadingProducts, setLoadingProducts] = useState(true);
 
@@ -41,11 +38,6 @@ export default function ProductsPage({
         const data = await response.json();
         if (data.success && data.data?.products) {
           setAllProducts(data.data.products);
-          if (!searchTerm) {
-            const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-            const endIndex = startIndex + ITEMS_PER_PAGE;
-            setProducts(data.data.products.slice(startIndex, endIndex));
-          }
         }
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -55,52 +47,34 @@ export default function ProductsPage({
     };
 
     fetchProducts();
-  }, [currentPage, searchTerm]);
-
-  useEffect(() => {
-    if (!searchTerm) {
-      const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-      const endIndex = startIndex + ITEMS_PER_PAGE;
-      setProducts(allProducts.slice(startIndex, endIndex));
-    }
-  }, [allProducts, currentPage, searchTerm]);
-
-  const performSearch = useCallback(async (keyword: string) => {
-    if (!keyword.trim()) {
-      setProducts([]);
-      setSearchTerm('');
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const response = await fetch(`/api/products/search?keyword=${encodeURIComponent(keyword)}`);
-      const data = await response.json();
-      if (data.success && data.data?.products) {
-        setProducts(data.data.products);
-      } else {
-        setProducts([]);
-      }
-    } catch (error) {
-      console.error('Error searching products:', error);
-      setProducts([]);
-    } finally {
-      setLoading(false);
-    }
   }, []);
 
   useEffect(() => {
     const query = resolvedSearchParams.q || '';
     setSearchTerm(query);
-    if (query) {
-      performSearch(query);
-    } else {
-      setProducts([]);
+  }, [resolvedSearchParams.q]);
+
+  const filteredProducts = useMemo(() => {
+    if (!searchTerm.trim()) {
+      return allProducts;
     }
-  }, [resolvedSearchParams.q, performSearch]);
+    
+    const searchLower = searchTerm.toLowerCase();
+    return allProducts.filter(product => 
+      product.title.toLowerCase().includes(searchLower) ||
+      product.excerpt?.toLowerCase().includes(searchLower) ||
+      product.filters?.some(filter => filter.name.toLowerCase().includes(searchLower))
+    );
+  }, [allProducts, searchTerm]);
+
+  const paginatedProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    return filteredProducts.slice(startIndex, endIndex);
+  }, [filteredProducts, currentPage]);
 
   const handleSearch = useCallback((keyword: string) => {
-    const params = new URLSearchParams();
+    const params = new URLSearchParams(window.location.search);
     if (keyword.trim()) {
       params.set('q', keyword);
     } else {
@@ -110,7 +84,7 @@ export default function ProductsPage({
     router.push(`${window.location.pathname}?${params.toString()}`);
   }, [router]);
 
-  const totalPages = Math.ceil(allProducts.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
   const isSearching = !!searchTerm;
 
   return (
@@ -129,74 +103,30 @@ export default function ProductsPage({
           <SearchForm
             initialValue={searchTerm}
             onSearch={handleSearch}
-            loading={loading || loadingProducts}
+            loading={loadingProducts}
             placeholder={t.common.productSearch}
-            debounceMs={0}
+            debounceMs={300}
           />
         </div>
 
-        {isSearching ? (
-          <SearchResults
-            loading={loading}
-            searched={true}
-            count={products.length}
-            emptyMessage={t.common.noProductsFound}
-          >
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {products.map((product) => (
-                <Card
-                  key={product.id}
-                  className="group overflow-hidden hover:scale-[1.02] transition-all duration-300 cursor-pointer"
-                >
-                  <Link href={`/${locale}${locale === 'tr' ? '/urunler/detay' : '/products/detail'}/${product.slug}`}>
-                    {product.thumbnail && typeof product.thumbnail === 'string' && (
-                      <div className="relative w-full h-48 overflow-hidden">
-                        <Image
-                          src={product.thumbnail}
-                          alt={product.title}
-                          fill
-                          className="object-cover group-hover:scale-110 transition-transform duration-300"
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        />
-                      </div>
-                    )}
-                    <CardHeader>
-                      <CardTitle className="line-clamp-2">{product.title}</CardTitle>
-                      {product.excerpt && (
-                        <CardDescription className="line-clamp-3">
-                          {product.excerpt}
-                        </CardDescription>
-                      )}
-                    </CardHeader>
-                    {product.filters && product.filters.length > 0 && (
-                      <CardContent>
-                        <div className="flex flex-wrap gap-2">
-                          {product.filters.map((filter) => (
-                            <span
-                              key={filter.id}
-                              className="text-xs px-2 py-1 bg-muted rounded"
-                            >
-                              {filter.name}
-                            </span>
-                          ))}
-                        </div>
-                      </CardContent>
-                    )}
-                  </Link>
-                </Card>
-              ))}
-            </div>
-          </SearchResults>
+        {loadingProducts ? (
+          <div className="text-center py-16">
+            <p className="text-muted-foreground text-lg">Yükleniyor...</p>
+          </div>
         ) : (
           <>
-            {loadingProducts ? (
-              <div className="text-center py-16">
-                <p className="text-muted-foreground text-lg">Yükleniyor...</p>
+            {isSearching && (
+              <div className="mb-4">
+                <p className="text-muted-foreground">
+                  {filteredProducts.length} ürün bulundu
+                </p>
               </div>
-            ) : products.length > 0 ? (
+            )}
+
+            {paginatedProducts.length > 0 ? (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-                  {products.map((product) => (
+                  {paginatedProducts.map((product) => (
                     <Card
                       key={product.id}
                       className="group overflow-hidden hover:scale-[1.02] transition-all duration-300 cursor-pointer"
@@ -240,7 +170,7 @@ export default function ProductsPage({
                   ))}
                 </div>
 
-                {totalPages > 1 && (
+                {totalPages > 1 && !isSearching && (
                   <div className="flex justify-center gap-2">
                     {currentPage > 1 && (
                       <Button asChild variant="outline">
@@ -269,7 +199,7 @@ export default function ProductsPage({
             ) : (
               <div className="text-center py-16">
                 <p className="text-muted-foreground text-lg mb-4">
-                  {t.common.noProducts}
+                  {isSearching ? t.common.noProductsFound : t.common.noProducts}
                 </p>
               </div>
             )}

@@ -105,6 +105,11 @@ export interface Product {
   excerpt?: string;
   content?: string;
   thumbnail: string | false;
+  categories: Array<{
+    id: number;
+    name: string;
+    slug: string;
+  }>;
   filters: ProductFilter[];
   date: string;
 }
@@ -126,30 +131,30 @@ export interface ProductDetail {
   };
 }
 
-export interface ProductCategoryItem {
-  category: string;
-  image: string;
-  products: Array<{
-    ID: number;
-    post_content: string;
-    post_title: string;
-    post_excerpt: string;
-    thumbnail: {
-      url: string;
-    };
-    description: string;
-    category: string;
-    category_slug: string;
-    category_id: number;
-  }>;
-}
-
 export interface ProductCategory {
   success: boolean;
   data: {
     name: string;
     description: string;
-    content: BaseBlock[];
+    products: Product[];
+    content?: BaseBlock[];
+  };
+}
+
+export interface ProductCategoryItem {
+  id: number;
+  name: string;
+  slug: string;
+  description: string;
+  count: number;
+  parent: number;
+}
+
+export interface ProductCategoriesResponse {
+  success: boolean;
+  data: {
+    categories: ProductCategoryItem[];
+    total: number;
   };
 }
 
