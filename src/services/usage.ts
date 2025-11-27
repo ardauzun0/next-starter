@@ -12,7 +12,14 @@ export async function getUsageAreas(): Promise<UsageAreasResponse> {
 export async function getUsageAreaDetail(
   slug: string
 ): Promise<UsageAreaDetail> {
-  return fetchAPI<UsageAreaDetail>(`/usage/v1/detail/${slug}`);
+  try {
+    return await fetchAPI<UsageAreaDetail>(`/usage/v1/detail/${slug}`);
+  } catch (error) {
+    if (error instanceof Error && error.message?.includes('404')) {
+      return { success: false } as UsageAreaDetail;
+    }
+    throw error;
+  }
 }
 
 export async function getUsageCategories(): Promise<UsageCategoriesResponse> {

@@ -6,7 +6,13 @@
     "readMore": "Read More",
     "loading": "Loading...",
     "noResults": "No results found",
-    "pageNotFound": "Page Not Found"
+    "pageNotFound": "Page Not Found",
+    "goHome": "Go to Home"
+  },
+  "notFound": {
+    "title": "404 - Page Not Found",
+    "description": "The page you are looking for could not be found. It may have been moved, deleted, or never existed.",
+    "backToHome": "Back to Home"
   },
   "blog": {
     "title": "Blog",

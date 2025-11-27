@@ -16,23 +16,31 @@ export async function generateMetadata({
   params,
 }: DynamicPageProps): Promise<Metadata> {
   const { locale, slug } = await params;
-  const pageData = await getPageBySlug(slug);
+  
+  try {
+    const pageData = await getPageBySlug(slug);
 
-  if (!pageData.success) {
+    if (!pageData.success) {
+      return {
+        title: 'Sayfa Bulunamadı',
+      };
+    }
+
+    const baseUrl = getSEOBaseUrl(locale);
+    const fullUrl = getSEOPageUrl(slug);
+    const seoData = await getSEOData(fullUrl);
+
+    return constructMetadata(seoData, baseUrl);
+  } catch {
     return {
       title: 'Sayfa Bulunamadı',
     };
   }
-
-  const baseUrl = getSEOBaseUrl(locale);
-  const fullUrl = getSEOPageUrl(slug);
-  const seoData = await getSEOData(fullUrl);
-
-  return constructMetadata(seoData, baseUrl);
 }
 
 export default async function DynamicPage({ params }: DynamicPageProps) {
-  const { locale, slug } = await params;
+  const { slug } = await params;
+  
   const pageData = await getPageBySlug(slug);
 
   if (!pageData.success) {
@@ -56,4 +64,3 @@ export default async function DynamicPage({ params }: DynamicPageProps) {
     </>
   );
 }
-

@@ -11,7 +11,14 @@ export async function getPosts(page: number = 1): Promise<PostsResponse> {
 }
 
 export async function getPostBySlug(slug: string): Promise<PostDetailResponse> {
-  return fetchAPI<PostDetailResponse>(`/posts/v1/detail/${slug}`);
+  try {
+    return await fetchAPI<PostDetailResponse>(`/posts/v1/detail/${slug}`);
+  } catch (error) {
+    if (error instanceof Error && error.message?.includes('404')) {
+      return { success: false } as PostDetailResponse;
+    }
+    throw error;
+  }
 }
 
 export async function searchPosts(keyword: string): Promise<PostsResponse> {

@@ -16,25 +16,33 @@ export async function generateMetadata({
   params,
 }: ProductDetailPageProps): Promise<Metadata> {
   const { locale, slug } = await params;
-  const productData = await getProductBySlug(slug);
+  
+  try {
+    const productData = await getProductBySlug(slug);
 
-  if (!productData.success) {
+    if (!productData.success) {
+      return {
+        title: 'Ürün Bulunamadı',
+      };
+    }
+
+    const baseUrl = getSEOBaseUrl(locale);
+    const fullUrl = getSEOProductDetailUrl(slug);
+    const seoData = await getSEOData(fullUrl);
+
+    return constructMetadata(seoData, baseUrl);
+  } catch {
     return {
       title: 'Ürün Bulunamadı',
     };
   }
-
-  const baseUrl = getSEOBaseUrl(locale);
-  const fullUrl = getSEOProductDetailUrl(slug);
-  const seoData = await getSEOData(fullUrl);
-
-  return constructMetadata(seoData, baseUrl);
 }
 
 export default async function ProductDetailPage({
   params,
 }: ProductDetailPageProps) {
-  const { locale, slug } = await params;
+  const { slug } = await params;
+  
   const productData = await getProductBySlug(slug);
 
   if (!productData.success) {
@@ -58,4 +66,3 @@ export default async function ProductDetailPage({
     </>
   );
 }
-

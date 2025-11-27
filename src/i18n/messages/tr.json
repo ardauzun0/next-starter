@@ -6,7 +6,13 @@
     "readMore": "Devamını Oku",
     "loading": "Yükleniyor...",
     "noResults": "Sonuç bulunamadı",
-    "pageNotFound": "Sayfa Bulunamadı"
+    "pageNotFound": "Sayfa Bulunamadı",
+    "goHome": "Ana Sayfaya Dön"
+  },
+  "notFound": {
+    "title": "404 - Sayfa Bulunamadı",
+    "description": "Aradığınız sayfa bulunamadı. Sayfa taşınmış, silinmiş veya hiç var olmamış olabilir.",
+    "backToHome": "Ana Sayfaya Dön"
   },
   "blog": {
     "title": "Blog",

@@ -21,30 +21,38 @@ export async function generateMetadata({
   params,
 }: BlogPostPageProps): Promise<Metadata> {
   const { locale, slug } = await params;
-  const postData = await getPostBySlug(slug);
+  
+  try {
+    const postData = await getPostBySlug(slug);
 
-  if (!postData.success) {
+    if (!postData.success) {
+      return {
+        title: 'Post Bulunamadı',
+      };
+    }
+
+    const baseUrl = getSEOBaseUrl(locale);
+    const fullUrl = getSEOBlogPostUrl(slug);
+    const seoData = await getSEOData(fullUrl);
+
+    if (!seoData) {
+      return {
+        title: postData.data.title,
+        description: postData.data.description || '',
+      };
+    }
+
+    return constructMetadata(seoData, baseUrl);
+  } catch {
     return {
       title: 'Post Bulunamadı',
     };
   }
-
-  const baseUrl = getSEOBaseUrl(locale);
-  const fullUrl = getSEOBlogPostUrl(slug);
-  const seoData = await getSEOData(fullUrl);
-
-  if (!seoData) {
-    return {
-      title: postData.data.title,
-      description: postData.data.description || '',
-    };
-  }
-
-  return constructMetadata(seoData, baseUrl);
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { locale, slug } = await params;
+  
   const postData = await getPostBySlug(slug);
 
   if (!postData.success) {
@@ -119,4 +127,3 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     </>
   );
 }
-

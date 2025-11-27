@@ -19,22 +19,19 @@ export function middleware(request: NextRequest) {
   const pathSegments = pathname.split('/').filter(Boolean);
   const firstSegment = pathSegments[0];
 
-  // Eğer ilk segment bir locale ise
+  // Eğer ilk segment bir locale ise, devam et
   if (firstSegment && locales.includes(firstSegment as typeof defaultLocale)) {
-    // Varsayılan dil (tr) için prefix'i kaldır ve redirect yap
-    if (firstSegment === defaultLocale) {
-      const pathWithoutLocale = '/' + pathSegments.slice(1).join('/');
-      const newUrl = new URL(pathWithoutLocale || '/', request.url);
-      return NextResponse.redirect(newUrl);
-    }
-    // Diğer diller için devam et
-    return NextResponse.next();
+    const response = NextResponse.next();
+    // Pathname'i header'a ekle ki not-found.tsx'te kullanabilelim
+    response.headers.set('x-pathname', pathname);
+    return response;
   }
 
-  // Locale yoksa, varsayılan dil (tr) için prefix eklemeden devam et
-  // Diğer diller için browser'dan gelen Accept-Language header'ına göre yönlendirme yapılabilir
-  // Şimdilik varsayılan dil olarak devam ediyoruz
-  return NextResponse.next();
+  // Locale yoksa, varsayılan dil (tr) ile redirect yap
+  const newUrl = new URL(`/${defaultLocale}${pathname === '/' ? '' : pathname}`, request.url);
+  const response = NextResponse.redirect(newUrl);
+  response.headers.set('x-pathname', pathname);
+  return response;
 }
 
 export const config = {

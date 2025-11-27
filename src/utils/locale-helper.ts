@@ -2,21 +2,11 @@ import { defaultLocale, type Locale } from '@/i18n/config';
 
 /**
  * Locale'e göre URL oluşturur
- * Varsayılan dil (tr) için prefix eklemez, diğer diller için ekler
+ * Artık tüm URL'lere locale prefix'i ekleniyor
  */
 export function getLocalizedPath(path: string, locale: Locale): string {
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
-  
-  if (locale === defaultLocale) {
-    return cleanPath;
-  }
-  
   return `/${locale}${cleanPath}`;
-}
-
-export function getLocalizedPathWithQuery(path: string, locale: Locale, query?: string): string {
-  const basePath = getLocalizedPath(path, locale);
-  return query ? `${basePath}?${query}` : basePath;
 }
 
 /**
@@ -45,4 +35,3 @@ export function removeLocaleFromPath(pathname: string): string {
   
   return pathname;
 }
-

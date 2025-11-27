@@ -20,30 +20,38 @@ export async function generateMetadata({
   params,
 }: UsageAreaPageProps): Promise<Metadata> {
   const { locale, slug } = await params;
-  const usageData = await getUsageAreaDetail(slug);
+  
+  try {
+    const usageData = await getUsageAreaDetail(slug);
 
-  if (!usageData.success) {
+    if (!usageData.success) {
+      return {
+        title: 'Kullanım Alanı Bulunamadı',
+      };
+    }
+
+    const baseUrl = getSEOBaseUrl(locale);
+    const fullUrl = `${baseUrl}/usage/${slug}/`;
+    const seoData = await getSEOData(fullUrl);
+
+    if (!seoData) {
+      return {
+        title: usageData.data.title,
+        description: '',
+      };
+    }
+
+    return constructMetadata(seoData, baseUrl);
+  } catch {
     return {
       title: 'Kullanım Alanı Bulunamadı',
     };
   }
-
-  const baseUrl = getSEOBaseUrl(locale);
-  const fullUrl = `${baseUrl}/usage/${slug}/`;
-  const seoData = await getSEOData(fullUrl);
-
-  if (!seoData) {
-    return {
-      title: usageData.data.title,
-      description: '',
-    };
-  }
-
-  return constructMetadata(seoData, baseUrl);
 }
 
 export default async function UsageAreaPage({ params }: UsageAreaPageProps) {
   const { locale, slug } = await params;
+  
   const usageData = await getUsageAreaDetail(slug);
 
   if (!usageData.success) {
@@ -145,4 +153,3 @@ export default async function UsageAreaPage({ params }: UsageAreaPageProps) {
     </>
   );
 }
-
