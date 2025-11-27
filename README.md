@@ -1,1344 +1,480 @@
-# Next.js 15 Headless WordPress Starter Template
+# ✨ Next.js 15 Headless WordPress Proje Kılavuzu
 
-Bu proje, Next.js 15 App Router kullanarak Headless WordPress entegrasyonu için hazırlanmış bir starter template'dir. Çok dilli (i18n) desteği, SEO optimizasyonu, dinamik block rendering ve modern UI component'leri içerir.
+Merhaba ekip\! Ben, bu altyapıyı hazırlayan **Arda Uzun**.
+
+Bu proje, **Next.js 15 App Router** kullanarak, **Headless WordPress** sitenizin frontend'ini oluşturmak için hazırlanmış güçlü bir başlangıç şablonudur. Hızlı performans, harika SEO ve kolay yönetilebilirlik için gerekli tüm yapı taşlarını içerir.
+
+Bu kılavuzu okuduktan sonra projenin neresinde ne olduğunu tam olarak bilecek, yeni bir özellik geliştirirken hangi adımları izleyeceğinizi öğrenmiş olacaksınız. Bu dosya, sadece başlangıçta değil, ileride bir detayı kontrol etmek istediğinizde de başvuracağınız **ana rehberiniz**dir.
+
+-----
 
 ## 📋 İçindekiler
 
-- [Kurulum](#kurulum)
-- [Proje Yapısı](#proje-yapısı)
-- [API Yapısı ve Formatları](#api-yapısı-ve-formatları)
-- [Block Component'leri Ekleme](#block-componentleri-ekleme)
-- [Yeni Dil Ekleme](#yeni-dil-ekleme)
-- [Component Ekleme](#component-ekleme)
-- [Modül Ekleme](#modül-ekleme)
-- [Build ve Deployment](#build-ve-deployment)
-- [Next.js Özellikleri](#nextjs-özellikleri)
-- [Syntax ve Best Practices](#syntax-ve-best-practices)
-- [Public Klasörü Kullanımı](#public-klasörü-kullanımı)
-- [Yol Haritası](#yol-haritası)
+  * **1. 🚀 Hızlı Başlangıç**
+      * 1.1. Gereksinimler
+      * 1.2. Kurulum Adımları
+  * **2. 🧭 Proje Mimarisi ve Yapısı**
+      * 2.1. Kök Dizin
+      * 2.2. `src/` Klasör Yapısı
+  * **3. ⚙️ Temel Next.js Kavramları (Yeni Başlayanlar İçin)**
+      * 3.1. Server Component (Varsayılan) vs. Client Component
+      * 3.2. Veri Çekme (Data Fetching)
+  * **4. 💻 Proje Klasörlerinin Detaylı İncelemesi**
+      * 4.1. **`src/app/`** (Sayfalar ve Rotalar)
+      * 4.2. **`src/services/`** (API İletişimi)
+      * 4.3. **`src/types/`** (TypeScript Sözleşmesi)
+      * 4.4. **`src/i18n/`** (Çoklu Dil Yönetimi)
+      * 4.5. **`src/components/`** (Arayüz Yapı Taşları)
+  * **5. 🛠️ Sık Kullanılan İşlemler (Nasıl Yapılır?)**
+      * 5.1. Yeni Block Component'i Ekleme
+      * 5.2. Yeni Dil Ekleme
+      * 5.3. Yeni API Modülü (Service) Ekleme
+  * **6. 💡 Best Practices ve Kontrol Listesi**
+      * 6.1. Projeyi Özelleştirme Kontrol Listesi
+      * 6.2. Dosya Açıklamaları (Değiştir/Değiştirme)
+      * 6.3. Hata Ayıklama (Troubleshooting)
+  * **7. 🏗️ Build ve Deployment**
 
----
+-----
 
-## 🚀 Kurulum
+## 1\. 🚀 Hızlı Başlangıç
 
-### Gereksinimler
+### 1.1. Gereksinimler
 
-- Node.js 18+ 
-- npm veya yarn
-- WordPress Headless API (REST API)
+Projenin sorunsuz çalışması için gerekli minimum yazılımlar:
 
-### Adımlar
+  * **Node.js** **18+** (LTS sürümü önerilir)
+  * **npm** veya **yarn** (Paket yöneticisi)
+  * **WordPress Headless API** (Veri kaynağımız)
 
-1. **Projeyi klonlayın veya indirin**
-   ```bash
-   git clone <repository-url>
-   cd next-starter
-   ```
+### 1.2. Kurulum Adımları
 
-2. **Bağımlılıkları yükleyin**
-   ```bash
-   npm install
-   # veya
-   yarn install
-   ```
+1.  **Projeyi Klonlayın**
 
-3. **Environment değişkenlerini ayarlayın**
-   
-   `.env.local` dosyası oluşturun:
-   ```env
-   NEXT_PUBLIC_API_URL=https://your-wordpress-site.com/wp-json
-   NEXT_PUBLIC_SITE_URL=https://your-frontend-site.com
-   NEXT_PUBLIC_SITE_NAME=Site Adı
-   ```
+    ```bash
+    git clone <repository-url>
+    cd next-starter
+    ```
 
-4. **Geliştirme sunucusunu başlatın**
-   ```bash
-   npm run dev
-   # veya
-   yarn dev
-   ```
+2.  **Bağımlılıkları Yükleyin**
 
-   Tarayıcıda `http://localhost:3001` adresini açın.
+    ```bash
+    npm install
+    # veya
+    yarn install
+    ```
 
----
+3.  **Environment Değişkenlerini Ayarlayın**
+    API bağlantısı için projenin kök dizininde **`.env.local`** adında bir dosya oluşturun ve içerisine aşağıdaki değişkenleri ekleyin.
 
-## 📁 Proje Yapısı
+    > 💡 **NEXT\_PUBLIC\_\* kuralı:** Next.js'te `NEXT_PUBLIC_` ile başlayan değişkenler tarayıcıda (Client Component'lerde) kullanılabilir. API URL'imiz tarayıcıda da kullanılacağı için bu kurala uyulmuştur.
 
-### Kök Dizin
+    ```env
+    NEXT_PUBLIC_API_URL=https://your-wordpress-site.com/wp-json  # WP API'nin kök adresi (ZORUNLU)
+    NEXT_PUBLIC_SITE_URL=https://your-frontend-site.com          # Bu Next.js uygulamasının canlı URL'i
+    NEXT_PUBLIC_SITE_NAME=Site Adı                              # Varsayılan site adı
+    ```
 
-```
-next-starter/
-├── public/                 # Statik dosyalar (resimler, videolar, fontlar)
-├── src/                    # Kaynak kodlar
-├── middleware.ts          # Next.js middleware (i18n routing)
-├── next.config.ts         # Next.js konfigürasyonu
-├── tsconfig.json          # TypeScript konfigürasyonu
-├── package.json           # Proje bağımlılıkları
-└── README.md              # Bu dosya
-```
+4.  **Geliştirme Sunucusunu Başlatın**
 
-### `src/` Klasör Yapısı
+    ```bash
+    npm run dev
+    # veya
+    yarn dev
+    ```
 
-```
-src/
-├── app/                    # Next.js App Router sayfaları
-│   ├── [locale]/          # Locale bazlı route'lar
-│   │   ├── layout.tsx     # Locale layout (dil bazlı)
-│   │   ├── page.tsx       # Ana sayfa
-│   │   ├── not-found.tsx  # 404 sayfası (locale bazlı)
-│   │   ├── [slug]/        # Dinamik sayfalar
-│   │   ├── blog/          # Blog sayfaları
-│   │   ├── products/      # Ürün sayfaları
-│   │   └── usage/         # Kullanım alanı sayfaları
-│   ├── api/               # API route'ları
-│   ├── layout.tsx         # Root layout
-│   ├── globals.css        # Global CSS
-│   └── not-found.tsx      # Global 404 sayfası
-│
-├── components/            # React component'leri
-│   ├── blocks/            # Block component'leri (ACF Flexible Content)
-│   ├── seo/               # SEO component'leri
-│   └── ui/                # UI component'leri (shadcn/ui)
-│
-├── services/              # API service fonksiyonları
-│   ├── core.ts            # Temel fetch wrapper
-│   ├── global.ts          # Global options & SEO
-│   ├── blog.ts            # Blog API'leri
-│   ├── product.ts         # Ürün API'leri
-│   ├── page.ts            # Sayfa API'leri
-│   └── usage.ts           # Kullanım alanı API'leri
-│
-├── types/                 # TypeScript type tanımları
-│   └── api.ts             # API response type'ları
-│
-├── utils/                 # Yardımcı fonksiyonlar
-│   ├── locale-helper.ts   # Locale URL helper'ları
-│   ├── seo-helper.ts      # SEO metadata helper
-│   └── url-helper.ts      # URL construction helper'ları
-│
-├── i18n/                  # Çok dilli (i18n) yapılandırma
-│   ├── config.ts          # Locale konfigürasyonu
-│   ├── getTranslations.ts # Çeviri yükleme fonksiyonu
-│   └── messages/          # Çeviri dosyaları
-│       ├── tr.json        # Türkçe çeviriler
-│       └── en.json        # İngilizce çeviriler
-│
-└── lib/                   # Kütüphane helper'ları
-    └── utils.ts           # Genel utility fonksiyonları
-```
+    Tarayıcıda `http://localhost:3001` adresini açarak projenin çalıştığını kontrol edin.
 
----
+-----
 
-## 📄 Dosya Açıklamaları
+## 2\. 🧭 Proje Mimarisi ve Yapısı
 
-### Root Dosyalar
+Bu proje, Next.js'in modern **App Router** yapısını kullanır. Tüm kaynak kodları **`src/`** klasörünün altındadır.
 
-#### `middleware.ts`
-**Ne işe yarar:** Next.js middleware, her istekte çalışır ve locale routing'i yönetir.
+### 2.1. Kök Dizin
 
-**Değiştirilmesi gerekenler:**
-- ❌ **DEĞİŞTİRMEYİN** - Locale routing mantığı
+| Dosya/Klasör | Açıklama |
+| :--- | :--- |
+| `public/` | **Statik dosyalar.** Logolar, resimler, fontlar gibi değişmeyecek dosyalar buraya konur. (Örn: `/public/images/logo.png`'ye `<img src="/images/logo.png" />` ile erişilir). |
+| `src/` | **Tüm kaynak kodları.** Sayfalar, Component'ler, API iletişimleri, type tanımları, her şey buradadır. |
+| `middleware.ts` | **Her istekten önce çalışır.** Projemizde **çoklu dil (i18n) yönlendirmesi** için kullanılır. |
+| `next.config.ts` | Next.js'in genel ayarları (Örn: Harici resim domain izinleri, `redirect`'ler). |
+| `tsconfig.json` | **TypeScript ayarları.** `tsconfig` içinde tanımlanan **Path Alias'ları** (`@/components`, `@/services` vb.) kod içinde kolay import etmeyi sağlar. |
+| `package.json` | Projenin bağımlılıkları ve çalıştırma komutları (`npm run dev`, `npm run build`). |
 
-**Ne zaman değiştirilir:**
-- Yeni bir locale eklediğinizde `src/i18n/config.ts` dosyasını güncelleyin, middleware otomatik çalışır.
+### 2.2. `src/` Klasör Yapısı
 
-#### `next.config.ts`
-**Ne işe yarar:** Next.js konfigürasyonu (image domains, redirects, vb.)
+Next.js'in yapısını ve Clean Architecture prensiplerini birleştirerek projenizi **domainlere** (API, Types, Components vb.) ayırdık.
 
-**Değiştirilmesi gerekenler:**
-- ✅ `images.remotePatterns` - WordPress API'den gelen resimlerin domain'ini ekleyin
-- ✅ `redirects` - Özel yönlendirmeler ekleyebilirsiniz
+> 
+
+| Klasör | Ne İçin Kullanılır? | Örnek Dosyalar |
+| :--- | :--- | :--- |
+| **`app/`** | **Tüm Sayfalar ve Rotalar.** Next.js'in sayfa tabanlı routing (yönlendirme) yapısıdır. | `[locale]/page.tsx`, `api/route.ts` |
+| **`components/`** | **Yeniden Kullanılabilir Arayüz Parçaları.** UI elementleri, Block'lar ve Feature Component'ler. | `ui/Button.tsx`, `blocks/Hero.tsx` |
+| **`services/`** | **WordPress API ile İletişim.** Tüm veri çekme (data fetching) fonksiyonları. | `core.ts`, `blog.ts`, `page.ts` |
+| **`types/`** | **TypeScript Veri Sözleşmeleri.** API'den gelen verilerin ve genel objelerin tip tanımları. | `api.ts` |
+| **`i18n/`** | **Çoklu Dil (i18n) Yönetimi.** Dil konfigürasyonu ve çeviri dosyaları. | `config.ts`, `messages/tr.json` |
+| **`utils/`** | **Genel Yardımcı Fonksiyonlar.** Proje genelinde kullanılan küçük, mantıksal işlevler. | `url-helper.ts`, `date-helper.ts` |
+| **`lib/`** | **Harici Kütüphane Helper'ları.** Tailwind CSS sınıf birleştirme fonksiyonu gibi genel utility'ler. | `utils.ts` |
+
+-----
+
+## 3\. ⚙️ Temel Next.js Kavramları (Yeni Başlayanlar İçin)
+
+Ekibimizin Next.js'i yeni öğreniyor olması nedeniyle, App Router'ın en kritik iki kavramını anlamanız çok önemlidir.
+
+### 3.1. Server Component (Varsayılan) vs. Client Component
+
+Next.js 15'te tüm component'ler varsayılan olarak **Server Component**'lerdir (Sunucuda çalışır).
+
+| Kavram | Nasıl Tanımlanır? | Ne Zaman Kullanılır? | Avantajı |
+| :--- | :--- | :--- | :--- |
+| **Server Component** | **Varsayılan** (Ek kod gerekmez) | Veri çekme (`async/await` ile), SEO (Metadata), statik içerik render etme. | Daha hızlı yükleme, paket boyutunun küçülmesi, güvenli veri çekme. |
+| **Client Component** | Dosyanın en üstüne **`'use client';`** eklenir. | Tarayıcı etkileşimleri (Butona tıklama, form gönderimi, `useState`, `useEffect`). | Kullanıcı etkileşimi, tarayıcı API'larına erişim. |
+
+> 💡 **Kural:** Her zaman **Server Component** olarak başlayın. Sadece **etkileşim (interactivity)** eklemeniz gerektiğinde **`'use client';`** ekleyin.
 
 **Örnek:**
+
 ```typescript
-const nextConfig: NextConfig = {
-  images: {
-    remotePatterns: [
-      {
-        hostname: "your-wordpress-site.com",
+// src/app/[locale]/page.tsx (Varsayılan Server Component)
+export default async function Page() {
+  const data = await getPageData(); // ✅ API çağrısı direkt burada yapılabilir
+  return (
+    <div>
+      <h1>{data.title}</h1>
+      <InteractiveForm /> // 👈 Client Component'i burada kullanabilirsiniz
+    </div>
+  );
+}
+
+// src/components/InteractiveForm.tsx (Client Component)
+'use client'; 
+import { useState } from 'react';
+
+export default function InteractiveForm() {
+  const [value, setValue] = useState(''); // ✅ State kullanmak için gerekli
+  return <input value={value} onChange={(e) => setValue(e.target.value)} />;
+}
+```
+
+### 3.2. Veri Çekme (Data Fetching)
+
+API'den veri çekme (data fetching) her zaman **Server Component'lerde** yapılır. Bu, daha hızlı yükleme ve daha iyi SEO sağlar.
+
+**Service Fonksiyonu Kullanımı:**
+
+Tüm API çağrıları `src/services/` klasöründeki fonksiyonlar üzerinden yapılmalıdır.
+
+```typescript
+// Sayfa Component'inde (src/app/[locale]/[slug]/page.tsx)
+import { getPageBySlug } from '@/services/page';
+import { notFound } from 'next/navigation'; // Next.js'in 404 yönlendirme helper'ı
+
+export default async function DynamicPage({ params }: { params: { slug: string } }) {
+  const pageData = await getPageBySlug(params.slug);
+
+  // 🚨 Hata Yönetimi: API'den success: false veya 404 gelirse
+  if (!pageData.success) {
+    notFound(); // Next.js'in 404 sayfasını tetikler
+  }
+
+  // Veri başarıyla çekildi, kullanıma hazır.
+  return (
+    <main>
+      <h1>{pageData.data.title}</h1>
+      {/* ... diğer componentler ... */}
+    </main>
+  );
+}
+```
+
+-----
+
+## 4\. 💻 Proje Klasörlerinin Detaylı İncelemesi
+
+### 4.1. **`src/app/`** (Sayfalar ve Rotalar)
+
+Bu klasör, Next.js uygulamasının adres yapısını (Routing) belirler.
+
+  * **`[locale]/`:** Tüm sayfalarımız, dil kodu (`tr`, `en`, vb.) altında gruplandırılmıştır. Bu, **`middleware.ts`** ile yönetilir.
+  * **`layout.tsx`:** O klasör ve altındaki tüm sayfalara uygulanan arayüz çatısıdır (Header, Footer, Global state, vb.).
+      * **Root `layout.tsx`:** En üst düzey HTML, Body, Global CSS gibi ayarları içerir.
+      * **`[locale]/layout.tsx`:** Header/Footer'ı global API'den veri çekerek render eder.
+  * **`page.tsx`:** O klasörün ana sayfasını temsil eder (Örn: `/tr/`).
+  * **`[slug]/page.tsx`:** Köşeli parantezler, **dinamik rotaları** (URL parametreleri) temsil eder (Örn: `/tr/hakkimizda`).
+  * **`api/`:** Serverless fonksiyonlar gibi çalışan **Route Handlers** (eski adıyla API Routes) buradadır.
+      * **Örnek:** `api/blog/search/route.ts`'ye `GET /api/blog/search?q=keyword` isteği gönderilir.
+
+### 4.2. **`src/services/`** (API İletişimi)
+
+WordPress API ile konuşan tek yer burasıdır.
+
+  * **`core.ts`:**
+      * Tüm API çağrılarını yapan temel **`fetchAPI`** fonksiyonunu içerir.
+      * API'ye yapılan her istek buradaki mantıktan geçer.
+      * **❌ DEĞİŞTİRMEYİN:** Hata yönetimi ve temel `fetch` mantığı sabittir.
+  * **`global.ts`:** Global menü, footer, site ayarları gibi her sayfada kullanılan verilerin çekildiği yer.
+  * **`blog.ts`, `product.ts`, `page.ts`, vb.:**
+      * Her biri kendi domainine ait endpoint'leri içerir.
+      * **✅ GÜNCELLEYİN:** Yeni bir API endpoint'i (örn: Haberler) eklendiğinde buraya yeni bir dosya (`news.ts`) ekleyin.
+
+### 4.3. **`src/types/`** (TypeScript Sözleşmesi)
+
+**`src/types/api.ts`** dosyası, WordPress API'nizin döndürdüğü **tüm veri yapılarını** tanımlar.
+
+  * **Önemli:** API'nizin veri formatı değiştiğinde, öncelikle **bu dosyayı güncelleyin**. Bu, projenin geri kalanında nelerin etkilendiğini anında görmenizi sağlar.
+  * **Best Practice:** Block Component'lerinin Interface'leri (tipleri) component'in kendi dosyasında (`co-located types`) tanımlanmalıdır.
+
+### 4.4. **`src/i18n/`** (Çoklu Dil Yönetimi)
+
+  * **`config.ts`:** Desteklenen diller (`locales`) ve varsayılan dili tanımlar. Yeni dil eklemenin ilk adımı burasıdır.
+  * **`messages/*.json`:** Statik metinlerin (Düğme yazıları, Form başlıkları, Footer metinleri) çevirileri buraya yazılır.
+  * **Kullanım:** Sayfa component'lerinde `getTranslations(locale)` fonksiyonu çağrılarak çeviri objesi alınır.
+    ```typescript
+    // Örnek: t.common.back
+    const t = getTranslations(locale);
+    <Button>{t.common.back}</Button>
+    ```
+
+### 4.5. **`src/components/`** (Arayüz Yapı Taşları)
+
+  * **`blocks/`:** WordPress ACF Flexible Content'ten gelen block'ları render eden component'ler. Her block, kendi dosyasıdır (Örn: `Hero.tsx`).
+  * **`ui/`:** **shadcn/ui** ile oluşturulmuş basit, yeniden kullanılabilir UI component'leri (Button, Input, Card). Bu component'ler projenin görsel dilini taşır.
+  * **`seo/`:** JSON-LD gibi SEO'ya yönelik yardımcı component'ler.
+  * **Önemli Component'ler:**
+      * **`BlockRenderer.tsx`:** ACF block'larını otomatik olarak doğru component'e yönlendirir. Yeni block eklediğinizde sadece bu dosyayı güncellemeniz gerekir.
+      * **`Header.tsx` / `Footer.tsx`:** Global verileri çekip menü/footer yapısını render eder.
+
+-----
+
+## 5\. 🛠️ Sık Kullanılan İşlemler (Nasıl Yapılır?)
+
+Bu bölüm, en sık yapacağınız geliştirme adımlarını basit adımlarla anlatır.
+
+### 5.1. Yeni Block Component'i Ekleme (ACF Flexible Content İçin)
+
+Yeni bir block (örn: Sık Sorulan Sorular - `faq`) eklemek istediğinizde:
+
+1.  **Block Component'ini Oluşturun**
+    Yeni bir dosya açın: `src/components/blocks/FaqBlock.tsx`.
+
+    ```typescript
+    // src/components/blocks/FaqBlock.tsx
+    import { BaseBlock } from '@/types/api';
+
+    // 1. Kendi tipini component içinde tanımla (co-located)
+    export interface FaqBlockProps extends BaseBlock {
+      acf_fc_layout: 'faq_block'; // 🚨 Bu, WP'deki block adı ile aynı OLMALIDIR
+      title: string;
+      items: Array<{ question: string; answer: string }>;
+    }
+
+    export default function FaqBlock({ title, items }: FaqBlockProps) {
+      return (
+        <section className="py-20">
+          <h2 className="text-4xl">{title}</h2>
+          {items.map((item, index) => (
+            <details key={index} className="border-b py-4">
+              <summary className="font-bold">{item.question}</summary>
+              <p className="mt-2 text-muted-foreground">{item.answer}</p>
+            </details>
+          ))}
+        </section>
+      );
+    }
+    ```
+
+2.  **`BlockRenderer`'a Kayıt Edin**
+    `src/components/blocks/BlockRenderer.tsx` dosyasını açın ve component'i import edip `blockMap` objesine ekleyin.
+
+    ```typescript
+    // src/components/blocks/BlockRenderer.tsx
+    import FaqBlock from './FaqBlock'; // 👈 Import et
+
+    const blockMap: Record<string, React.ComponentType<any>> = {
+      hero: Hero,
+      imagecontent: ImageContent,
+      faq_block: FaqBlock, // 👈 Ekleyerek sistemi bilgilendir
+      // ... diğer block'lar
+    };
+    ```
+
+    > ✅ **Kural:** `blockMap`'teki key (`faq_block`), WordPress'ten gelen **`acf_fc_layout`** değeri ile **tam eşleşmelidir**.
+
+### 5.2. Yeni Dil Ekleme (Örn: Almanca - `de`)
+
+Next.js'in `middleware` ve i18n yapısı sayesinde yeni dil eklemek çok basittir.
+
+1.  **`config.ts`'yi Güncelleyin**
+    `src/i18n/config.ts` dosyasına yeni dil kodunu ekleyin.
+
+    ```typescript
+    export const locales = ['tr', 'en', 'de'] as const; // 👈 'de' eklendi
+    export const defaultLocale = 'tr' as const;
+
+    export const localeNames: Record<Locale, string> = {
+      tr: 'Türkçe',
+      en: 'English',
+      de: 'Deutsch', // 👈 İsim eklendi
+    };
+    ```
+
+2.  **Çeviri Dosyası Oluşturun**
+    Mevcut `tr.json` dosyasını kopyalayıp, Almanca karşılıklarını yazarak `src/i18n/messages/de.json` dosyasını oluşturun.
+
+    ```json
+    // src/i18n/messages/de.json
+    {
+      "common": {
+        "back": "Zurück",
+        "search": "Suchen"
       },
-    ],
-  },
-};
-```
-
-#### `tsconfig.json`
-**Ne işe yarar:** TypeScript derleyici ayarları ve path alias'ları
-
-**Değiştirilmesi gerekenler:**
-- ❌ **DEĞİŞTİRMEYİN** - Path alias'lar proje genelinde kullanılıyor
-
-### `src/services/` Klasörü
-
-#### `core.ts`
-**Ne işe yarar:** Tüm API çağrıları için temel `fetchAPI` wrapper fonksiyonu.
-
-**Değiştirilmesi gerekenler:**
-- ✅ `API_URL` - WordPress API URL'inizi ayarlayın (`.env.local` dosyasından okunur)
-- ❌ **DEĞİŞTİRMEYİN** - Fetch mantığı ve error handling
-
-**Önemli:** Tüm service fonksiyonları bu `fetchAPI` fonksiyonunu kullanmalıdır.
-
-#### `global.ts`
-**Ne işe yarar:** Global options (menu, footer, settings) ve SEO data fetching.
-
-**Değiştirilmesi gerekenler:**
-- ✅ API endpoint'leri (eğer WordPress API yapınız farklıysa)
-- ❌ **DEĞİŞTİRMEYİN** - `getSEOData` fonksiyonu (SEO API formatı sabit)
-
-#### `blog.ts`, `product.ts`, `page.ts`, `usage.ts`
-**Ne işe yarar:** Domain-specific API çağrıları.
-
-**Değiştirilmesi gerekenler:**
-- ✅ API endpoint'leri (eğer WordPress API yapınız farklıysa)
-- ✅ Return type'ları (eğer API response formatı değişirse)
-
-**Örnek:**
-```typescript
-// src/services/blog.ts
-export async function getPostBySlug(slug: string): Promise<PostDetailResponse> {
-  try {
-    return await fetchAPI<PostDetailResponse>(`/posts/v1/detail/${slug}`);
-  } catch (error) {
-    if (error instanceof Error && error.message?.includes('404')) {
-      return { success: false } as PostDetailResponse;
+      "blog": {
+        "title": "Blog"
+      }
+      // ... tüm key'leri çevirin
     }
-    throw error;
-  }
-}
-```
-
-### `src/types/api.ts`
-**Ne işe yarar:** Tüm API response type tanımları.
-
-**Değiştirilmesi gerekenler:**
-- ✅ **MUTLAKA DEĞİŞTİRİN** - WordPress API'nizin döndürdüğü veri yapısına göre güncelleyin
-- ✅ Yeni block type'ları için interface'ler ekleyin
-- ✅ Yeni API endpoint'leri için response type'ları ekleyin
-
-**Önemli:** Bu dosya API'nizin contract'ını tanımlar. API değişikliklerinde burayı güncelleyin.
-
-### `src/utils/` Klasörü
-
-#### `locale-helper.ts`
-**Ne işe yarar:** Locale bazlı URL oluşturma ve parsing fonksiyonları.
-
-**Değiştirilmesi gerekenler:**
-- ❌ **DEĞİŞTİRMEYİN** - Locale routing mantığı
-
-#### `seo-helper.ts`
-**Ne işe yarar:** SEO metadata'yı Next.js Metadata formatına dönüştürür.
-
-**Değiştirilmesi gerekenler:**
-- ✅ SEO API'nizin döndürdüğü veri yapısına göre güncelleyin
-- ❌ **DEĞİŞTİRMEYİN** - Metadata transformation mantığı
-
-#### `url-helper.ts`
-**Ne işe yarar:** SEO API çağrıları için URL oluşturma.
-
-**Değiştirilmesi gerekenler:**
-- ✅ `PRODUCTION_URL` - Production URL'inizi ayarlayın
-- ✅ URL formatları (eğer SEO API formatı farklıysa)
-
-**SEO URL Formatları:**
-- `getSEOPageUrl(slug)` - Genel sayfalar için: `/{slug}/`
-- `getSEOBlogPostUrl(slug)` - Blog yazıları için: `/{slug}/`
-- `getSEOProductDetailUrl(slug)` - Ürün detay için: `/product/{slug}/`
-- `getSEOProductCategoryUrl(category)` - Ürün kategorileri için: `/products/{category}/`
-
-**Önemli:** SEO API çağrıları için her zaman production URL kullanılır (`getSEOBaseUrl()`).
-
-### `src/i18n/` Klasörü
-
-#### `config.ts`
-**Ne işe yarar:** Desteklenen dilleri ve varsayılan dili tanımlar.
-
-**Değiştirilmesi gerekenler:**
-- ✅ `locales` - Yeni dil eklerken buraya ekleyin
-- ✅ `defaultLocale` - Varsayılan dili değiştirebilirsiniz
-- ✅ `localeNames` - Dil isimlerini güncelleyin
-
-**Örnek:**
-```typescript
-export const locales = ['tr', 'en', 'de'] as const; // Yeni dil: 'de'
-export const defaultLocale = 'tr' as const;
-
-export const localeNames: Record<Locale, string> = {
-  tr: 'Türkçe',
-  en: 'English',
-  de: 'Deutsch', // Yeni dil
-};
-```
-
-#### `getTranslations.ts`
-**Ne işe yarar:** Çeviri dosyalarını yükler ve cache'ler.
-
-**Değiştirilmesi gerekenler:**
-- ❌ **DEĞİŞTİRMEYİN** - Çeviri yükleme mantığı
-
-#### `messages/tr.json`, `messages/en.json`
-**Ne işe yarar:** Statik metinlerin çevirileri.
-
-**Değiştirilmesi gerekenler:**
-- ✅ **MUTLAKA DEĞİŞTİRİN** - Tüm statik metinleri buraya ekleyin
-- ✅ Yeni çeviri key'leri ekleyin
-- ✅ Mevcut çevirileri güncelleyin
-
-**Örnek:**
-```json
-{
-  "common": {
-    "back": "Geri",
-    "search": "Ara"
-  },
-  "blog": {
-    "title": "Blog",
-    "backToBlog": "Blog'a Dön"
-  }
-}
-```
-
-### `src/components/` Klasörü
-
-#### `blocks/BlockRenderer.tsx`
-**Ne işe yarar:** ACF Flexible Content block'larını dinamik olarak render eder.
-
-**Değiştirilmesi gerekenler:**
-- ✅ Yeni block component'i eklediğinizde buraya import edin ve `blockMap`'e ekleyin
-
-**Örnek:**
-```typescript
-import NewBlock from './NewBlock';
-
-const blockMap: Record<string, React.ComponentType<any>> = {
-  hero: Hero,
-  newblock: NewBlock, // Yeni block
-};
-```
-
-#### `blocks/*.tsx`
-**Ne işe yarar:** Her block component'i, ACF Flexible Content'ten gelen bir block type'ını render eder.
-
-**Değiştirilmesi gerekenler:**
-- ✅ **MUTLAKA DEĞİŞTİRİN** - Block'ların görünümü ve davranışı projeye özeldir
-- ✅ Interface'leri API'nizin döndürdüğü veri yapısına göre güncelleyin
-- ✅ Stil ve layout'u projenize göre özelleştirin
-
-**Önemli:** Her block component'i kendi interface'ini içinde tanımlamalıdır (co-located types).
-
-#### `Header.tsx`
-**Ne işe yarar:** Site header component'i. GlobalOptions'tan menu, sub-menu ve language switcher verilerini çeker.
-
-**Değiştirilmesi gerekenler:**
-- ✅ Logo ve branding'i özelleştirin
-- ✅ Menu yapısını ve stilini özelleştirin
-- ✅ Sub-menu dropdown davranışını özelleştirebilirsiniz
-
-**Kullanım:**
-```typescript
-import Header from '@/components/Header';
-import { getGlobalOptions } from '@/services/global';
-
-const globalOptions = await getGlobalOptions();
-<Header globalOptions={globalOptions} locale={locale} />
-```
-
-**Özellikler:**
-- Ana menü (`option.menu`)
-- Alt menülü menü (`option.menu_2` - sub_menu_select: 'yes' olanlar için dropdown)
-- Language switcher entegrasyonu
-- Responsive tasarım
-
-#### `Footer.tsx`
-**Ne işe yarar:** Site footer component'i. GlobalOptions'tan footer menu, adresler ve sosyal medya linklerini çeker.
-
-**Değiştirilmesi gerekenler:**
-- ✅ Footer layout'unu özelleştirin
-- ✅ Adres ve iletişim bilgileri formatını özelleştirin
-- ✅ Sosyal medya linklerini özelleştirin
-
-**Kullanım:**
-```typescript
-import Footer from '@/components/Footer';
-import { getGlobalOptions } from '@/services/global';
-
-const globalOptions = await getGlobalOptions();
-<Footer globalOptions={globalOptions} locale={locale} />
-```
-
-**Özellikler:**
-- Footer menü (`option.footer_menu`)
-- İletişim adresleri (`option.addresses`)
-- Sosyal medya linkleri (`option.socials`)
-- Map görselleri (address.map_image)
-
-#### `ContactForm.tsx`
-**Ne işe yarar:** İletişim formu component'i. React Hook Form ve Zod validation kullanır.
-
-**Değiştirilmesi gerekenler:**
-- ✅ Form alanlarını özelleştirin
-- ✅ Validation kurallarını güncelleyin
-- ✅ Form action URL'ini güncelleyin (`FORM_ACTION_URL`)
-- ✅ Başarı/hata mesajlarını özelleştirin
-
-**Kullanım:**
-```typescript
-import ContactForm from '@/components/ContactForm';
-
-<ContactForm />
-```
-
-**Form Alanları:**
-- Name (İsim) - Zorunlu, min 2 karakter
-- Phone (Telefon) - Zorunlu, min 10 karakter
-- Email (E-posta) - Zorunlu, email formatı
-- Subject (Konu) - Zorunlu, min 3 karakter
-- Message (Mesaj) - Zorunlu, min 10 karakter
-- GDPR (KVKK Onayı) - Zorunlu checkbox
-- CreatedAt - Otomatik eklenir (form submit sırasında)
-
-**Form Action:**
-Form, WordPress admin-ajax.php endpoint'ine POST request gönderir:
-```
-https://frontend-example-panel.pentademo.com.tr/wp-admin/admin-ajax.php
-```
-
-**Form Data Formatı:**
-```javascript
-{
-  action: 'contact_form_submit',
-  name: string,
-  phone: string,
-  email: string,
-  subject: string,
-  message: string,
-  gdpr: '1' | '0',
-  createdAt: ISO string
-}
-```
-
-#### `LanguageSwitcher.tsx`
-**Ne işe yarar:** Dil değiştirme dropdown component'i.
-
-**Değiştirilmesi gerekenler:**
-- ❌ **DEĞİŞTİRMEYİN** - Locale routing mantığı
-- ✅ Stil ve görünümü özelleştirebilirsiniz
-
-#### `seo/JsonLd.tsx`
-**Ne işe yarar:** JSON-LD structured data'yı sayfaya ekler.
-
-**Değiştirilmesi gerekenler:**
-- ❌ **DEĞİŞTİRMEYİN** - JSON-LD formatı standarttır
-
-#### `ui/*.tsx`
-**Ne işe yarar:** shadcn/ui component'leri (Button, Card, Input, vb.)
-
-**Değiştirilmesi gerekenler:**
-- ✅ Stil ve görünümü özelleştirebilirsiniz
-- ✅ Yeni UI component'leri ekleyebilirsiniz
-
-### `src/app/` Klasörü
-
-#### `[locale]/layout.tsx`
-**Ne işe yarar:** Locale bazlı root layout (HTML, body, header, vb.)
-
-**Değiştirilmesi gerekenler:**
-- ✅ Font ayarlarını özelleştirin
-- ✅ Global styles ekleyin
-- ✅ Header ve Footer component'leri zaten entegre edilmiştir
-
-**Mevcut Yapı:**
-- Header component'i (GlobalOptions'tan menu verilerini çeker)
-- Footer component'i (GlobalOptions'tan footer verilerini çeker)
-- Language switcher (Header içinde)
-
-#### `[locale]/page.tsx`
-**Ne işe yarar:** Ana sayfa.
-
-**Değiştirilmesi gerekenler:**
-- ✅ **MUTLAKA DEĞİŞTİRİN** - Ana sayfa içeriği projeye özeldir
-- ✅ ContactForm component'i mevcut (kaldırabilir veya özelleştirebilirsiniz)
-
-#### `[locale]/[slug]/page.tsx`
-**Ne işe yarar:** Dinamik sayfalar (örn: /tr/hakkimizda).
-
-**Değiştirilmesi gerekenler:**
-- ❌ **DEĞİŞTİRMEYİN** - Dinamik sayfa mantığı
-- ✅ SEO metadata'yı özelleştirebilirsiniz
-
-#### `[locale]/blog/*`, `[locale]/products/*`, `[locale]/usage/*`
-**Ne işe yarar:** Blog, ürün ve kullanım alanı sayfaları.
-
-**Değiştirilmesi gerekenler:**
-- ✅ Sayfa içeriklerini ve layout'ları özelleştirin
-- ✅ Yeni sayfa türleri ekleyebilirsiniz
-
-**Mevcut Sayfalar:**
-- `blog/page.tsx` - Blog listesi (pagination destekler)
-- `blog/search/page.tsx` - Blog arama (URL query parameter: `?q=keyword`)
-- `blog/categories/page.tsx` - Blog kategorileri
-- `blog/category/[slug]/page.tsx` - Kategoriye göre blog yazıları
-- `blog/[slug]/page.tsx` - Blog detay sayfası
-- `products/page.tsx` - Ürünler ana sayfa (kullanım alanları listesi)
-- `products/search/page.tsx` - Ürün arama (URL query parameter: `?q=keyword`)
-- `products/categories/page.tsx` - Ürün kategorileri
-- `products/category/[slug]/page.tsx` - Kategoriye göre kullanım alanları
-- `products/detail/[slug]/page.tsx` - Ürün detay sayfası
-- `products/[category]/page.tsx` - Ürün kategori sayfası
-- `usage/[slug]/page.tsx` - Kullanım alanı detay sayfası
-
-#### `api/blog/search/route.ts`
-**Ne işe yarar:** Blog arama için API route.
-
-**Değiştirilmesi gerekenler:**
-- ✅ Arama mantığını özelleştirebilirsiniz
-- ✅ Yeni API route'ları ekleyebilirsiniz
-
-#### `api/products/search/route.ts`
-**Ne işe yarar:** Ürün arama için API route.
-
-**Değiştirilmesi gerekenler:**
-- ✅ Arama mantığını özelleştirebilirsiniz
-- ✅ API endpoint'ini güncelleyebilirsiniz (şu an `/usage/v1/search/{keyword}` kullanıyor)
-
----
-
-## 🔌 API Yapısı ve Formatları
-
-### API Base URL
-
-API base URL'i `.env.local` dosyasında tanımlanır:
-
-```env
-NEXT_PUBLIC_API_URL=https://your-wordpress-site.com/wp-json
-```
-
-### API Response Formatı
-
-Tüm API response'ları şu formatı kullanmalıdır:
-
-```typescript
-{
-  success: boolean;
-  data: any; // Response verisi
-}
-```
-
-### Mevcut API Endpoint'leri
-
-#### Blog API'leri
-- `GET /posts/v1` - Tüm blog yazıları (pagination destekler)
-- `GET /posts/v1?page=2` - Sayfalama
-- `GET /posts/v1/detail/{slug}` - Blog detay
-- `GET /posts/v1/search/{keyword}` - Blog arama
-- `GET /posts/v1/category/{category_slug}` - Kategoriye göre postlar
-- `GET /posts/v1/categories` - Tüm kategoriler
-
-#### Ürün API'leri
-- `GET /product/v1/detail/{slug}` - Ürün detay
-- `GET /product-category/v1/{category_slug}` - Ürün kategori
-- `GET /usage/v1/search/{keyword}` - Ürün arama (kullanım alanları üzerinden)
-
-#### Kullanım Alanı API'leri
-- `GET /usage/v1` - Tüm kullanım alanları
-- `GET /usage/v1/detail/{slug}` - Kullanım alanı detay
-- `GET /usage/v1/categories` - Kullanım alanı kategorileri
-- `GET /usage/v1/category/{category_slug}` - Kategoriye göre kullanım alanları
-
-#### Sayfa API'leri
-- `GET /page/v1/{slug}` - Dinamik sayfa
-
-#### SEO API
-- `GET /custom-seo/v1/getHead?url={full_url}` - SEO metadata
-
-### API Response Type'ları
-
-Tüm API response type'ları `src/types/api.ts` dosyasında tanımlıdır. API'nizin döndürdüğü veri yapısına göre bu type'ları güncelleyin.
-
-**Önemli:** API formatı değiştiğinde:
-1. `src/types/api.ts` dosyasını güncelleyin
-2. İlgili service fonksiyonlarını kontrol edin
-3. İlgili sayfa component'lerini kontrol edin
-
----
-
-## 🧩 Block Component'leri Ekleme
-
-Block component'leri, WordPress ACF Flexible Content'ten gelen block'ları render eder.
-
-### Adım 1: Block Interface'ini Tanımlayın
-
-Yeni bir block component'i oluşturun: `src/components/blocks/NewBlock.tsx`
-
-```typescript
-import { BaseBlock } from '@/types/api';
-
-// Block interface'ini component içinde tanımlayın (co-located types)
-export interface NewBlockProps extends BaseBlock {
-  acf_fc_layout: 'newblock'; // API'den gelen block type adı
-  title: string;
-  description?: string;
-  image?: string;
-  // ... diğer field'lar
-}
-
-export default function NewBlock({ 
-  title, 
-  description, 
-  image 
-}: NewBlockProps) {
-  return (
-    <section className="py-16">
-      <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold mb-4">{title}</h2>
-        {description && <p className="text-muted-foreground">{description}</p>}
-        {image && (
-          <Image 
-            src={image} 
-            alt={title} 
-            width={800} 
-            height={600} 
-          />
-        )}
-      </div>
-    </section>
-  );
-}
-```
-
-### Adım 2: BlockRenderer'a Ekleyin
-
-`src/components/blocks/BlockRenderer.tsx` dosyasını güncelleyin:
-
-```typescript
-import NewBlock from './NewBlock';
-
-const blockMap: Record<string, React.ComponentType<any>> = {
-  hero: Hero,
-  imagecontent: ImageContent,
-  newblock: NewBlock, // Yeni block'u ekleyin
-  // ... diğer block'lar
-};
-```
-
-**Önemli:** `acf_fc_layout` değeri, `blockMap` key'i ile tam olarak eşleşmelidir (case-sensitive).
-
-### Adım 3: Type Tanımını Güncelleyin (Opsiyonel)
-
-Eğer block'unuz `BaseBlock`'tan farklı bir yapıya sahipse, `src/types/api.ts` dosyasına özel bir interface ekleyebilirsiniz:
-
-```typescript
-export interface NewBlockData extends BaseBlock {
-  acf_fc_layout: 'newblock';
-  title: string;
-  description?: string;
-}
-```
-
-### Block Component Best Practices
-
-1. **Co-located Types:** Interface'i component dosyasının içinde tanımlayın
-2. **SSR First:** Varsayılan olarak Server Component kullanın
-3. **Client Component:** Sadece interactivity gerektiğinde `'use client'` ekleyin
-4. **Error Handling:** Null/undefined kontrolü yapın
-5. **Accessibility:** Semantic HTML ve ARIA attribute'ları kullanın
-
----
-
-## 🌍 Yeni Dil Ekleme
-
-### Adım 1: Locale Config'e Ekleyin
-
-`src/i18n/config.ts` dosyasını güncelleyin:
-
-```typescript
-export const locales = ['tr', 'en', 'de'] as const; // Yeni dil: 'de'
-export const defaultLocale = 'tr' as const;
-
-export type Locale = (typeof locales)[number];
-
-export const localeNames: Record<Locale, string> = {
-  tr: 'Türkçe',
-  en: 'English',
-  de: 'Deutsch', // Yeni dil
-};
-```
-
-### Adım 2: Çeviri Dosyası Oluşturun
-
-`src/i18n/messages/de.json` dosyası oluşturun:
-
-```json
-{
-  "common": {
-    "back": "Zurück",
-    "search": "Suchen",
-    "categories": "Kategorien"
-  },
-  "blog": {
-    "title": "Blog",
-    "backToBlog": "Zurück zum Blog"
-  },
-  "products": {
-    "title": "Produkte",
-    "backToProducts": "Zurück zu Produkten"
-  },
-  "notFound": {
-    "title": "404 - Seite nicht gefunden",
-    "description": "Die gesuchte Seite konnte nicht gefunden werden.",
-    "backToHome": "Zurück zur Startseite"
-  }
-}
-```
-
-### Adım 3: getTranslations Fonksiyonunu Güncelleyin
-
-`src/i18n/getTranslations.ts` dosyasını güncelleyin:
-
-```typescript
-import trMessages from './messages/tr.json';
-import enMessages from './messages/en.json';
-import deMessages from './messages/de.json'; // Yeni dil
-
-const messages: Record<Locale, Messages> = {
-  tr: trMessages,
-  en: enMessages,
-  de: deMessages, // Yeni dil
-};
-```
-
-### Adım 4: Middleware'i Test Edin
-
-Middleware otomatik olarak yeni locale'i algılar. Test edin:
-
-```bash
-npm run dev
-# http://localhost:3001/de/hakkimizda
-```
-
-### Çeviri Dosyası Yapısı
-
-Çeviri dosyaları nested object yapısını destekler:
-
-```json
-{
-  "common": {
-    "back": "Geri",
-    "search": "Ara"
-  },
-  "blog": {
-    "title": "Blog",
-    "categories": {
-      "title": "Kategoriler",
-      "empty": "Kategori bulunamadı"
+    ```
+
+3.  **`getTranslations`'ı Güncelleyin**
+    `src/i18n/getTranslations.ts` dosyasına yeni çeviri dosyasını import edip `messages` objesine ekleyin.
+
+    ```typescript
+    import trMessages from './messages/tr.json';
+    import enMessages from './messages/en.json';
+    import deMessages from './messages/de.json'; // 👈 Yeni import
+
+    const messages: Record<Locale, Messages> = {
+      tr: trMessages,
+      en: enMessages,
+      de: deMessages, // 👈 Objeye eklendi
+    };
+    ```
+
+    > 🎉 Artık `/de/` rotası sorunsuz çalışacak ve `LanguageSwitcher` otomatik olarak Almanca'yı görecektir.
+
+### 5.3. Yeni API Modülü (Service) Ekleme (Örn: Haberler - `news`)
+
+1.  **Type Tanımını Oluşturun**
+    `src/types/api.ts` dosyasına haber verisinin tipini ekleyin.
+
+    ```typescript
+    export interface NewsItem {
+      id: number;
+      title: string;
+      slug: string;
+      date: string;
     }
-  }
-}
-```
 
-Kullanım:
-```typescript
-const t = getTranslations(locale);
-t.blog.categories.title // "Kategoriler"
-```
-
----
-
-## 🎨 Component Ekleme
-
-### Yeni UI Component'i Ekleme
-
-#### shadcn/ui Kullanarak
-
-```bash
-npx shadcn@latest add [component-name]
-```
-
-Örnek:
-```bash
-npx shadcn@latest add dialog
-npx shadcn@latest add dropdown-menu
-```
-
-#### Manuel Olarak
-
-1. `src/components/ui/` klasörüne yeni component ekleyin
-2. shadcn/ui pattern'ini takip edin
-3. `src/lib/utils.ts` dosyasındaki `cn()` fonksiyonunu kullanın
-
-### Yeni Feature Component'i Ekleme
-
-1. `src/components/` klasörüne yeni component ekleyin
-2. Server Component olarak başlayın
-3. Interactivity gerekiyorsa `'use client'` ekleyin
-
-**Örnek:**
-```typescript
-// src/components/Newsletter.tsx
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-
-export default function Newsletter() {
-  return (
-    <section className="py-16 bg-card">
-      <div className="container mx-auto px-4">
-        <h2 className="text-2xl font-bold mb-4">Newsletter</h2>
-        <form className="flex gap-2">
-          <Input type="email" placeholder="E-posta" />
-          <Button type="submit">Abone Ol</Button>
-        </form>
-      </div>
-    </section>
-  );
-}
-```
-
----
-
-## 📦 Modül Ekleme
-
-### Yeni Service Modülü Ekleme
-
-1. `src/services/` klasörüne yeni dosya ekleyin: `news.ts`
-
-```typescript
-// src/services/news.ts
-import { fetchAPI } from './core';
-import type { NewsResponse } from '../types/api';
-
-export async function getNews(): Promise<NewsResponse> {
-  return fetchAPI<NewsResponse>('/news/v1');
-}
-
-export async function getNewsBySlug(slug: string): Promise<NewsDetailResponse> {
-  try {
-    return await fetchAPI<NewsDetailResponse>(`/news/v1/detail/${slug}`);
-  } catch (error) {
-    if (error instanceof Error && error.message?.includes('404')) {
-      return { success: false } as NewsDetailResponse;
+    export interface NewsListResponse {
+      success: boolean;
+      data: NewsItem[];
     }
-    throw error;
-  }
-}
-```
+    // ... detay için NewsDetailResponse
+    ```
 
-2. `src/types/api.ts` dosyasına type'ları ekleyin:
+2.  **Service Fonksiyonunu Oluşturun**
+    `src/services/news.ts` dosyasını oluşturun ve `core.ts`'ten `fetchAPI`'yi kullanarak veriyi çekin.
 
-```typescript
-export interface News {
-  id: number;
-  title: string;
-  slug: string;
-  content: string;
-}
+    ```typescript
+    // src/services/news.ts
+    import { fetchAPI } from './core';
+    import type { NewsListResponse, NewsDetailResponse } from '../types/api';
 
-export interface NewsResponse {
-  success: boolean;
-  data: News[];
-}
-```
+    export async function getNewsList(): Promise<NewsListResponse> {
+      return fetchAPI<NewsListResponse>('/news/v1'); // 👈 API endpoint
+    }
 
-3. Yeni sayfa oluşturun: `src/app/[locale]/news/page.tsx`
+    export async function getNewsDetail(slug: string): Promise<NewsDetailResponse> {
+      try {
+        return await fetchAPI<NewsDetailResponse>(`/news/v1/detail/${slug}`);
+      } catch (error) {
+        // ... Hata yönetimi
+        throw error;
+      }
+    }
+    ```
 
-### Yeni Utility Modülü Ekleme
+3.  **Sayfayı Oluşturun**
+    `src/app/[locale]/news/page.tsx` sayfasını oluşturun ve yeni service fonksiyonunu kullanın.
 
-1. `src/utils/` klasörüne yeni dosya ekleyin: `date-helper.ts`
+    ```typescript
+    // src/app/[locale]/news/page.tsx
+    import { getNewsList } from '@/services/news';
 
-```typescript
-// src/utils/date-helper.ts
-export function formatDate(date: string, locale: string = 'tr'): string {
-  return new Date(date).toLocaleDateString(locale === 'tr' ? 'tr-TR' : 'en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-}
-```
+    export default async function NewsListPage() {
+      const newsList = await getNewsList();
+      
+      if (!newsList.success) return <p>Haberler yüklenemedi.</p>;
+      
+      return (
+        <ul>
+          {newsList.data.map(item => (
+            <li key={item.id}>{item.title}</li>
+          ))}
+        </ul>
+      );
+    }
+    ```
 
-2. Kullanım:
-```typescript
-import { formatDate } from '@/utils/date-helper';
-formatDate(post.date, locale);
-```
+-----
 
----
+## 6\. 💡 Best Practices ve Kontrol Listesi
 
-## 🏗️ Build ve Deployment
+### 6.1. Projeyi Özelleştirme Kontrol Listesi
 
-### Development Build
+Bu altyapıyı kendi projenize adapte ederken **mutlaka** bu adımları takip edin:
 
-```bash
-npm run dev
-```
+| Durum | Dosya/Ayar | Açıklama |
+| :--- | :--- | :--- |
+| **Zorunlu ✅** | `.env.local` | API ve site URL'lerini güncelleyin. |
+| **Zorunlu ✅** | `src/types/api.ts` | **API'nizin döndürdüğü veri yapısına göre tüm tipleri güncelleyin.** Bu, projenin en önemli adımıdır. |
+| **Zorunlu ✅** | `next.config.ts` | `images.remotePatterns` altına WordPress sitenizin resim domainini ekleyin. |
+| **Zorunlu ✅** | `src/i18n/messages/*.json` | Tüm statik çevirileri kontrol edin ve güncelleyin. |
+| **Zorunlu ✅** | `src/components/blocks/*.tsx` | Projenizde kullanılmayacak block component'lerini silin, kullanılacakları özelleştirin. |
+| **Önerilen ✏️** | `src/app/globals.css` | Tailwind renk paleti, fontlar ve global stilleri projenize göre güncelleyin. |
+| **Önerilen ✏️** | `src/services/*.ts` | Endpoint'lerinizi API dokümantasyonunuza göre kontrol edin. |
+
+### 6.2. Dosya Açıklamaları (Değiştir/Değiştirme)
+
+| Dosya Adı | Ne Yapar? | Değiştirmeli Misiniz? |
+| :--- | :--- | :--- |
+| `middleware.ts` | Locale Routing mantığı | ❌ **HAYIR** (Sadece i18n/config.ts'yi değiştirin) |
+| `src/services/core.ts` | Temel Fetch Wrapper | ❌ **HAYIR** (API URL'i .env'den okunur) |
+| `src/utils/locale-helper.ts` | Locale URL oluşturucular | ❌ **HAYIR** (Core routing mantığıdır) |
+| `src/types/api.ts` | API Response Type'ları | ✅ **EVET** (API'nizin sözleşmesidir) |
+| `src/components/blocks/BlockRenderer.tsx` | Block haritası | ✅ **EVET** (Yeni block eklenirken) |
+| `src/app/[locale]/layout.tsx` | Ana Header/Footer entegrasyonu | ✅ **EVET** (Stil ve component yapısı için) |
+
+### 6.3. Hata Ayıklama (Troubleshooting)
+
+| Hata Mesajı | Olası Sebep | Çözüm |
+| :--- | :--- | :--- |
+| **`404 Not Found` (API'den)** | API URL'i yanlış veya endpoint yanlış. | `.env.local`'daki `NEXT_PUBLIC_API_URL`'i ve `src/services/` içindeki endpoint'leri kontrol edin. |
+| **`Type Error: Property 'title' does not exist on type '...'`** | API'den gelen verinin yapısı değişti. | **`src/types/api.ts`** dosyasını yeni API yapısına göre güncelleyin. |
+| **Resimler yüklenmiyor** | Next.js'e harici domain izni verilmemiş. | `next.config.ts`'deki `images.remotePatterns` alanına resimlerin geldiği domaini ekleyin. |
+| **`Hydration Error`** | Server ve Client Component'lerin render çıktıları eşleşmiyor. | Etkileşimli elementleri bir Client Component (`'use client'`) içine taşıyın. |
+| **Locale değişmiyor** | `middleware.ts` rotayı yakalayamıyor. | Projenin kök dizininde olduğundan ve `src/i18n/config.ts`'deki dillerin doğru olduğundan emin olun. |
+
+-----
+
+## 7\. 🏗️ Build ve Deployment
 
 ### Production Build
 
+Canlıya çıkmadan önce bu komutları kullanın.
+
 ```bash
-npm run build
+# Projeyi derler (Build)
+npm run build 
+
+# Derlenen projeyi başlatır (Production'da bu çalışır)
 npm start
 ```
 
 ### Build Alırken Dikkat Edilmesi Gerekenler
 
-1. **Environment Variables:**
-   - `.env.local` dosyasını production'da kullanmayın
-   - Production'da environment variable'ları hosting platform'unuzda ayarlayın
-
-2. **Image Optimization:**
-   - `next.config.ts` dosyasında `images.remotePatterns` ayarlarını kontrol edin
-   - WordPress API'den gelen resimlerin domain'ini ekleyin
-
-3. **Static Generation:**
-   - `generateStaticParams()` fonksiyonlarını kullanarak statik sayfalar oluşturun
-   - `revalidate` değerlerini ayarlayın (ISR - Incremental Static Regeneration)
-
-4. **API Routes:**
-   - Client-side API route'ları production'da çalışmayabilir
-   - Server-side API route'ları kullanın
-
-5. **Type Checking:**
-   ```bash
-   npm run build
-   # TypeScript hatalarını kontrol edin
-   ```
-
-### Deployment Platform'ları
-
-#### Vercel
-```bash
-vercel
-```
-
-#### Netlify
-```bash
-netlify deploy
-```
-
-#### Docker
-```dockerfile
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-RUN npm run build
-CMD ["npm", "start"]
-```
-
----
-
-## ⚡ Next.js Özellikleri
-
-### Server Components (Varsayılan)
-
-Next.js 15'te tüm component'ler varsayılan olarak Server Component'tir.
-
-```typescript
-// Server Component (varsayılan)
-export default async function Page() {
-  const data = await fetchData(); // Server-side data fetching
-  return <div>{data}</div>;
-}
-```
-
-### Client Components
-
-Interactivity gerektiğinde `'use client'` ekleyin:
-
-```typescript
-'use client';
-
-import { useState } from 'react';
-
-export default function InteractiveComponent() {
-  const [count, setCount] = useState(0);
-  return <button onClick={() => setCount(count + 1)}>{count}</button>;
-}
-```
-
-### Data Fetching
-
-#### Server-Side Fetching
-
-```typescript
-// Sayfa component'inde
-export default async function Page() {
-  const data = await fetchAPI<Data>('/endpoint');
-  return <div>{data.title}</div>;
-}
-```
-
-#### Client-Side Fetching
-
-```typescript
-'use client';
-
-import { useEffect, useState } from 'react';
-
-export default function ClientPage() {
-  const [data, setData] = useState(null);
-  
-  useEffect(() => {
-    fetch('/api/data')
-      .then(res => res.json())
-      .then(setData);
-  }, []);
-  
-  return <div>{data?.title}</div>;
-}
-```
-
-### Metadata ve SEO
-
-```typescript
-// generateMetadata fonksiyonu
-export async function generateMetadata({ params }): Promise<Metadata> {
-  const { slug } = await params;
-  const data = await getData(slug);
-  
-  return {
-    title: data.title,
-    description: data.description,
-    openGraph: {
-      title: data.title,
-      images: [data.image],
-    },
-  };
-}
-```
-
-### Dynamic Routes
-
-```typescript
-// [slug]/page.tsx
-export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  // slug kullan
-}
-```
-
-### Route Handlers (API Routes)
-
-```typescript
-// app/api/route/route.ts
-import { NextResponse } from 'next/server';
-
-export async function GET(request: Request) {
-  const data = await fetchData();
-  return NextResponse.json(data);
-}
-```
-
----
-
-## 📝 Syntax ve Best Practices
-
-### TypeScript Syntax
-
-#### Interface Tanımlama
-
-```typescript
-// Co-located types (component içinde)
-export interface ComponentProps {
-  title: string;
-  description?: string; // Optional
-}
-
-// Shared types (types/api.ts)
-export interface ApiResponse {
-  success: boolean;
-  data: any;
-}
-```
-
-#### Type Guards
-
-```typescript
-if (error instanceof Error) {
-  console.error(error.message);
-}
-```
-
-#### Optional Chaining
-
-```typescript
-const title = data?.title || 'Default Title';
-const count = items?.length ?? 0; // Nullish coalescing
-```
-
-### React Syntax
-
-#### Conditional Rendering
-
-```typescript
-// If kontrolü
-{condition && <Component />}
-
-// Ternary
-{condition ? <ComponentA /> : <ComponentB />}
-
-// Null check
-{data && <div>{data.title}</div>}
-```
-
-#### Map Rendering
-
-```typescript
-{items.map((item, index) => (
-  <div key={item.id || index}>{item.title}</div>
-))}
-```
-
-#### Event Handlers
-
-```typescript
-// Inline
-<button onClick={() => handleClick()}>Click</button>
-
-// With parameters
-<button onClick={(e) => handleClick(e, id)}>Click</button>
-```
-
-### Async/Await
-
-```typescript
-// Server Component
-export default async function Page() {
-  const data = await fetchData();
-  return <div>{data.title}</div>;
-}
-
-// Try-catch
-try {
-  const data = await fetchData();
-} catch (error) {
-  console.error(error);
-}
-```
-
-### Error Handling
-
-```typescript
-// Service fonksiyonlarında
-try {
-  return await fetchAPI<Response>(endpoint);
-} catch (error) {
-  if (error instanceof Error && error.message?.includes('404')) {
-    return { success: false } as Response;
-  }
-  throw error;
-}
-
-// Sayfa component'lerinde
-const data = await getData();
-if (!data.success) {
-  notFound(); // 404 sayfasına yönlendir
-}
-```
-
----
-
-## 📂 Public Klasörü Kullanımı
-
-### Klasör Yapısı
-
-```
-public/
-├── images/          # Statik resimler
-│   ├── logo.png
-│   ├── hero-bg.jpg
-│   └── icons/
-├── videos/          # Statik videolar
-│   └── intro.mp4
-├── fonts/           # Custom fontlar
-│   ├── custom-font.woff2
-│   └── custom-font.woff
-├── files/           # İndirilebilir dosyalar
-│   ├── catalog.pdf
-│   └── brochure.pdf
-└── favicon.ico      # Site ikonu
-```
-
-### Kullanım
-
-#### Resimler
-
-```typescript
-import Image from 'next/image';
-
-<Image 
-  src="/images/logo.png" 
-  alt="Logo" 
-  width={200} 
-  height={50} 
-/>
-```
-
-#### Videolar
-
-```html
-<video src="/videos/intro.mp4" controls />
-```
-
-#### Fontlar
-
-`src/app/[locale]/layout.tsx` dosyasında:
-
-```typescript
-import localFont from 'next/font/local';
-
-const customFont = localFont({
-  src: '../public/fonts/custom-font.woff2',
-  variable: '--font-custom',
-});
-
-// Kullanım
-<body className={customFont.variable}>
-```
-
-#### Dosyalar
-
-```typescript
-<Link href="/files/catalog.pdf" download>
-  Katalog İndir
-</Link>
-```
-
-### Best Practices
-
-1. **Optimizasyon:** Resimleri optimize edin (WebP formatı kullanın)
-2. **Naming:** Dosya isimlerini kebab-case kullanın: `hero-background.jpg`
-3. **Organization:** Dosyaları kategorilere göre organize edin
-4. **Size:** Büyük dosyaları CDN'de tutun, public klasöründe tutmayın
-
----
-
-## 🗺️ Yol Haritası
-
-### Yeni Proje Başlatma Adımları
-
-1. **Kurulum**
-   - [ ] Projeyi klonlayın
-   - [ ] `npm install` çalıştırın
-   - [ ] `.env.local` dosyası oluşturun
-
-2. **API Yapılandırması**
-   - [ ] WordPress API URL'ini ayarlayın
-   - [ ] `src/types/api.ts` dosyasını API'nize göre güncelleyin
-   - [ ] `src/services/*.ts` dosyalarındaki endpoint'leri kontrol edin
-
-3. **Block Component'leri**
-   - [ ] Mevcut block'ları inceleyin
-   - [ ] Gereksiz block'ları silin
-   - [ ] Yeni block'ları ekleyin
-   - [ ] `BlockRenderer.tsx` dosyasını güncelleyin
-
-4. **Çeviriler**
-   - [ ] `src/i18n/messages/tr.json` dosyasını güncelleyin
-   - [ ] `src/i18n/messages/en.json` dosyasını güncelleyin
-   - [ ] Yeni dil ekleyin (gerekirse)
-
-5. **Sayfalar**
-   - [ ] Ana sayfayı özelleştirin (`src/app/[locale]/page.tsx`)
-   - [ ] Blog sayfalarını özelleştirin
-   - [ ] Ürün sayfalarını özelleştirin
-   - [ ] Yeni sayfa türleri ekleyin (gerekirse)
-
-6. **Stil ve Tema**
-   - [ ] `src/app/globals.css` dosyasını özelleştirin
-   - [ ] Tailwind theme ayarlarını güncelleyin
-   - [ ] UI component'lerini özelleştirin
-
-7. **SEO**
-   - [ ] `src/utils/seo-helper.ts` dosyasını SEO API'nize göre güncelleyin
-   - [ ] `src/utils/url-helper.ts` dosyasındaki URL'leri güncelleyin
-   - [ ] Her sayfada `generateMetadata` fonksiyonlarını kontrol edin
-
-8. **Test ve Build**
-   - [ ] `npm run dev` ile test edin
-   - [ ] `npm run build` ile build alın
-   - [ ] Hataları düzeltin
-   - [ ] Production'da test edin
-
-### Checklist: Projeyi Özelleştirme
-
-#### Değiştirilmesi Gerekenler ✅
-
-- [ ] `.env.local` - API URL'leri ve site URL'i
-- [ ] `src/types/api.ts` - API response type'ları
-- [ ] `src/services/*.ts` - API endpoint'leri (eğer farklıysa)
-- [ ] `src/components/blocks/*.tsx` - Block component'leri
-- [ ] `src/i18n/messages/*.json` - Çeviri dosyaları
-- [ ] `src/app/[locale]/page.tsx` - Ana sayfa
-- [ ] `src/app/[locale]/layout.tsx` - Header, footer, navigation
-- [ ] `next.config.ts` - Image domains
-- [ ] `src/utils/url-helper.ts` - Production URL
-- [ ] `src/utils/seo-helper.ts` - SEO API formatı (eğer farklıysa)
-
-#### Değiştirilmemesi Gerekenler ❌
-
-- [ ] `middleware.ts` - Locale routing mantığı
-- [ ] `src/utils/locale-helper.ts` - Locale helper fonksiyonları
-- [ ] `src/i18n/config.ts` - Sadece yeni dil eklerken
-- [ ] `src/i18n/getTranslations.ts` - Çeviri yükleme mantığı
-- [ ] `src/services/core.ts` - Fetch wrapper mantığı
-- [ ] `src/components/LanguageSwitcher.tsx` - Dil değiştirme mantığı
-- [ ] `src/components/seo/JsonLd.tsx` - JSON-LD formatı
-
----
-
-## 🔧 Troubleshooting
-
-### Yaygın Hatalar ve Çözümleri
-
-#### 1. "Cannot find module '@/types'"
-**Çözüm:** `tsconfig.json` dosyasında path alias'ları kontrol edin.
-
-#### 2. "API Error: 404 Not Found"
-**Çözüm:** 
-- API endpoint'lerini kontrol edin
-- `.env.local` dosyasındaki `NEXT_PUBLIC_API_URL` değerini kontrol edin
-- Service fonksiyonlarında 404 hatası yakalanıyor mu kontrol edin
-
-#### 3. "Module not found: Can't resolve '@/lib/utils'"
-**Çözüm:** `src/lib/utils.ts` dosyasının var olduğundan emin olun.
-
-#### 4. Locale routing çalışmıyor
-**Çözüm:** 
-- `middleware.ts` dosyasının root'ta olduğundan emin olun
-- `src/i18n/config.ts` dosyasındaki locale'leri kontrol edin
-
-#### 5. Block component render edilmiyor
-**Çözüm:**
-- `BlockRenderer.tsx` dosyasında block'un import edildiğinden emin olun
-- `acf_fc_layout` değerinin `blockMap` key'i ile eşleştiğinden emin olun
-- Console'da uyarı mesajlarını kontrol edin
-
----
-
-## 📚 Ek Kaynaklar
-
-- [Next.js 15 Documentation](https://nextjs.org/docs)
-- [TypeScript Handbook](https://www.typescriptlang.org/docs/)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
-- [shadcn/ui Components](https://ui.shadcn.com/)
-- [WordPress REST API Handbook](https://developer.wordpress.org/rest-api/)
-
----
-
-## 📞 Destek
-
-Sorularınız için:
-- GitHub Issues açın
-- Dokümantasyonu inceleyin
-- Next.js ve TypeScript dokümantasyonlarına bakın
-
----
-
-## 📄 Lisans
-
-Bu proje bir starter template'dir. Projenize göre özelleştirin ve kullanın.
-
----
-
-**Son Güncelleme:** 2024
+1.  **Environment Variables:** Production ortamında `.env.local` dosyası kullanılmaz. Hosting platformunuzda (Vercel, Netlify vb.) environment değişkenlerini (`NEXT_PUBLIC_API_URL` gibi) **ayarladığınızdan emin olun**.
+2.  **Statik Sayfalar (ISR):** Sayfa component'lerinde `export const revalidate = 3600;` gibi değerler kullanarak **Incremental Static Regeneration (ISR)** ayarlayabilirsiniz. Bu, sayfaların sunucuda statik olarak üretilmesini, ancak belirli aralıklarla (bu örnekte 1 saat) güncellenmesini sağlar. Bu, en iyi performans yöntemidir.
