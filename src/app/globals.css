@@ -25,11 +25,12 @@
   }
 
   * {
-    @apply border-border;
+    border-color: rgb(var(--border));
   }
 
   body {
-    @apply bg-background text-foreground;
+    background-color: rgb(var(--background));
+    color: rgb(var(--foreground));
     font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
     min-height: 100vh;
   }
