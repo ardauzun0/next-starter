@@ -34,6 +34,7 @@ function UsageContent({ locale }: { locale: Locale }) {
       setCurrentPage(1);
       try {
         const categoryParam = searchParams.get('category');
+        
         let areasResponse;
         
         if (categoryParam && categoryParam !== 'all') {
@@ -66,43 +67,18 @@ function UsageContent({ locale }: { locale: Locale }) {
     fetchData();
   }, [searchParams]);
 
-  const filterAndSearch = useCallback((categorySlug: string, search: string, areas: UsageArea[]) => {
-    let filtered = [...areas];
-
-    if (categorySlug !== 'all') {
-      filtered = filtered.filter((area) => {
-        return area.type === categorySlug;
-      });
-    }
-
-    if (search.trim()) {
-      const searchLower = search.toLowerCase();
-      filtered = filtered.filter((area) =>
+  // Sadece search aktifken filtreleme yap
+  useEffect(() => {
+    if (usageAreas.length > 0 && searchTerm.trim()) {
+      const searchLower = searchTerm.toLowerCase();
+      const filtered = usageAreas.filter((area) =>
         area.title.toLowerCase().includes(searchLower)
       );
+      setFilteredAreas(filtered);
+      setDisplayedAreas(filtered.slice(0, ITEMS_PER_PAGE));
+      setCurrentPage(1);
     }
-
-    setFilteredAreas(filtered);
-    setCurrentPage(1);
-    setDisplayedAreas(filtered.slice(0, ITEMS_PER_PAGE));
-  }, []);
-
-  useEffect(() => {
-    if (usageAreas.length > 0) {
-      // If search is active, only filter by search term, ignore category
-      if (searchTerm.trim()) {
-        const searchLower = searchTerm.toLowerCase();
-        const filtered = usageAreas.filter((area) =>
-          area.title.toLowerCase().includes(searchLower)
-        );
-        setFilteredAreas(filtered);
-        setDisplayedAreas(filtered.slice(0, ITEMS_PER_PAGE));
-        setCurrentPage(1);
-      } else {
-        filterAndSearch(selectedCategory, '', usageAreas);
-      }
-    }
-  }, [selectedCategory, searchTerm, usageAreas, filterAndSearch]);
+  }, [searchTerm, usageAreas]);
 
   const handleLoadMore = useCallback(() => {
     setLoadingMore(true);
@@ -144,6 +120,7 @@ function UsageContent({ locale }: { locale: Locale }) {
       }
 
       const areasData = await areasResponse.json();
+      
       if (areasData.success && areasData.data) {
         setUsageAreas(areasData.data);
         setFilteredAreas(areasData.data);
