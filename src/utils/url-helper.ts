@@ -83,7 +83,7 @@ export function getSEOBlogPostUrl(slug: string): string {
 }
 
 export function getSEOProductDetailUrl(slug: string): string {
-  return constructSEOUrl('products', 'detail', slug);
+  return constructSEOUrl('product', slug);
 }
 
 export function getSEOProductCategoryUrl(category: string): string {

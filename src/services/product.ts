@@ -1,5 +1,5 @@
 import { fetchAPI } from './core';
-import type { ProductDetail, ProductCategory } from '../types/api';
+import type { ProductDetail, ProductCategory, UsageAreasResponse } from '../types/api';
 
 export async function getProductBySlug(slug: string): Promise<ProductDetail> {
   try {
@@ -23,4 +23,8 @@ export async function getProductCategory(
     }
     throw error;
   }
+}
+
+export async function searchProducts(keyword: string): Promise<UsageAreasResponse> {
+  return fetchAPI<UsageAreasResponse>(`/usage/v1/search/${encodeURIComponent(keyword)}`);
 }

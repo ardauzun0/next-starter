@@ -11,7 +11,7 @@ import { use } from 'react';
 import { getLocalizedPath } from '@/utils/locale-helper';
 import type { Locale } from '@/i18n/config';
 
-export default function BlogSearchPage({
+export default function ProductSearchPage({
   params,
 }: {
   params: Promise<{ locale: Locale }>;
@@ -20,7 +20,7 @@ export default function BlogSearchPage({
   const searchParams = useSearchParams();
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
-  const [results, setResults] = useState<Array<{ id: number; title: string; description?: string; date: string; slug: string; thumbnail?: string }>>([]);
+  const [results, setResults] = useState<Array<{ id: number; title: string; slug: string; thumbnail?: string; count: number }>>([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
 
@@ -44,11 +44,11 @@ export default function BlogSearchPage({
 
     try {
       const response = await fetch(
-        `/api/blog/search?keyword=${encodeURIComponent(keyword)}`
+        `/api/products/search?keyword=${encodeURIComponent(keyword)}`
       );
       const data = await response.json();
-      if (data.success && data.data?.posts) {
-        setResults(data.data.posts);
+      if (data.success && data.data) {
+        setResults(data.data);
       } else {
         setResults([]);
       }
@@ -70,9 +70,9 @@ export default function BlogSearchPage({
       <div className="container mx-auto px-4 py-16 max-w-7xl">
         <div className="mb-8">
           <Button asChild variant="ghost" className="mb-4">
-            <Link href={getLocalizedPath('/blog', locale)}>← Blog&apos;a Dön</Link>
+            <Link href={getLocalizedPath('/products', locale)}>← Ürünler&apos;e Dön</Link>
           </Button>
-          <h1 className="text-5xl font-bold text-foreground mb-8">Blog Arama</h1>
+          <h1 className="text-5xl font-bold text-foreground mb-8">Ürün Arama</h1>
 
           <form onSubmit={onSubmit} className="flex gap-4 mb-8">
             <Input
@@ -100,17 +100,17 @@ export default function BlogSearchPage({
                   {results.length} sonuç bulundu
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {results.map((post) => (
+                  {results.map((item) => (
                     <Card
-                      key={post.id}
+                      key={item.id}
                       className="group overflow-hidden hover:scale-[1.02] transition-all duration-300 cursor-pointer"
                     >
-                      <Link href={getLocalizedPath(`/blog/${post.slug}`, locale)}>
-                        {post.thumbnail && (
+                      <Link href={getLocalizedPath(`/usage/${item.slug}`, locale)}>
+                        {item.thumbnail && (
                           <div className="relative w-full h-48 overflow-hidden">
                             <Image
-                              src={post.thumbnail}
-                              alt={post.title}
+                              src={item.thumbnail}
+                              alt={item.title}
                               fill
                               className="object-cover group-hover:scale-110 transition-transform duration-300"
                               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -119,23 +119,12 @@ export default function BlogSearchPage({
                         )}
                         <CardHeader>
                           <CardTitle className="line-clamp-2">
-                            {post.title}
+                            {item.title}
                           </CardTitle>
-                          {post.description && (
-                            <CardDescription className="line-clamp-3">
-                              {post.description}
-                            </CardDescription>
-                          )}
+                          <CardDescription>
+                            {item.count} ürün
+                          </CardDescription>
                         </CardHeader>
-                        <CardContent>
-                          <p className="text-xs text-muted-foreground">
-                            {new Date(post.date).toLocaleDateString(locale === 'tr' ? 'tr-TR' : 'en-US', {
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric',
-                            })}
-                          </p>
-                        </CardContent>
                       </Link>
                     </Card>
                   ))}

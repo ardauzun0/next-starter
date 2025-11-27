@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import '../globals.css';
-import LanguageSwitcher from '@/components/LanguageSwitcher';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import { getGlobalOptions } from '@/services/global';
-import { locales, defaultLocale, type Locale } from '@/i18n/config';
+import { locales, type Locale } from '@/i18n/config';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -37,18 +38,13 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} className="dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0a0a0a] text-[#e5e5e5]`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0a0a0a] text-[#e5e5e5] flex flex-col min-h-screen`}
       >
-        <header className="border-b border-border">
-          <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              {globalOptions.languages.list && (
-                <LanguageSwitcher />
-              )}
-            </div>
-          </div>
-        </header>
-        {children}
+        <Header globalOptions={globalOptions} locale={locale} />
+        <main className="flex-1">
+          {children}
+        </main>
+        <Footer globalOptions={globalOptions} locale={locale} />
       </body>
     </html>
   );

@@ -33,9 +33,14 @@ export default async function ProductsPage({ params }: ProductsPageProps) {
       <div className="container mx-auto px-4 py-16 max-w-7xl">
         <div className="flex items-center justify-between mb-12">
           <h1 className="text-5xl font-bold text-foreground">{t.products.title}</h1>
-          <Button asChild variant="outline">
-            <Link href={getLocalizedPath('/products/categories', locale)}>{t.common.categories}</Link>
-          </Button>
+          <div className="flex gap-2">
+            <Button asChild variant="outline">
+              <Link href={getLocalizedPath('/products/search', locale)}>{t.common.search}</Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href={getLocalizedPath('/products/categories', locale)}>{t.common.categories}</Link>
+            </Button>
+          </div>
         </div>
 
         {usageAreas.success && usageAreas.data.length > 0 && (
