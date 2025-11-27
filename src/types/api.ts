@@ -1,4 +1,4 @@
-// TypeScript Interfaces for WordPress Headless API
+// Shared TypeScript Interfaces for WordPress Headless API
 
 // 4.1. Global Options
 export interface GlobalOptions {
@@ -31,21 +31,8 @@ export interface GlobalOptions {
 // Base interface for all blocks
 export interface BaseBlock {
   acf_fc_layout: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
-}
-
-// Example Block Types (Extend as needed based on API)
-export interface HeroBlock extends BaseBlock {
-  acf_fc_layout: 'hero';
-  title: string;
-  image: string;
-}
-
-export interface ImageContentBlock extends BaseBlock {
-  acf_fc_layout: 'image_content';
-  select: 'image' | 'video';
-  image: string;
-  content: string;
 }
 
 // 4.3. Page Data
@@ -90,6 +77,7 @@ export interface PostDetailResponse {
   success: boolean;
   data: Post & {
     content?: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any;
   };
 }
@@ -123,6 +111,7 @@ export interface UsageArea {
   name: string;
   slug: string;
   description?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
 
@@ -135,6 +124,7 @@ export interface UsageAreaDetail {
   success: boolean;
   data: UsageArea & {
     content?: BaseBlock[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any;
   };
 }
@@ -153,6 +143,7 @@ export interface SEOData {
       url: string;
       type: string;
     };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     jsonLd?: any[];
   };
 }
