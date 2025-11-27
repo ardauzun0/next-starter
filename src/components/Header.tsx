@@ -11,7 +11,6 @@ interface HeaderProps {
 
 export default function Header({ globalOptions, locale }: HeaderProps) {
   const menu = globalOptions.option?.menu || [];
-  const menu2 = globalOptions.option?.menu_2 || [];
 
   return (
     <header className="border-b border-border bg-[#0a0a0a] sticky top-0 z-50">
@@ -33,31 +32,6 @@ export default function Header({ globalOptions, locale }: HeaderProps) {
                 </Link>
               ))}
               
-              {menu2.map((item, index) => (
-                <div key={index} className="relative group">
-                  <Link
-                    href={item.url}
-                    className="text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {item.name}
-                  </Link>
-                  {item.sub_menu_select === 'yes' && item.sub_menu && item.sub_menu.length > 0 && (
-                    <div className="absolute top-full left-0 mt-2 w-48 bg-card border border-border rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                      <div className="py-2">
-                        {item.sub_menu.map((subItem, subIndex) => (
-                          <Link
-                            key={subIndex}
-                            href={subItem.url}
-                            className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-                          >
-                            {subItem.name}
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
             </nav>
           </div>
 

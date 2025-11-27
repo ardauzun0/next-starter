@@ -10,6 +10,7 @@ interface FooterProps {
 }
 
 export default function Footer({ globalOptions, locale }: FooterProps) {
+  const menu_2 = globalOptions.option?.menu_2 || [];
   const footerMenu = globalOptions.option?.footer_menu || [];
   const addresses = globalOptions.option?.addresses || [];
   const socials = globalOptions.option?.socials || [];
@@ -19,7 +20,7 @@ export default function Footer({ globalOptions, locale }: FooterProps) {
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-foreground">Menü</h3>
+            <h3 className="text-lg font-semibold mb-4 text-foreground">Menu</h3>
             <nav className="flex flex-col gap-2">
               {footerMenu.map((item, index) => (
                 <Link
@@ -35,7 +36,7 @@ export default function Footer({ globalOptions, locale }: FooterProps) {
 
           {addresses.length > 0 && (
             <div>
-              <h3 className="text-lg font-semibold mb-4 text-foreground">İletişim</h3>
+              <h3 className="text-lg font-semibold mb-4 text-foreground">Contact</h3>
               <div className="space-y-4">
                 {addresses.map((address, index) => (
                   <div key={index} className="text-sm text-muted-foreground">
@@ -76,7 +77,7 @@ export default function Footer({ globalOptions, locale }: FooterProps) {
 
           {socials.length > 0 && (
             <div>
-              <h3 className="text-lg font-semibold mb-4 text-foreground">Sosyal Medya</h3>
+              <h3 className="text-lg font-semibold mb-4 text-foreground">Social Media</h3>
               <div className="flex flex-wrap gap-3">
                 {socials.map((social, index) => (
                   <a
@@ -92,11 +93,12 @@ export default function Footer({ globalOptions, locale }: FooterProps) {
               </div>
             </div>
           )}
+          
 
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-foreground">Bilgi</h3>
+            <h3 className="text-lg font-semibold mb-4 text-foreground">Information</h3>
             <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} Tüm hakları saklıdır.
+              © {new Date().getFullYear()} All rights reserved.
             </p>
           </div>
         </div>
