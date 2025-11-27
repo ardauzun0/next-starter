@@ -7,7 +7,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import Link from 'next/link';
 import Image from 'next/image';
 import { use } from 'react';
-import { getLocalizedPath } from '@/utils/locale-helper';
 import type { Locale } from '@/i18n/config';
 import type { Product } from '@/types/api';
 import SearchForm from '@/components/search/SearchForm';
@@ -80,7 +79,7 @@ function ProductSearchContent({ locale }: { locale: Locale }) {
         <div className="container mx-auto px-4 py-16 max-w-7xl">
           <div className="mb-8">
             <Button asChild variant="ghost" className="mb-4">
-              <Link href={getLocalizedPath('/products', locale)}>{t.common.backToProducts}</Link>
+              <Link href={`/${locale}${locale === 'tr' ? '/urunler' : '/products'}`}>{t.common.backToProducts}</Link>
             </Button>
             <h1 className="text-5xl font-bold text-foreground mb-8">
               {query ? t.products.searchResults.replace('{query}', query) : t.products.searchTitle}
@@ -109,7 +108,7 @@ function ProductSearchContent({ locale }: { locale: Locale }) {
                   key={product.id}
                   className="group overflow-hidden hover:scale-[1.02] transition-all duration-300 cursor-pointer"
                 >
-                  <Link href={getLocalizedPath(`/products/detail/${product.slug}`, locale)}>
+                  <Link href={`/${locale}${locale === 'tr' ? '/urunler/detay' : '/products/detail'}/${product.slug}`}>
                     {product.thumbnail && typeof product.thumbnail === 'string' && (
                       <div className="relative w-full h-48 overflow-hidden">
                         <Image

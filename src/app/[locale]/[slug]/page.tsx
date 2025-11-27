@@ -5,7 +5,6 @@ import BlockRenderer from '@/components/blocks/BlockRenderer';
 import JsonLd from '@/components/seo/JsonLd';
 import { constructMetadata } from '@/utils/seo-helper';
 import { getSEOPageUrl, getSEOBaseUrl } from '@/utils/url-helper';
-import { reverseTranslatePath } from '@/i18n/url-mapping';
 import type { Metadata } from 'next';
 import type { Locale } from '@/i18n/config';
 
@@ -48,24 +47,11 @@ export async function generateMetadata({
 }
 
 export default async function DynamicPage({ params }: DynamicPageProps) {
-  const { locale, slug } = await params;
+  const { slug } = await params;
   
-  // Önce çevrilmiş path'i kontrol et
-  const originalPath = reverseTranslatePath(`/${slug}`);
-  const pathSegments = originalPath.split('/').filter(Boolean);
-  const firstSegment = pathSegments[0] || slug;
-  
-  // Eğer slug bir reserved path ise veya çevrilmiş path bir reserved path'e dönüşüyorsa, 404 döndür
-  if (RESERVED_PATHS.includes(slug) || RESERVED_PATHS.includes(firstSegment)) {
+  // Eğer slug bir reserved path ise, 404 döndür
+  if (RESERVED_PATHS.includes(slug)) {
     notFound();
-  }
-  
-  // Eğer çevrilmiş path farklı bir path'e dönüşüyorsa (örn: /urunler -> /products), bu bir reserved path'tir
-  if (originalPath !== `/${slug}` && pathSegments.length > 0) {
-    const translatedFirstSegment = pathSegments[0];
-    if (RESERVED_PATHS.includes(translatedFirstSegment)) {
-      notFound();
-    }
   }
   
   const pageData = await getPageBySlug(slug);

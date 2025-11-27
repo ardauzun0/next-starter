@@ -4,7 +4,6 @@ import type { Metadata } from 'next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { getTranslations } from '@/i18n/getTranslations';
-import { getLocalizedPath } from '@/utils/locale-helper';
 import type { Locale } from '@/i18n/config';
 
 interface ProductCategoriesPageProps {
@@ -34,7 +33,7 @@ export default async function ProductCategoriesPage({
       <div className="container mx-auto px-4 py-16 max-w-7xl">
         <div className="mb-8">
           <Button asChild variant="ghost" className="mb-4">
-            <Link href={getLocalizedPath('/products', locale)}>← {t.products.backToProducts}</Link>
+            <Link href={`/${locale}${locale === 'tr' ? '/urunler' : '/products'}`}>← {t.products.backToProducts}</Link>
           </Button>
           <h1 className="text-5xl font-bold text-foreground mb-8">
             {t.products.categories}
@@ -48,7 +47,7 @@ export default async function ProductCategoriesPage({
                 key={category.term_id}
                 className="group hover:scale-[1.02] transition-all duration-300 cursor-pointer"
               >
-                <Link href={getLocalizedPath(`/products/category/${category.slug}`, locale)}>
+                <Link href={`/${locale}${locale === 'tr' ? '/urunler/kategori' : '/products/category'}/${category.slug}`}>
                   <CardHeader>
                     <CardTitle>{category.name}</CardTitle>
                     {category.description && (

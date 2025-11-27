@@ -18,6 +18,7 @@ Bu proje, Next.js 15 App Router kullanarak Headless WordPress entegrasyonu için
   - [İki Katman Neden Gerekli?](#-iki-katman-neden-gerekli)
   - [Ne Zaman Hangisi?](#-ne-zaman-hangisi)
   - [API Route Nasıl Çalışır?](#-api-route-nasıl-çalışır)
+  - [Service Dosyaları](#-service-dosyaları-ve-ne-işe-yaradıkları)
 - [🎨 Block Component'leri](#-block-componentleri)
 - [🧩 UI Component'leri ve Variant Kullanımı](#-ui-componentleri-ve-variant-kullanımı)
 - [🖼️ Next.js Image Kullanımı](#️-nextjs-image-kullanımı)
@@ -1339,57 +1340,13 @@ export default async function HomePage({ params }) {
 }
 ```
 
-### 🔗 Localized Link'ler ve URL Mapping
+### 🔗 Localized Link'ler
 
-Proje, statik URL'lerin dile göre çevrilmesini destekler. Örneğin:
-- Türkçe: `/tr/urunler`, `/tr/kullanim-alanlari`, `/tr/iletisim`
+Proje, URL bazlı çok dilli yapıyı destekler:
+- Türkçe: `/tr/products`, `/tr/usage`, `/tr/contact`
 - İngilizce: `/en/products`, `/en/usage`, `/en/contact`
 
-#### URL Mapping Nasıl Çalışır?
-
-URL mapping sistemi `src/i18n/url-mapping.ts` dosyasında tanımlanır:
-
-```typescript
-// src/i18n/url-mapping.ts
-export const urlMapping: Record<string, Record<Locale, string>> = {
-  '/products': {
-    tr: '/urunler',
-    en: '/products',
-  },
-  '/usage': {
-    tr: '/kullanim-alanlari',
-    en: '/usage',
-  },
-  '/contact': {
-    tr: '/iletisim',
-    en: '/contact',
-  },
-  // ... diğer path'ler
-};
-```
-
-#### Yeni URL Mapping Ekleme
-
-1. **`src/i18n/url-mapping.ts` dosyasına ekleyin:**
-
-```typescript
-export const urlMapping: Record<string, Record<Locale, string>> = {
-  // ... mevcut mapping'ler
-  '/about': {
-    tr: '/hakkimizda',
-    en: '/about',
-  },
-};
-```
-
-2. **Middleware otomatik olarak çevirir:**
-
-Middleware, gelen URL'leri otomatik olarak orijinal path'e çevirir. Örneğin:
-- Kullanıcı `/tr/urunler` adresine gider
-- Middleware bunu `/tr/products` olarak Next.js routing sistemine iletir
-- Next.js `src/app/[locale]/products/page.tsx` dosyasını render eder
-
-3. **Link'lerde kullanım:**
+**Link'lerde kullanım:**
 
 ```typescript
 import { getLocalizedPath } from "@/utils/locale-helper";
@@ -1399,11 +1356,13 @@ export default function Navigation({ locale }) {
   return (
     <nav>
       <Link href={getLocalizedPath("/blog", locale)}>Blog</Link>
-      <Link href={getLocalizedPath("/products", locale)}>Ürünler</Link>
+      <Link href={getLocalizedPath("/products", locale)}>Products</Link>
     </nav>
   );
 }
 ```
+
+**Not:** Dil bazlı URL çevirileri (örn: `/tr/urunler` → `/tr/products`) `next.config.ts` dosyasındaki `rewrites` ile yönetilir.
 
 ---
 

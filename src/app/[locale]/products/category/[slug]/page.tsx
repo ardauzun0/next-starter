@@ -49,7 +49,7 @@ export default async function ProductCategoryListPage({
                 key={area.id}
                 className="group hover:scale-[1.02] transition-all duration-300 cursor-pointer"
               >
-                <Link href={getLocalizedPath(`/usage/${area.slug}`, locale)}>
+                <Link href={`/${locale}${locale === 'tr' ? '/kullanim-alanlari' : '/usage'}/${area.slug}`}>
                   {area.thumbnail && (
                     <div className="relative w-full h-48 overflow-hidden">
                       <Image

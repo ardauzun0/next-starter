@@ -8,9 +8,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { locales, localeNames, defaultLocale, type Locale } from '@/i18n/config';
+import { locales, localeNames, type Locale } from '@/i18n/config';
 import { getLocaleFromPath, removeLocaleFromPath, getLocalizedPath } from '@/utils/locale-helper';
-import { reverseTranslatePath } from '@/i18n/url-mapping';
 
 export default function LanguageSwitcher() {
   const pathname = usePathname();
@@ -18,13 +17,9 @@ export default function LanguageSwitcher() {
 
   const currentLocale = getLocaleFromPath(pathname);
   const pathWithoutLocale = removeLocaleFromPath(pathname) || '/';
-  
-  // Çevrilmiş path'i orijinal path'e çevir
-  const originalPath = reverseTranslatePath(pathWithoutLocale);
 
   const handleLanguageChange = (newLocale: string) => {
-    // Orijinal path'i yeni locale'e çevir
-    const newPath = getLocalizedPath(originalPath, newLocale as Locale);
+    const newPath = getLocalizedPath(pathWithoutLocale, newLocale as Locale);
     router.push(newPath);
   };
 

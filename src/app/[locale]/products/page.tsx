@@ -6,7 +6,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { getLocalizedPath } from '@/utils/locale-helper';
 import { use } from 'react';
 import type { Locale } from '@/i18n/config';
 import type { Product } from '@/types/api';
@@ -121,7 +120,7 @@ export default function ProductsPage({
           <h1 className="text-5xl font-bold text-foreground">{t.products.title}</h1>
           <div className="flex gap-2">
             <Button asChild variant="outline">
-              <Link href={getLocalizedPath('/products/categories', locale)}>{t.common.categories}</Link>
+              <Link href={`/${locale}${locale === 'tr' ? '/urunler/kategoriler' : '/products/categories'}`}>{t.common.categories}</Link>
             </Button>
           </div>
         </div>
@@ -149,7 +148,7 @@ export default function ProductsPage({
                   key={product.id}
                   className="group overflow-hidden hover:scale-[1.02] transition-all duration-300 cursor-pointer"
                 >
-                  <Link href={getLocalizedPath(`/products/detail/${product.slug}`, locale)}>
+                  <Link href={`/${locale}${locale === 'tr' ? '/urunler/detay' : '/products/detail'}/${product.slug}`}>
                     {product.thumbnail && typeof product.thumbnail === 'string' && (
                       <div className="relative w-full h-48 overflow-hidden">
                         <Image
@@ -202,7 +201,7 @@ export default function ProductsPage({
                       key={product.id}
                       className="group overflow-hidden hover:scale-[1.02] transition-all duration-300 cursor-pointer"
                     >
-                      <Link href={getLocalizedPath(`/products/detail/${product.slug}`, locale)}>
+                      <Link href={`/${locale}${locale === 'tr' ? '/urunler/detay' : '/products/detail'}/${product.slug}`}>
                         {product.thumbnail && typeof product.thumbnail === 'string' && (
                           <div className="relative w-full h-48 overflow-hidden">
                             <Image
@@ -246,10 +245,7 @@ export default function ProductsPage({
                     {currentPage > 1 && (
                       <Button asChild variant="outline">
                         <Link
-                          href={getLocalizedPath(
-                            `/products?page=${currentPage - 1}`,
-                            locale
-                          )}
+                          href={`/${locale}${locale === 'tr' ? '/urunler' : '/products'}?page=${currentPage - 1}`}
                         >
                           {t.common.previous}
                         </Link>
@@ -261,10 +257,7 @@ export default function ProductsPage({
                     {currentPage < totalPages && (
                       <Button asChild variant="outline">
                         <Link
-                          href={getLocalizedPath(
-                            `/products?page=${currentPage + 1}`,
-                            locale
-                          )}
+                          href={`/${locale}${locale === 'tr' ? '/urunler' : '/products'}?page=${currentPage + 1}`}
                         >
                           {t.common.next}
                         </Link>

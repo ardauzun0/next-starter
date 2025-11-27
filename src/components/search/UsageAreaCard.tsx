@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { getLocalizedPath } from '@/utils/locale-helper';
 import type { Locale } from '@/i18n/config';
 import type { UsageArea } from '@/types/api';
 
@@ -11,9 +10,11 @@ interface UsageAreaCardProps {
 }
 
 export default function UsageAreaCard({ area, locale }: UsageAreaCardProps) {
+  const usagePath = locale === 'tr' ? 'kullanim-alanlari' : 'usage';
+  
   return (
     <Card className="group overflow-hidden hover:scale-[1.02] transition-all duration-300 cursor-pointer">
-      <Link href={getLocalizedPath(`/usage/${area.slug}`, locale)}>
+      <Link href={`/${locale}/${usagePath}/${area.slug}`}>
         {area.thumbnail && (
           <div className="relative w-full h-48 overflow-hidden">
             <Image

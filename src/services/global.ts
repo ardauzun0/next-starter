@@ -5,7 +5,6 @@ export async function getGlobalOptions(): Promise<GlobalOptions> {
   return fetchAPI<GlobalOptions>('/options/v1');
 }
 
-// Belirli bir URL için SEO verilerini getirir (404 durumunda null döner)
 export async function getSEOData(url: string): Promise<SEOData | null> {
   const encodedUrl = encodeURIComponent(url);
 

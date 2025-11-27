@@ -9,7 +9,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getTranslations } from '@/i18n/getTranslations';
-import { getLocalizedPath } from '@/utils/locale-helper';
 import type { Locale } from '@/i18n/config';
 
 interface UsageAreaPageProps {
@@ -31,6 +30,7 @@ export async function generateMetadata({
     }
 
     const baseUrl = getSEOBaseUrl(locale);
+    // SEO için her zaman /usage/ kullan (WordPress backend path)
     const fullUrl = `${baseUrl}/usage/${slug}/`;
     const seoData = await getSEOData(fullUrl);
 
@@ -59,6 +59,7 @@ export default async function UsageAreaPage({ params }: UsageAreaPageProps) {
   }
 
   const baseUrl = getSEOBaseUrl(locale);
+  // SEO için her zaman /usage/ kullan (WordPress backend path)
   const fullUrl = `${baseUrl}/usage/${slug}/`;
   const seoData = await getSEOData(fullUrl);
   const t = getTranslations(locale);
@@ -124,7 +125,7 @@ export default async function UsageAreaPage({ params }: UsageAreaPageProps) {
                     key={`product-${index}-${product.slug}`}
                     className="group hover:scale-[1.02] transition-all duration-300 cursor-pointer"
                   >
-                    <Link href={getLocalizedPath(`/products/detail/${product.slug}`, locale)}>
+                    <Link href={`/${locale}${locale === 'tr' ? '/urunler/detay' : '/products/detail'}/${product.slug}`}>
                       {product.image && (
                         <div className="relative w-full h-48 overflow-hidden">
                           <Image

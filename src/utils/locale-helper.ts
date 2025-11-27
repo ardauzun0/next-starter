@@ -1,10 +1,8 @@
 import { defaultLocale, type Locale } from '@/i18n/config';
-import { translatePath } from '@/i18n/url-mapping';
 
 export function getLocalizedPath(path: string, locale: Locale): string {
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
-  const translatedPath = translatePath(cleanPath, locale);
-  return `/${locale}${translatedPath}`;
+  return `/${locale}${cleanPath}`;
 }
 
 export function getLocaleFromPath(pathname: string): Locale {

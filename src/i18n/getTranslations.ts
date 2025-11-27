@@ -2,8 +2,10 @@ import { locales, defaultLocale, type Locale } from './config';
 import trMessages from './messages/tr.json';
 import enMessages from './messages/en.json';
 
+// Type for translation messages structure
 type Messages = typeof trMessages;
 
+// Translation messages for all supported locales
 const messages: Record<Locale, Messages> = {
   tr: trMessages,
   en: enMessages,
