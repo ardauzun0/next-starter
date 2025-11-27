@@ -7,6 +7,8 @@ import { getTranslations } from '@/i18n/getTranslations';
 import { getLocalizedPath } from '@/utils/locale-helper';
 import type { Locale } from '@/i18n/config';
 
+export const dynamic = 'force-dynamic';
+
 interface BlogCategoriesPageProps {
   params: Promise<{ locale: Locale }>;
 }

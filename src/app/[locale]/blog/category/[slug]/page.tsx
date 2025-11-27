@@ -10,6 +10,8 @@ import { getLocalizedPath } from '@/utils/locale-helper';
 import type { Locale } from '@/i18n/config';
 import type { Post } from '@/types/api';
 
+export const dynamic = 'force-dynamic';
+
 interface BlogCategoryPageProps {
   params: Promise<{ locale: Locale; slug: string }>;
   searchParams: Promise<{ page?: string }>;

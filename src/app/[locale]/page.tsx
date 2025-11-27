@@ -5,6 +5,8 @@ import { getLocalizedPath } from '@/utils/locale-helper';
 import ContactForm from '@/components/ContactForm';
 import type { Locale } from '@/i18n/config';
 
+export const dynamic = 'force-dynamic';
+
 interface HomePageProps {
   params: Promise<{ locale: Locale }>;
 }

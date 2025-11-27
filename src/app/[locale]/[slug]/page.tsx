@@ -8,7 +8,9 @@ import { getSEOPageUrl, getSEOBaseUrl } from '@/utils/url-helper';
 import type { Metadata } from 'next';
 import type { Locale } from '@/i18n/config';
 
-export const revalidate = 60;
+// SSR - render on every request
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 interface DynamicPageProps {
   params: Promise<{ locale: Locale; slug: string }>;

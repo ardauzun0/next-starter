@@ -8,7 +8,8 @@ import { getSEOProductDetailUrl, getSEOBaseUrl } from '@/utils/url-helper';
 import type { Metadata } from 'next';
 import type { Locale } from '@/i18n/config';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 interface ProductDetailPageProps {
   params: Promise<{ locale: Locale; slug: string }>;

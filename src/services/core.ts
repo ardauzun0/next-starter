@@ -18,7 +18,7 @@ export async function fetchAPI<T>(
         ...options?.headers,
       },
       next: options?.next || {
-        revalidate: 60,
+        revalidate: 0,
       },
     });
 

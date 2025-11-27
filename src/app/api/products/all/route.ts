@@ -1,7 +1,8 @@
 import { getAllProducts } from '@/services/product';
 import { NextResponse } from 'next/server';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);

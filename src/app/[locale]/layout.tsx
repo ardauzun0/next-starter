@@ -4,6 +4,8 @@ import Footer from '@/components/Footer';
 import { getGlobalOptions } from '@/services/global';
 import { locales, type Locale } from '@/i18n/config';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Next Starter',
   description: 'Next.js 15 Headless WordPress',

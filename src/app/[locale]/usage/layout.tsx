@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { getTranslations } from '@/i18n/getTranslations';
 import type { Locale } from '@/i18n/config';
 
+export const dynamic = 'force-dynamic';
+
 interface UsageLayoutProps {
   params: Promise<{ locale: string }>;
   children: React.ReactNode;
