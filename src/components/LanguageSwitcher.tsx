@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { locales, localeNames, type Locale } from '@/i18n/config';
-import { getLocaleFromPath, removeLocaleFromPath, getLocalizedPath } from '@/utils/locale-helper';
+import { getLocaleFromPath, removeLocaleFromPath, translatePath } from '@/utils/locale-helper';
 
 export default function LanguageSwitcher() {
   const pathname = usePathname();
@@ -19,7 +19,8 @@ export default function LanguageSwitcher() {
   const pathWithoutLocale = removeLocaleFromPath(pathname) || '/';
 
   const handleLanguageChange = (newLocale: string) => {
-    const newPath = getLocalizedPath(pathWithoutLocale, newLocale as Locale);
+    const translatedPath = translatePath(pathWithoutLocale, newLocale as Locale);
+    const newPath = `/${newLocale}${translatedPath}`;
     router.push(newPath);
   };
 
