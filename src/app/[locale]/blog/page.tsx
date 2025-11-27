@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { getTranslations } from '@/i18n/getTranslations';
 import { getLocalizedPath } from '@/utils/locale-helper';
 import type { Locale } from '@/i18n/config';
+import BlogSearch from '@/components/BlogSearch';
 
 interface BlogPageProps {
   params: Promise<{ locale: Locale }>;
@@ -42,13 +43,12 @@ export default async function BlogPage({
           <h1 className="text-5xl font-bold text-foreground">{t.blog.title}</h1>
           <div className="flex gap-2">
             <Button asChild variant="outline">
-              <Link href={getLocalizedPath('/blog/search', locale)} target="_blank">{t.common.search}</Link>
-            </Button>
-            <Button asChild variant="outline">
               <Link href={getLocalizedPath('/blog/categories', locale)}>{t.common.categories}</Link>
             </Button>
           </div>
         </div>
+
+        <BlogSearch locale={locale} />
 
         <div className="flex flex-col lg:flex-row gap-8">
           {categoriesData.success && categoriesData.data.length > 0 && (
@@ -81,7 +81,7 @@ export default async function BlogPage({
           )}
 
           <main className="flex-1">
-            {postsData.success && postsData.data.posts.length > 0 ? (
+            {!searchParamsResolved.q && postsData.success && postsData.data.posts.length > 0 ? (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
                   {postsData.data.posts.map((post) => (

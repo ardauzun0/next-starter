@@ -1,17 +1,17 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
+import Image from 'next/image';
 import { use } from 'react';
 import { getLocalizedPath } from '@/utils/locale-helper';
 import type { Locale } from '@/i18n/config';
-import type { UsageArea, Category } from '@/types/api';
+import type { Product } from '@/types/api';
 import SearchForm from '@/components/search/SearchForm';
 import SearchResults from '@/components/search/SearchResults';
-import CategoryFilter from '@/components/search/CategoryFilter';
-import UsageAreaCard from '@/components/search/UsageAreaCard';
 
 export default function ProductSearchPage({
   params,
@@ -21,138 +21,65 @@ export default function ProductSearchPage({
   const { locale } = use(params);
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [usageAreas, setUsageAreas] = useState<UsageArea[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [filteredAreas, setFilteredAreas] = useState<UsageArea[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>(searchParams.get('category') || 'all');
+  const [products, setProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
-  const [loading, setLoading] = useState(true);
-  const isInitialMount = useRef(true);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const categoryParam = searchParams.get('category');
-        let areasResponse;
-        
-        if (categoryParam && categoryParam !== 'all') {
-          areasResponse = await fetch(`/api/usage/category/${categoryParam}`);
-        } else {
-          areasResponse = await fetch('/api/usage/areas');
-        }
-
-        const categoriesResponse = await fetch('/api/usage/categories');
-
-        const areasData = await areasResponse.json();
-        const categoriesData = await categoriesResponse.json();
-
-        if (areasData.success && areasData.data) {
-          setUsageAreas(areasData.data);
-          setFilteredAreas(areasData.data);
-        }
-
-        if (categoriesData.success && categoriesData.data) {
-          setCategories(categoriesData.data);
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [searchParams]);
-
-  const filterAndSearch = useCallback((categorySlug: string, search: string, areas: UsageArea[]) => {
-    let filtered = [...areas];
-
-    if (categorySlug !== 'all') {
-      filtered = filtered.filter((area) => {
-        return area.type === categorySlug;
-      });
+  const performSearch = useCallback(async (keyword: string) => {
+    if (!keyword.trim()) {
+      setProducts([]);
+      return;
     }
 
-    if (search.trim()) {
-      const searchLower = search.toLowerCase();
-      filtered = filtered.filter((area) =>
-        area.title.toLowerCase().includes(searchLower)
-      );
-    }
-
-    setFilteredAreas(filtered);
-  }, []);
-
-  useEffect(() => {
-    if (usageAreas.length > 0) {
-      filterAndSearch(selectedCategory, searchTerm, usageAreas);
-    }
-  }, [selectedCategory, searchTerm, usageAreas, filterAndSearch]);
-
-  const handleCategoryChange = async (categorySlug: string) => {
-    setSelectedCategory(categorySlug);
     setLoading(true);
-    
-    const params = new URLSearchParams(searchParams.toString());
-    if (categorySlug === 'all') {
-      params.delete('category');
-    } else {
-      params.set('category', categorySlug);
-    }
-    router.push(`${window.location.pathname}?${params.toString()}`);
-
     try {
-      let areasResponse;
-      if (categorySlug === 'all') {
-        areasResponse = await fetch('/api/usage/areas');
+      const response = await fetch(`/api/products/search?keyword=${encodeURIComponent(keyword)}`);
+      const data = await response.json();
+      if (data.success && data.data?.products) {
+        setProducts(data.data.products);
       } else {
-        areasResponse = await fetch(`/api/usage/category/${categorySlug}`);
-      }
-
-      const areasData = await areasResponse.json();
-      if (areasData.success && areasData.data) {
-        setUsageAreas(areasData.data);
-        setFilteredAreas(areasData.data);
+        setProducts([]);
       }
     } catch (error) {
-      console.error('Error fetching category data:', error);
+      console.error('Error searching products:', error);
+      setProducts([]);
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleSearch = useCallback((keyword: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    if (keyword.trim()) {
-      params.set('q', keyword);
-    } else {
-      params.delete('q');
-    }
-    router.push(`${window.location.pathname}?${params.toString()}`);
-  }, [router, searchParams]);
+  }, []);
 
   useEffect(() => {
-    const query = searchParams.get('q');
-    const category = searchParams.get('category');
-    
-    if (query !== searchTerm) {
-      setSearchTerm(query || '');
+    const query = searchParams.get('q') || '';
+    setSearchTerm(query);
+    if (query) {
+      performSearch(query);
+    } else {
+      setProducts([]);
     }
-    if (category !== selectedCategory) {
-      setSelectedCategory(category || 'all');
+  }, [searchParams, performSearch]);
+
+  const handleSearch = useCallback((keyword: string) => {
+    const params = new URLSearchParams();
+    if (keyword.trim()) {
+      params.set('q', keyword);
+      router.push(`${window.location.pathname}?${params.toString()}`);
+    } else {
+      router.push(window.location.pathname);
     }
-  }, [searchParams]);
+  }, [router]);
 
   const query = searchParams.get('q') || '';
 
+  useEffect(() => {
+    if (query) {
+      document.title = `"${query}" Arama Sonuçları - Ürünler`;
+    } else {
+      document.title = 'Ürün Arama';
+    }
+  }, [query]);
+
   return (
-    <>
-      <head>
-        <title>{query ? `"${query}" Arama Sonuçları - Ürünler` : 'Ürün Arama'}</title>
-        <meta name="description" content={query ? `"${query}" için ürün arama sonuçları` : 'Ürünlerde arama yapın'} />
-      </head>
-      <div className="min-h-screen bg-[#0a0a0a]">
+    <div className="min-h-screen bg-[#0a0a0a]">
         <div className="container mx-auto px-4 py-16 max-w-7xl">
           <div className="mb-8">
             <Button asChild variant="ghost" className="mb-4">
@@ -167,27 +94,60 @@ export default function ProductSearchPage({
                 initialValue={searchTerm}
                 onSearch={handleSearch}
                 loading={loading}
-                placeholder="Arama yapın..."
+                placeholder="Ürün ara..."
+                debounceMs={0}
               />
             </div>
-
-            <CategoryFilter
-              categories={categories}
-              selectedCategory={selectedCategory}
-              onCategoryChange={handleCategoryChange}
-              loading={loading}
-            />
           </div>
 
           <SearchResults
             loading={loading}
-            searched={true}
-            count={filteredAreas.length}
-            emptyMessage="Aradığınız kriterlere uygun sonuç bulunamadı."
+            searched={!!query}
+            count={products.length}
+            emptyMessage="Aradığınız kriterlere uygun ürün bulunamadı."
           >
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredAreas.map((item) => (
-                <UsageAreaCard key={item.id} area={item} locale={locale} />
+              {products.map((product) => (
+                <Card
+                  key={product.id}
+                  className="group overflow-hidden hover:scale-[1.02] transition-all duration-300 cursor-pointer"
+                >
+                  <Link href={getLocalizedPath(`/products/detail/${product.slug}`, locale)}>
+                    {product.thumbnail && typeof product.thumbnail === 'string' && (
+                      <div className="relative w-full h-48 overflow-hidden">
+                        <Image
+                          src={product.thumbnail}
+                          alt={product.title}
+                          fill
+                          className="object-cover group-hover:scale-110 transition-transform duration-300"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        />
+                      </div>
+                    )}
+                    <CardHeader>
+                      <CardTitle className="line-clamp-2">{product.title}</CardTitle>
+                      {product.excerpt && (
+                        <CardDescription className="line-clamp-3">
+                          {product.excerpt}
+                        </CardDescription>
+                      )}
+                    </CardHeader>
+                    {product.filters && product.filters.length > 0 && (
+                      <CardContent>
+                        <div className="flex flex-wrap gap-2">
+                          {product.filters.map((filter) => (
+                            <span
+                              key={filter.id}
+                              className="text-xs px-2 py-1 bg-muted rounded"
+                            >
+                              {filter.name}
+                            </span>
+                          ))}
+                        </div>
+                      </CardContent>
+                    )}
+                  </Link>
+                </Card>
               ))}
             </div>
           </SearchResults>

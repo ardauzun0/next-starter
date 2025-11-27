@@ -630,9 +630,10 @@ export default async function BlogPage() {
 
 | Fonksiyon                  | Ne İşe Yarar?             | Endpoint                          |
 | -------------------------- | ------------------------- | --------------------------------- |
+| `getAllProducts(perPage, page)` | Tüm ürünleri getirir (pagination) | `GET /product/v1/all?per_page={perPage}&page={page}` |
 | `getProductBySlug(slug)`   | Tek ürün detayını getirir | `GET /product/v1/detail/{slug}`   |
 | `getProductCategory(slug)` | Ürün kategorisini getirir | `GET /product-category/v1/{slug}` |
-| `searchProducts(keyword)`  | Ürün araması yapar        | `GET /usage/v1/search/{keyword}`  |
+| `searchProducts(keyword)`  | Ürün araması yapar        | `GET /product/v1/search/{keyword}`  |
 
 **Örnek Kullanım:**
 
@@ -1449,10 +1450,11 @@ Arama ile ilgili tüm component'ler `src/components/search/` klasöründedir:
 Arama input'u ve submit butonu içeren yeniden kullanılabilir form component'i.
 
 **Özellikler:**
-- Debounce desteği (varsayılan 800ms)
+- Debounce desteği (varsayılan 800ms, `debounceMs={0}` ile devre dışı bırakılabilir)
 - Loading state yönetimi
 - URL senkronizasyonu
 - Otomatik form submit
+- **Not:** Usage sayfasında `debounceMs={0}` kullanılır, sadece "Ara" butonuna tıklayınca arama yapılır
 
 **Props:**
 ```typescript
@@ -1728,7 +1730,150 @@ export default function BlogSearchPage({ params }) {
 
 ### 🔎 Ürün Arama
 
-Ürün arama da aynı şekilde çalışır: `/products/search?q=keyword`
+**ÖNEMLİ:** Products ve Usage tamamen ayrılmıştır. Product search sadece ürünleri listeler, usage alanlarını değil.
+
+Ürün arama: `/products/search?q=keyword`
+
+**Özellikler:**
+- Sadece ürünleri listeler (usage alanları değil)
+- Product type'ları: `filters` array, `thumbnail` (string | false), `excerpt`, `content`
+- Debounce desteği (varsayılan 800ms)
+- URL'de query parameter: `?q=keyword`
+
+**Örnek:**
+```typescript
+// src/app/[locale]/products/search/page.tsx
+'use client';
+
+export default function ProductSearchPage() {
+  const handleSearch = async (keyword: string) => {
+    const response = await fetch(`/api/products/search?keyword=${keyword}`);
+    const data = await response.json();
+    // data.data.products → Product[] array
+  };
+  
+  return <SearchForm onSearch={handleSearch} />;
+}
+```
+
+**Product Type Yapısı:**
+```typescript
+interface Product {
+  id: number;
+  title: string;
+  slug: string;
+  excerpt?: string;
+  content?: string;
+  thumbnail: string | false;  // false ise resim yok
+  filters: ProductFilter[];  // Filtre array'i
+  date: string;
+}
+
+interface ProductFilter {
+  id: number;
+  name: string;
+  slug: string;
+}
+```
+
+### 🔎 Usage Arama
+
+**ÖNEMLİ:** Usage arama özellikleri:
+- **Canlı search YOK:** Sadece "Ara" butonuna tıklayınca arama yapılır (`debounceMs={0}`)
+- **Search yapıldığında kategori butonları gizlenir**
+- Sadece usage alanlarını listeler (ürünler değil)
+
+Usage arama: `/usage?q=keyword`
+
+**Özellikler:**
+- Canlı search devre dışı (sadece submit'te çalışır)
+- Search aktifken kategori filtreleri gizlenir
+- URL'de query parameter: `?q=keyword`
+- Kategori filtreleme ile birlikte kullanılabilir (ama search yapıldığında kategori butonları gizlenir)
+
+**Örnek:**
+```typescript
+// src/app/[locale]/usage/page.tsx
+'use client';
+
+export default function UsagePage() {
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  return (
+    <>
+      <SearchForm
+        debounceMs={0}  // 👈 Canlı search YOK
+        onSearch={handleSearch}
+      />
+      
+      {/* Search yapıldığında kategori butonları gizlenir */}
+      {!searchTerm && (
+        <CategoryFilter
+          categories={categories}
+          onCategoryChange={handleCategoryChange}
+        />
+      )}
+    </>
+  );
+}
+```
+
+### 📄 Blog Kategori Sayfası - Pagination
+
+Blog kategori sayfasında **6'lı liste** ve **pagination** kullanılır.
+
+**Özellikler:**
+- Her sayfada maksimum 6 blog yazısı gösterilir
+- Pagination butonları (Önceki/Sonraki)
+- URL'de page parameter: `/blog/category/{slug}?page=2`
+
+**Örnek:**
+```typescript
+// src/app/[locale]/blog/category/[slug]/page.tsx
+export default async function BlogCategoryPage({ params, searchParams }) {
+  const { slug } = await params;
+  const currentPage = parseInt(searchParams.page || '1', 10);
+  const postsData = await getPostsByCategory(slug, currentPage);
+  
+  // Client-side pagination (6'lı liste)
+  const ITEMS_PER_PAGE = 6;
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedPosts = postsData.data.posts.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  
+  return (
+    <>
+      {paginatedPosts.map((post) => (
+        <BlogPostCard key={post.id} post={post} />
+      ))}
+      
+      {/* Pagination */}
+      {Math.ceil(postsData.data.posts.length / ITEMS_PER_PAGE) > 1 && (
+        <Pagination currentPage={currentPage} totalPages={...} />
+      )}
+    </>
+  );
+}
+```
+
+### 🔄 Products ve Usage Ayrımı
+
+**ÖNEMLİ:** Products ve Usage modülleri tamamen ayrılmıştır:
+
+| Özellik | Products | Usage |
+|---------|----------|-------|
+| **Arama Endpoint** | `/api/products/search` | `/api/usage/areas` (filtreleme) |
+| **Service Fonksiyonu** | `searchProducts()` | `getUsageAreas()` |
+| **Type** | `Product[]` | `UsageArea[]` |
+| **Kategori Endpoint** | `/product-category/v1/{slug}` | `/usage/v1/category/{slug}` |
+| **Liste Endpoint** | `/product/v1/all` | `/usage/v1` |
+| **Search Davranışı** | Debounce (800ms) | Sadece submit (debounce yok) |
+| **Kategori Filtreleri** | Yok (filters array kullanılır) | Var (CategoryFilter component) |
+
+**Neden Ayrıldı?**
+- Products ve Usage farklı veri yapılarına sahip
+- Farklı arama/filtreleme mantıkları
+- Kod karışıklığını önlemek
+- Bakım kolaylığı
 
 ---
 

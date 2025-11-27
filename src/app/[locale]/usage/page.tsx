@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import type { Locale } from '@/i18n/config';
 import type { UsageArea, Category } from '@/types/api';
@@ -92,7 +92,18 @@ export default function UsagePage({
 
   useEffect(() => {
     if (usageAreas.length > 0) {
-      filterAndSearch(selectedCategory, searchTerm, usageAreas);
+      // If search is active, only filter by search term, ignore category
+      if (searchTerm.trim()) {
+        const searchLower = searchTerm.toLowerCase();
+        const filtered = usageAreas.filter((area) =>
+          area.title.toLowerCase().includes(searchLower)
+        );
+        setFilteredAreas(filtered);
+        setDisplayedAreas(filtered.slice(0, ITEMS_PER_PAGE));
+        setCurrentPage(1);
+      } else {
+        filterAndSearch(selectedCategory, '', usageAreas);
+      }
     }
   }, [selectedCategory, searchTerm, usageAreas, filterAndSearch]);
 
@@ -149,26 +160,29 @@ export default function UsagePage({
   };
 
   const handleSearch = useCallback((keyword: string) => {
-    const params = new URLSearchParams(searchParams.toString());
+    setSearchTerm(keyword);
+    setSelectedCategory('all'); // Reset category when searching
+    const params = new URLSearchParams();
     if (keyword.trim()) {
       params.set('q', keyword);
     } else {
       params.delete('q');
     }
+    params.delete('category'); // Remove category when searching
     router.push(`${window.location.pathname}?${params.toString()}`);
-  }, [router, searchParams]);
+  }, [router]);
 
   useEffect(() => {
-    const query = searchParams.get('q');
-    const category = searchParams.get('category');
+    const query = searchParams.get('q') || '';
+    const category = searchParams.get('category') || 'all';
     
     if (query !== searchTerm) {
-      setSearchTerm(query || '');
+      setSearchTerm(query);
     }
     if (category !== selectedCategory) {
-      setSelectedCategory(category || 'all');
+      setSelectedCategory(category);
     }
-  }, [searchParams]);
+  }, [searchParams, searchTerm, selectedCategory]);
 
   const hasMore = displayedAreas.length < filteredAreas.length;
   const remainingCount = Math.min(ITEMS_PER_PAGE, filteredAreas.length - displayedAreas.length);
@@ -185,15 +199,18 @@ export default function UsagePage({
               onSearch={handleSearch}
               loading={loading}
               placeholder="Arama yapın..."
+              debounceMs={800}
             />
           </div>
 
-          <CategoryFilter
-            categories={categories}
-            selectedCategory={selectedCategory}
-            onCategoryChange={handleCategoryChange}
-            loading={loading}
-          />
+          {!searchTerm && (
+            <CategoryFilter
+              categories={categories}
+              selectedCategory={selectedCategory}
+              onCategoryChange={handleCategoryChange}
+              loading={loading}
+            />
+          )}
         </div>
 
         <SearchResults

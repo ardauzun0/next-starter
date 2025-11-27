@@ -70,7 +70,12 @@ export interface PostsResponse {
 
 export interface PostsByCategoryResponse {
   success: boolean;
-  data: Post[];
+  data: {
+    posts: Post[];
+    total_pages?: number;
+    current_page?: number;
+    total_posts?: number;
+  } | Post[];
 }
 
 export interface PostDetailResponse {
@@ -87,24 +92,30 @@ export interface CategoriesResponse {
   data: Category[];
 }
 
+export interface ProductFilter {
+  id: number;
+  name: string;
+  slug: string;
+}
+
 export interface Product {
   id: number;
   title: string;
   slug: string;
-  description?: string;
-  thumbnail?: string;
-  category?: string;
-  category_slug?: string;
-  date?: string;
+  excerpt?: string;
+  content?: string;
+  thumbnail: string | false;
+  filters: ProductFilter[];
+  date: string;
 }
 
 export interface ProductsResponse {
   success: boolean;
   data: {
     products: Product[];
-    total_pages?: number;
-    current_page?: number;
-    total_products?: number;
+    total: number;
+    pages: number;
+    current_page: number;
   };
 }
 

@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { getTranslations } from '@/i18n/getTranslations';
 import { getLocalizedPath } from '@/utils/locale-helper';
 import type { Locale } from '@/i18n/config';
+import type { Post } from '@/types/api';
 
 interface BlogCategoryPageProps {
   params: Promise<{ locale: Locale; slug: string }>;
@@ -44,7 +45,23 @@ export default async function BlogCategoryPage({
 
   const categoriesData = await getBlogCategories();
   const currentCategory = categoriesData.data.find((cat) => cat.slug === slug);
-  const hasPosts = postsData.success && Array.isArray(postsData.data) && postsData.data.length > 0;
+  
+  // Handle both array and object response formats
+  let posts: Post[] = [];
+  
+  if (postsData.success) {
+    if (Array.isArray(postsData.data)) {
+      posts = postsData.data;
+    } else if (postsData.data && 'posts' in postsData.data) {
+      posts = postsData.data.posts;
+    }
+  }
+  
+  const ITEMS_PER_PAGE = 6;
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const paginatedPosts = posts.slice(startIndex, endIndex);
+  const hasPosts = paginatedPosts.length > 0;
 
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
@@ -97,7 +114,7 @@ export default async function BlogCategoryPage({
             {hasPosts ? (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-                  {postsData.data.map((post) => (
+                  {paginatedPosts.map((post) => (
                     <Card
                       key={post.id}
                       className="group overflow-hidden hover:scale-[1.02] transition-all duration-300 cursor-pointer"
@@ -137,6 +154,38 @@ export default async function BlogCategoryPage({
                     </Card>
                   ))}
                 </div>
+                
+                {Math.ceil(posts.length / ITEMS_PER_PAGE) > 1 && (
+                  <div className="flex justify-center gap-2">
+                    {currentPage > 1 && (
+                      <Button asChild variant="outline">
+                        <Link
+                          href={getLocalizedPath(
+                            `/blog/category/${slug}?page=${currentPage - 1}`,
+                            locale
+                          )}
+                        >
+                          Önceki
+                        </Link>
+                      </Button>
+                    )}
+                    <span className="flex items-center px-4 text-muted-foreground">
+                      Sayfa {currentPage} / {Math.ceil(posts.length / ITEMS_PER_PAGE)}
+                    </span>
+                    {currentPage < Math.ceil(posts.length / ITEMS_PER_PAGE) && (
+                      <Button asChild variant="outline">
+                        <Link
+                          href={getLocalizedPath(
+                            `/blog/category/${slug}?page=${currentPage + 1}`,
+                            locale
+                          )}
+                        >
+                          Sonraki
+                        </Link>
+                      </Button>
+                    )}
+                  </div>
+                )}
               </>
             ) : (
               <div className="text-center py-16">
