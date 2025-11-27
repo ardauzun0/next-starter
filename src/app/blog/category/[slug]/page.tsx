@@ -1,38 +1,53 @@
-import { getPosts, getBlogCategories } from '@/services/blog';
+import { getPostsByCategory } from '@/services/blog';
+import { getBlogCategories } from '@/services/blog';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
-export const metadata: Metadata = {
-  title: 'Blog',
-  description: 'Blog yazılarımızı keşfedin',
-};
-
-export default async function BlogPage({
-  searchParams,
-}: {
+interface BlogCategoryPageProps {
+  params: Promise<{ slug: string }>;
   searchParams: Promise<{ page?: string }>;
-}) {
-  const params = await searchParams;
-  const currentPage = parseInt(params.page || '1', 10);
-  const postsData = await getPosts(currentPage);
+}
+
+export async function generateMetadata({
+  params,
+}: BlogCategoryPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  return {
+    title: `Blog - ${slug}`,
+    description: `${slug} kategorisindeki blog yazıları`,
+  };
+}
+
+export default async function BlogCategoryPage({
+  params,
+  searchParams,
+}: BlogCategoryPageProps) {
+  const { slug } = await params;
+  const searchParamsResolved = await searchParams;
+  const currentPage = parseInt(searchParamsResolved.page || '1', 10);
+  const postsData = await getPostsByCategory(slug, currentPage);
   const categoriesData = await getBlogCategories();
+
+  const currentCategory = categoriesData.data.find((cat) => cat.slug === slug);
 
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
       <div className="container mx-auto px-4 py-16 max-w-7xl">
-        <div className="flex items-center justify-between mb-12">
-          <h1 className="text-5xl font-bold text-foreground">Blog</h1>
-          <div className="flex gap-2">
-            <Button asChild variant="outline">
-              <Link href="/blog/search">Ara</Link>
-            </Button>
-            <Button asChild variant="outline">
-              <Link href="/blog/categories">Kategoriler</Link>
-            </Button>
-          </div>
+        <div className="mb-8">
+          <Button asChild variant="ghost" className="mb-4">
+            <Link href="/blog">← Blog&apos;a Dön</Link>
+          </Button>
+          <h1 className="text-5xl font-bold text-foreground">
+            {currentCategory?.name || slug}
+          </h1>
+          {currentCategory?.description && (
+            <p className="text-muted-foreground mt-4">
+              {currentCategory.description}
+            </p>
+          )}
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
@@ -48,7 +63,7 @@ export default async function BlogPage({
                       <Button
                         key={category.term_id}
                         asChild
-                        variant="ghost"
+                        variant={category.slug === slug ? 'default' : 'ghost'}
                         className="w-full justify-start"
                       >
                         <Link href={`/blog/category/${category.slug}`}>
@@ -66,7 +81,7 @@ export default async function BlogPage({
           )}
 
           <main className="flex-1">
-            {postsData.success && postsData.data.posts.length > 0 ? (
+            {postsData.success && postsData.data?.posts && postsData.data.posts.length > 0 ? (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
                   {postsData.data.posts.map((post) => (
@@ -110,7 +125,7 @@ export default async function BlogPage({
                   ))}
                 </div>
 
-                {postsData.data.total_pages > 1 && (
+                {postsData.data.total_pages && postsData.data.total_pages > 1 && (
                   <div className="flex justify-center gap-2">
                     {Array.from(
                       { length: postsData.data.total_pages },
@@ -121,7 +136,9 @@ export default async function BlogPage({
                         asChild
                         variant={page === currentPage ? 'default' : 'outline'}
                       >
-                        <Link href={`/blog?page=${page}`}>{page}</Link>
+                        <Link href={`/blog/category/${slug}?page=${page}`}>
+                          {page}
+                        </Link>
                       </Button>
                     ))}
                   </div>
@@ -130,7 +147,7 @@ export default async function BlogPage({
             ) : (
               <div className="text-center py-16">
                 <p className="text-muted-foreground text-lg">
-                  Henüz blog yazısı bulunmamaktadır.
+                  Bu kategoride henüz blog yazısı bulunmamaktadır.
                 </p>
               </div>
             )}

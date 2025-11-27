@@ -30,20 +30,25 @@ export function constructMetadata(
     alt: head.openGraph?.title || head.title,
   })) || [];
 
+  const openGraphType = head.openGraph?.type || 'website';
   const openGraph: Metadata['openGraph'] = head.openGraph
     ? {
         title: head.openGraph.title || head.title,
         description: head.openGraph.description || head.description,
         url: getAbsoluteUrl(head.openGraph.url, baseUrl) || head.openGraph.url,
-        siteName: process.env.NEXT_PUBLIC_SITE_NAME || 'Site',
+        siteName: head.openGraph.site_name || process.env.NEXT_PUBLIC_SITE_NAME || 'Site',
         images: openGraphImages.length > 0 ? openGraphImages : undefined,
-        type: (head.openGraph.type as Metadata['openGraph']['type']) || 'website',
+        type: (openGraphType as Metadata['openGraph']['type']) || 'website',
         locale: head.openGraph.locale || 'tr_TR',
       }
     : undefined;
 
+  const twitterCard = head.openGraph?.card || 'summary_large_image';
+
   const twitter: Metadata['twitter'] = {
-    card: 'summary_large_image',
+    card: twitterCard === 'summary' || twitterCard === 'summary_large_image' 
+      ? (twitterCard as 'summary' | 'summary_large_image')
+      : 'summary_large_image',
     title: head.openGraph?.title || head.title,
     description: head.openGraph?.description || head.description,
     images:

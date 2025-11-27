@@ -1,6 +1,5 @@
 // Shared TypeScript Interfaces for WordPress Headless API
 
-// 4.1. Global Options
 export interface GlobalOptions {
   option: {
     addresses: Array<{
@@ -27,23 +26,19 @@ export interface GlobalOptions {
   };
 }
 
-// 4.2. Dynamic Blocks (ACF Flexible Content)
-// Base interface for all blocks
 export interface BaseBlock {
   acf_fc_layout: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
 
-// 4.3. Page Data
 export interface PageData {
   success: boolean;
   data: {
-    content: BaseBlock[]; // Array of dynamic blocks
+    content: BaseBlock[];
   };
 }
 
-// 4.4. Blog & Categories
 export interface Post {
   id: number;
   title: string;
@@ -58,18 +53,18 @@ export interface Category {
   term_id: number;
   name: string;
   slug: string;
+  taxonomy?: string;
+  description?: string;
   count: number;
 }
 
-// Blog API Response Types
 export interface PostsResponse {
   success: boolean;
-  data: Post[];
-  pagination?: {
-    page: number;
-    per_page: number;
-    total: number;
+  data: {
+    posts: Post[];
     total_pages: number;
+    current_page: number;
+    total_posts: number;
   };
 }
 
@@ -87,12 +82,29 @@ export interface CategoriesResponse {
   data: Category[];
 }
 
-// 4.5. Products
 export interface ProductDetail {
   success: boolean;
   data: {
-    content: BaseBlock[]; // Flexible content
+    content: BaseBlock[];
   };
+}
+
+export interface ProductCategoryItem {
+  category: string;
+  image: string;
+  products: Array<{
+    ID: number;
+    post_content: string;
+    post_title: string;
+    post_excerpt: string;
+    thumbnail: {
+      url: string;
+    };
+    description: string;
+    category: string;
+    category_slug: string;
+    category_id: number;
+  }>;
 }
 
 export interface ProductCategory {
@@ -104,14 +116,13 @@ export interface ProductCategory {
   };
 }
 
-// 4.6. Usage Areas
 export interface UsageArea {
   id: number;
-  name: string;
+  title: string;
   slug: string;
-  description?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any;
+  thumbnail: string;
+  count: number;
+  type: string;
 }
 
 export interface UsageAreasResponse {
@@ -119,16 +130,33 @@ export interface UsageAreasResponse {
   data: UsageArea[];
 }
 
+export interface UsageAreaProduct {
+  image: string;
+  title: string;
+  slug: string;
+  category: string;
+}
+
 export interface UsageAreaDetail {
   success: boolean;
-  data: UsageArea & {
-    content?: BaseBlock[];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [key: string]: any;
+  data: {
+    id: number;
+    bc_type?: string;
+    bc_select?: string;
+    bc_image?: string;
+    bc_video?: string;
+    bc_exp?: string;
+    title: string;
+    content?: string;
+    products?: UsageAreaProduct[];
   };
 }
 
-// 4.7. SEO Data
+export interface UsageCategoriesResponse {
+  success: boolean;
+  data: Category[];
+}
+
 export interface SEOData {
   success: boolean;
   head: {
@@ -141,9 +169,11 @@ export interface SEOData {
       images: string[];
       url: string;
       type: string;
+      locale?: string;
+      site_name?: string;
+      card?: string;
     };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     jsonLd?: any[];
   };
 }
-

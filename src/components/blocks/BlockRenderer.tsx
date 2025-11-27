@@ -12,7 +12,7 @@ import FeatureHighlight from './FeatureHighlight';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const blockMap: Record<string, React.ComponentType<any>> = {
   hero: Hero,
-  image_content: ImageContent,
+  imagecontent: ImageContent,
   breadcrumb: Breadcrumb,
   tab: Tab,
   imagelist: ImageList,

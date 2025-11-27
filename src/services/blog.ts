@@ -5,13 +5,8 @@ import type {
   CategoriesResponse,
 } from '../types/api';
 
-export async function getPosts(
-  page: number = 1,
-  perPage: number = 10
-): Promise<PostsResponse> {
-  return fetchAPI<PostsResponse>(
-    `/posts/v1?page=${page}&per_page=${perPage}`
-  );
+export async function getPosts(page: number = 1): Promise<PostsResponse> {
+  return fetchAPI<PostsResponse>(`/posts/v1?page=${page}`);
 }
 
 export async function getPostBySlug(slug: string): Promise<PostDetailResponse> {
@@ -25,13 +20,10 @@ export async function searchPosts(keyword: string): Promise<PostsResponse> {
 }
 
 export async function getPostsByCategory(
-  slug: string,
-  page: number = 1,
-  perPage: number = 10
+  categorySlug: string,
+  page: number = 1
 ): Promise<PostsResponse> {
-  return fetchAPI<PostsResponse>(
-    `/posts/v1/category/${slug}?page=${page}&per_page=${perPage}`
-  );
+  return fetchAPI<PostsResponse>(`/posts/v1/category/${categorySlug}?page=${page}`);
 }
 
 export async function getBlogCategories(): Promise<CategoriesResponse> {
