@@ -1,11 +1,11 @@
 # 🚀 Next.js 15 Headless WordPress Starter
 
 > **Altyapıyı Hazırlayan:** Arda Uzun  
-> **Versiyon:** 1.0.0  
+> **Versiyon:** 2.0.0  
 > **Next.js:** 15 (App Router)  
 > **TypeScript:** 5+
 
-Bu proje, Next.js 15 App Router kullanarak Headless WordPress entegrasyonu için hazırlanmış profesyonel bir starter template'dir. Çok dilli (i18n) desteği, SEO optimizasyonu, dinamik block rendering ve modern UI component'leri içerir.
+Bu proje, Next.js 15 App Router kullanarak Headless WordPress entegrasyonu için hazırlanmış profesyonel bir starter template'dir. Çok dilli (i18n) desteği, SEO optimizasyonu, dinamik block rendering, ürün/blog yönetimi ve modern UI component'leri içerir.
 
 ---
 
