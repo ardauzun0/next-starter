@@ -3,22 +3,31 @@ const PRODUCTION_URL = 'https://frontend-example-panel.pentademo.com.tr';
 /**
  * Get the base URL from environment variable or fallback
  */
-export function getBaseUrl(): string {
-  if (process.env.NEXT_PUBLIC_SITE_URL) {
-    return process.env.NEXT_PUBLIC_SITE_URL;
+export function getBaseUrl(locale?: string): string {
+  let baseUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  if (!baseUrl && process.env.VERCEL_URL) {
+    baseUrl = `https://${process.env.VERCEL_URL}`;
   }
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
+  if (!baseUrl) {
+    baseUrl = 'http://localhost:3001';
   }
-  return 'http://localhost:3001';
+  
+  if (locale && locale !== 'tr') {
+    return `${baseUrl}/${locale}`;
+  }
+  return baseUrl;
 }
 
 /**
  * Get production URL for SEO API calls
  * Always returns production URL regardless of environment
  */
-export function getSEOBaseUrl(): string {
-  return process.env.NEXT_PUBLIC_SITE_URL || PRODUCTION_URL;
+export function getSEOBaseUrl(locale?: string): string {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || PRODUCTION_URL;
+  if (locale && locale !== 'tr') {
+    return `${baseUrl}/${locale}`;
+  }
+  return baseUrl;
 }
 
 /**

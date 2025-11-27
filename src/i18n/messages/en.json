@@ -1,0 +1,39 @@
+{
+  "common": {
+    "back": "Back",
+    "search": "Search",
+    "categories": "Categories",
+    "readMore": "Read More",
+    "loading": "Loading...",
+    "noResults": "No results found",
+    "pageNotFound": "Page Not Found"
+  },
+  "blog": {
+    "title": "Blog",
+    "backToBlog": "Back to Blog",
+    "categories": "Blog Categories",
+    "search": "Blog Search",
+    "searchPlaceholder": "Search...",
+    "searching": "Searching...",
+    "noPosts": "No blog posts found yet",
+    "noPostsInCategory": "No blog posts found in this category yet",
+    "noCategories": "No categories found yet",
+    "resultsFound": "{count} results found",
+    "noSearchResults": "No results found matching your criteria"
+  },
+  "products": {
+    "title": "Products",
+    "backToProducts": "Back to Products",
+    "categories": "Product Categories",
+    "usageAreas": "Usage Areas",
+    "products": "products",
+    "noCategories": "No categories found yet",
+    "noProductsInCategory": "No products found in this category yet",
+    "visitCategoryPage": "Visit the category page to see product categories"
+  },
+  "usage": {
+    "title": "Usage Areas",
+    "products": "Products"
+  }
+}
+

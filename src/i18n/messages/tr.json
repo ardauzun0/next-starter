@@ -1,0 +1,39 @@
+{
+  "common": {
+    "back": "Geri",
+    "search": "Ara",
+    "categories": "Kategoriler",
+    "readMore": "Devamını Oku",
+    "loading": "Yükleniyor...",
+    "noResults": "Sonuç bulunamadı",
+    "pageNotFound": "Sayfa Bulunamadı"
+  },
+  "blog": {
+    "title": "Blog",
+    "backToBlog": "Blog'a Dön",
+    "categories": "Blog Kategorileri",
+    "search": "Blog Arama",
+    "searchPlaceholder": "Arama yapın...",
+    "searching": "Aranıyor...",
+    "noPosts": "Henüz blog yazısı bulunmamaktadır",
+    "noPostsInCategory": "Bu kategoride henüz blog yazısı bulunmamaktadır",
+    "noCategories": "Henüz kategori bulunmamaktadır",
+    "resultsFound": "{count} sonuç bulundu",
+    "noSearchResults": "Aradığınız kriterlere uygun sonuç bulunamadı"
+  },
+  "products": {
+    "title": "Ürünler",
+    "backToProducts": "Ürünler'e Dön",
+    "categories": "Ürün Kategorileri",
+    "usageAreas": "Kullanım Alanları",
+    "products": "ürün",
+    "noCategories": "Henüz kategori bulunmamaktadır",
+    "noProductsInCategory": "Bu kategoride henüz ürün bulunmamaktadır",
+    "visitCategoryPage": "Ürün kategorilerini görmek için kategori sayfasını ziyaret edin"
+  },
+  "usage": {
+    "title": "Kullanım Alanları",
+    "products": "Ürünler"
+  }
+}
+
