@@ -12,6 +12,7 @@ import type { Locale } from '@/i18n/config';
 import type { Product } from '@/types/api';
 import SearchForm from '@/components/search/SearchForm';
 import SearchResults from '@/components/search/SearchResults';
+import { getTranslations } from '@/i18n/getTranslations';
 
 export default function ProductSearchPage({
   params,
@@ -19,6 +20,7 @@ export default function ProductSearchPage({
   params: Promise<{ locale: Locale }>;
 }) {
   const { locale } = use(params);
+  const t = getTranslations(locale);
   const searchParams = useSearchParams();
   const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
@@ -72,21 +74,21 @@ export default function ProductSearchPage({
 
   useEffect(() => {
     if (query) {
-      document.title = `"${query}" Arama Sonuçları - Ürünler`;
+      document.title = t.products.searchResults.replace('{query}', query) + ' - ' + t.products.title;
     } else {
-      document.title = 'Ürün Arama';
+      document.title = t.products.searchTitle;
     }
-  }, [query]);
+  }, [query, t]);
 
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
         <div className="container mx-auto px-4 py-16 max-w-7xl">
           <div className="mb-8">
             <Button asChild variant="ghost" className="mb-4">
-              <Link href={getLocalizedPath('/products', locale)}>← Ürünler&apos;e Dön</Link>
+              <Link href={getLocalizedPath('/products', locale)}>{t.common.backToProducts}</Link>
             </Button>
             <h1 className="text-5xl font-bold text-foreground mb-8">
-              {query ? `"${query}" Arama Sonuçları` : 'Ürün Arama'}
+              {query ? t.products.searchResults.replace('{query}', query) : t.products.searchTitle}
             </h1>
 
             <div className="flex flex-col md:flex-row gap-4 mb-8">
@@ -94,7 +96,7 @@ export default function ProductSearchPage({
                 initialValue={searchTerm}
                 onSearch={handleSearch}
                 loading={loading}
-                placeholder="Ürün ara..."
+                placeholder={t.common.productSearch}
                 debounceMs={0}
               />
             </div>
@@ -104,7 +106,7 @@ export default function ProductSearchPage({
             loading={loading}
             searched={!!query}
             count={products.length}
-            emptyMessage="Aradığınız kriterlere uygun ürün bulunamadı."
+            emptyMessage={t.common.noProductsFound}
           >
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {products.map((product) => (
@@ -153,6 +155,5 @@ export default function ProductSearchPage({
           </SearchResults>
         </div>
       </div>
-    </>
   );
 }

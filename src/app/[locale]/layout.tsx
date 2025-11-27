@@ -25,14 +25,17 @@ export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
 
+interface LocaleLayoutProps {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}
+
 export default async function LocaleLayout({
   children,
   params,
-}: {
-  children: React.ReactNode;
-  params: Promise<{ locale: Locale }>;
-}) {
-  const { locale } = await params;
+}: LocaleLayoutProps) {
+  const resolvedParams = await params;
+  const locale = resolvedParams.locale as Locale;
   const globalOptions = await getGlobalOptions();
 
   return (

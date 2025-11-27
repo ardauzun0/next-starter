@@ -18,10 +18,10 @@ export default async function Home({ params }: HomePageProps) {
       <div className="container mx-auto px-4 py-16 max-w-7xl">
         <div className="text-center mb-16">
           <h1 className="text-5xl font-bold mb-6 text-foreground">
-            Hoş Geldiniz
+            {t.common.welcome || 'Hoş Geldiniz'}
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Next.js 15 ile Headless WordPress entegrasyonu
+            {t.common.welcomeDescription || 'Next.js 15 ile Headless WordPress entegrasyonu'}
           </p>
           <div className="flex gap-4 justify-center">
             <Button asChild>
@@ -31,13 +31,13 @@ export default async function Home({ params }: HomePageProps) {
               <Link href={getLocalizedPath('/products', locale)}>{t.products.title}</Link>
             </Button>
             <Button asChild variant="outline">
-              <Link href={getLocalizedPath('/usage', locale)}>Kullanım Alanları</Link>
+              <Link href={getLocalizedPath('/usage', locale)}>{t.usage.title}</Link>
             </Button>
           </div>
         </div>
 
         <div className="py-16">
-          <ContactForm />
+          <ContactForm locale={locale} />
         </div>
       </div>
     </div>

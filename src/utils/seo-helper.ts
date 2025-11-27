@@ -38,7 +38,7 @@ export function constructMetadata(
         url: getAbsoluteUrl(head.openGraph.url, baseUrl) || head.openGraph.url,
         siteName: head.openGraph.site_name || process.env.NEXT_PUBLIC_SITE_NAME || 'Site',
         images: openGraphImages.length > 0 ? openGraphImages : undefined,
-        type: (openGraphType as Metadata['openGraph']['type']) || 'website',
+        type: (openGraphType as 'website' | 'article' | 'book' | 'profile' | undefined) || 'website',
         locale: head.openGraph.locale || 'tr_TR',
       }
     : undefined;

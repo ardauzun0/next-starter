@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,7 @@ import type { Locale } from '@/i18n/config';
 import type { Product } from '@/types/api';
 import SearchForm from '@/components/search/SearchForm';
 import SearchResults from '@/components/search/SearchResults';
+import { getTranslations } from '@/i18n/getTranslations';
 
 export default function ProductsPage({
   params,
@@ -21,13 +22,14 @@ export default function ProductsPage({
   searchParams: Promise<{ page?: string; q?: string }>;
 }) {
   const { locale } = use(params);
+  const t = getTranslations(locale);
   const resolvedSearchParams = use(searchParams);
   const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState(resolvedSearchParams.q || '');
   const [loading, setLoading] = useState(false);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
-  const [currentPage, setCurrentPage] = useState(parseInt(resolvedSearchParams.page || '1', 10));
+  const [currentPage] = useState(parseInt(resolvedSearchParams.page || '1', 10));
   const [loadingProducts, setLoadingProducts] = useState(true);
 
   const ITEMS_PER_PAGE = 10;
@@ -113,10 +115,10 @@ export default function ProductsPage({
     <div className="min-h-screen bg-[#0a0a0a]">
       <div className="container mx-auto px-4 py-16 max-w-7xl">
         <div className="flex items-center justify-between mb-12">
-          <h1 className="text-5xl font-bold text-foreground">Ürünler</h1>
+          <h1 className="text-5xl font-bold text-foreground">{t.products.title}</h1>
           <div className="flex gap-2">
             <Button asChild variant="outline">
-              <Link href={getLocalizedPath('/products/categories', locale)}>Kategoriler</Link>
+              <Link href={getLocalizedPath('/products/categories', locale)}>{t.common.categories}</Link>
             </Button>
           </div>
         </div>
@@ -126,7 +128,7 @@ export default function ProductsPage({
             initialValue={searchTerm}
             onSearch={handleSearch}
             loading={loading || loadingProducts}
-            placeholder="Ürün ara..."
+            placeholder={t.common.productSearch}
             debounceMs={800}
           />
         </div>
@@ -136,7 +138,7 @@ export default function ProductsPage({
             loading={loading}
             searched={true}
             count={products.length}
-            emptyMessage="Aradığınız kriterlere uygun ürün bulunamadı."
+            emptyMessage={t.common.noProductsFound}
           >
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {products.map((product) => (
@@ -246,12 +248,12 @@ export default function ProductsPage({
                             locale
                           )}
                         >
-                          Önceki
+                          {t.common.previous}
                         </Link>
                       </Button>
                     )}
                     <span className="flex items-center px-4 text-muted-foreground">
-                      Sayfa {currentPage} / {totalPages}
+                      {t.common.page} {currentPage} {t.common.of} {totalPages}
                     </span>
                     {currentPage < totalPages && (
                       <Button asChild variant="outline">
@@ -261,7 +263,7 @@ export default function ProductsPage({
                             locale
                           )}
                         >
-                          Sonraki
+                          {t.common.next}
                         </Link>
                       </Button>
                     )}
@@ -271,7 +273,7 @@ export default function ProductsPage({
             ) : (
               <div className="text-center py-16">
                 <p className="text-muted-foreground text-lg mb-4">
-                  Henüz ürün bulunmamaktadır.
+                  {t.common.noProducts}
                 </p>
               </div>
             )}

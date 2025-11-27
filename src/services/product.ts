@@ -11,7 +11,7 @@ export async function getAllProducts(
     );
   } catch (error) {
     if (error instanceof Error && error.message?.includes('404')) {
-      return { success: false, data: { products: [] } } as ProductsResponse;
+      return { success: false, data: { products: [], total: 0, pages: 0, current_page: 1 } } as ProductsResponse;
     }
     throw error;
   }

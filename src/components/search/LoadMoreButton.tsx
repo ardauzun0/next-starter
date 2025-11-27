@@ -1,6 +1,9 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { getTranslations } from '@/i18n/getTranslations';
+import { getLocaleFromPath } from '@/utils/locale-helper';
+import { usePathname } from 'next/navigation';
 
 interface LoadMoreButtonProps {
   hasMore: boolean;
@@ -15,6 +18,9 @@ export default function LoadMoreButton({
   onClick,
   loadCount = 6,
 }: LoadMoreButtonProps) {
+  const pathname = usePathname();
+  const locale = getLocaleFromPath(pathname);
+  const t = getTranslations(locale);
   if (!hasMore) {
     return null;
   }
@@ -27,7 +33,7 @@ export default function LoadMoreButton({
         variant="outline"
         size="lg"
       >
-        {loading ? 'Yükleniyor...' : `Daha Fazla Yükle (${loadCount})`}
+        {loading ? t.common.loading : `${t.common.loadMore} (${loadCount})`}
       </Button>
     </div>
   );

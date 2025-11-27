@@ -7,12 +7,14 @@ import SearchForm from '@/components/search/SearchForm';
 import SearchResults from '@/components/search/SearchResults';
 import BlogPostCard from '@/components/search/BlogPostCard';
 import type { Locale } from '@/i18n/config';
+import { getTranslations } from '@/i18n/getTranslations';
 
 interface BlogSearchProps {
   locale: Locale;
 }
 
 export default function BlogSearch({ locale }: BlogSearchProps) {
+  const t = getTranslations(locale);
   const searchParams = useSearchParams();
   const router = useRouter();
   const [posts, setPosts] = useState<Post[]>([]);
@@ -74,7 +76,7 @@ export default function BlogSearch({ locale }: BlogSearchProps) {
         initialValue={searchTerm}
         onSearch={handleSearch}
         loading={loading}
-        placeholder="Blog ara..."
+        placeholder={t.common.blogSearch}
         debounceMs={800}
       />
       <div className="mt-8">
@@ -82,7 +84,7 @@ export default function BlogSearch({ locale }: BlogSearchProps) {
           loading={loading}
           searched={true}
           count={posts.length}
-          emptyMessage="Aradığınız kriterlere uygun blog yazısı bulunamadı."
+          emptyMessage={t.common.noBlogPostsFound}
         >
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {posts.map((post) => (

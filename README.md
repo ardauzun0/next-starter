@@ -1339,7 +1339,57 @@ export default async function HomePage({ params }) {
 }
 ```
 
-### 🔗 Localized Link'ler
+### 🔗 Localized Link'ler ve URL Mapping
+
+Proje, statik URL'lerin dile göre çevrilmesini destekler. Örneğin:
+- Türkçe: `/tr/urunler`, `/tr/kullanim-alanlari`, `/tr/iletisim`
+- İngilizce: `/en/products`, `/en/usage`, `/en/contact`
+
+#### URL Mapping Nasıl Çalışır?
+
+URL mapping sistemi `src/i18n/url-mapping.ts` dosyasında tanımlanır:
+
+```typescript
+// src/i18n/url-mapping.ts
+export const urlMapping: Record<string, Record<Locale, string>> = {
+  '/products': {
+    tr: '/urunler',
+    en: '/products',
+  },
+  '/usage': {
+    tr: '/kullanim-alanlari',
+    en: '/usage',
+  },
+  '/contact': {
+    tr: '/iletisim',
+    en: '/contact',
+  },
+  // ... diğer path'ler
+};
+```
+
+#### Yeni URL Mapping Ekleme
+
+1. **`src/i18n/url-mapping.ts` dosyasına ekleyin:**
+
+```typescript
+export const urlMapping: Record<string, Record<Locale, string>> = {
+  // ... mevcut mapping'ler
+  '/about': {
+    tr: '/hakkimizda',
+    en: '/about',
+  },
+};
+```
+
+2. **Middleware otomatik olarak çevirir:**
+
+Middleware, gelen URL'leri otomatik olarak orijinal path'e çevirir. Örneğin:
+- Kullanıcı `/tr/urunler` adresine gider
+- Middleware bunu `/tr/products` olarak Next.js routing sistemine iletir
+- Next.js `src/app/[locale]/products/page.tsx` dosyasını render eder
+
+3. **Link'lerde kullanım:**
 
 ```typescript
 import { getLocalizedPath } from "@/utils/locale-helper";

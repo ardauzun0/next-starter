@@ -7,7 +7,28 @@
     "loading": "Yükleniyor...",
     "noResults": "Sonuç bulunamadı",
     "pageNotFound": "Sayfa Bulunamadı",
-    "goHome": "Ana Sayfaya Dön"
+    "goHome": "Ana Sayfaya Dön",
+    "all": "Tümü",
+    "searchPlaceholder": "Arama yapın...",
+    "searching": "Aranıyor...",
+    "searchButton": "Ara",
+    "loadMore": "Daha Fazla Yükle",
+    "resultsFound": "{count} sonuç bulundu",
+    "previous": "Önceki",
+    "next": "Sonraki",
+    "page": "Sayfa",
+    "of": "/",
+    "noProducts": "Henüz ürün bulunmamaktadır.",
+    "noProductsFound": "Aradığınız kriterlere uygun ürün bulunamadı.",
+    "productSearch": "Ürün ara...",
+    "blogSearch": "Blog ara...",
+    "noBlogPostsFound": "Aradığınız kriterlere uygun blog yazısı bulunamadı.",
+    "noUsageAreasFound": "Aradığınız kriterlere uygun kullanım alanı bulunamadı.",
+    "backToProducts": "← Ürünler'e Dön",
+    "backToBlog": "← Blog'a Dön",
+    "backToUsage": "← Kullanım Alanları'na Dön",
+    "welcome": "Hoş Geldiniz",
+    "welcomeDescription": "Next.js 15 ile Headless WordPress entegrasyonu"
   },
   "notFound": {
     "title": "404 - Sayfa Bulunamadı",
@@ -25,7 +46,10 @@
     "noPostsInCategory": "Bu kategoride henüz blog yazısı bulunmamaktadır",
     "noCategories": "Henüz kategori bulunmamaktadır",
     "resultsFound": "{count} sonuç bulundu",
-    "noSearchResults": "Aradığınız kriterlere uygun sonuç bulunamadı"
+    "noSearchResults": "Aradığınız kriterlere uygun sonuç bulunamadı",
+    "category": "Kategorisi",
+    "previous": "Önceki",
+    "next": "Sonraki"
   },
   "products": {
     "title": "Ürünler",
@@ -35,11 +59,43 @@
     "products": "ürün",
     "noCategories": "Henüz kategori bulunmamaktadır",
     "noProductsInCategory": "Bu kategoride henüz ürün bulunmamaktadır",
-    "visitCategoryPage": "Ürün kategorilerini görmek için kategori sayfasını ziyaret edin"
+    "visitCategoryPage": "Ürün kategorilerini görmek için kategori sayfasını ziyaret edin",
+    "searchResults": "\"{query}\" Arama Sonuçları",
+    "searchTitle": "Ürün Arama",
+    "searchDescription": "\"{query}\" için ürün arama sonuçları",
+    "searchDescriptionDefault": "Ürünlerde arama yapın"
   },
   "usage": {
     "title": "Kullanım Alanları",
     "products": "Ürünler"
+  },
+  "contact": {
+    "title": "İletişim Formu",
+    "description": "Bize ulaşmak için formu doldurun",
+    "name": "İsminiz",
+    "phone": "Telefon numaranız",
+    "email": "E-posta adresiniz",
+    "subject": "Konu",
+    "message": "Mesajınız",
+    "gdpr": "KVKK Aydınlatma Metni'ni okudum ve kabul ediyorum",
+    "gdprInfo": "Kişisel verilerinizin işlenmesi hakkında bilgilendirildim.",
+    "submit": "Gönder",
+    "submitting": "Gönderiliyor...",
+    "success": "Form başarıyla gönderildi!",
+    "error": "Form gönderilirken bir hata oluştu. Lütfen tekrar deneyin.",
+    "nameMin": "İsim en az 2 karakter olmalıdır",
+    "phoneMin": "Geçerli bir telefon numarası girin",
+    "emailInvalid": "Geçerli bir e-posta adresi girin",
+    "subjectMin": "Konu en az 3 karakter olmalıdır",
+    "messageMin": "Mesaj en az 10 karakter olmalıdır",
+    "gdprRequired": "KVKK onayını vermelisiniz"
+  },
+  "footer": {
+    "menu": "Menu",
+    "contact": "Contact",
+    "socialMedia": "Social Media",
+    "information": "Information",
+    "rightsReserved": "© {year} All rights reserved."
   }
 }
 

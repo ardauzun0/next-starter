@@ -7,7 +7,28 @@
     "loading": "Loading...",
     "noResults": "No results found",
     "pageNotFound": "Page Not Found",
-    "goHome": "Go to Home"
+    "goHome": "Go to Home",
+    "all": "All",
+    "searchPlaceholder": "Search...",
+    "searching": "Searching...",
+    "searchButton": "Search",
+    "loadMore": "Load More",
+    "resultsFound": "{count} results found",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page",
+    "of": "/",
+    "noProducts": "No products found yet.",
+    "noProductsFound": "No products found matching your criteria.",
+    "productSearch": "Search products...",
+    "blogSearch": "Search blog...",
+    "noBlogPostsFound": "No blog posts found matching your criteria.",
+    "noUsageAreasFound": "No usage areas found matching your criteria.",
+    "backToProducts": "← Back to Products",
+    "backToBlog": "← Back to Blog",
+    "backToUsage": "← Back to Usage Areas",
+    "welcome": "Welcome",
+    "welcomeDescription": "Next.js 15 Headless WordPress Integration"
   },
   "notFound": {
     "title": "404 - Page Not Found",
@@ -25,7 +46,10 @@
     "noPostsInCategory": "No blog posts found in this category yet",
     "noCategories": "No categories found yet",
     "resultsFound": "{count} results found",
-    "noSearchResults": "No results found matching your criteria"
+    "noSearchResults": "No results found matching your criteria",
+    "category": "Category",
+    "previous": "Previous",
+    "next": "Next"
   },
   "products": {
     "title": "Products",
@@ -35,11 +59,43 @@
     "products": "products",
     "noCategories": "No categories found yet",
     "noProductsInCategory": "No products found in this category yet",
-    "visitCategoryPage": "Visit the category page to see product categories"
+    "visitCategoryPage": "Visit the category page to see product categories",
+    "searchResults": "\"{query}\" Search Results",
+    "searchTitle": "Product Search",
+    "searchDescription": "Product search results for \"{query}\"",
+    "searchDescriptionDefault": "Search products"
   },
   "usage": {
     "title": "Usage Areas",
     "products": "Products"
+  },
+  "contact": {
+    "title": "Contact Form",
+    "description": "Fill out the form to reach us",
+    "name": "Your Name",
+    "phone": "Your Phone Number",
+    "email": "Your Email Address",
+    "subject": "Subject",
+    "message": "Your Message",
+    "gdpr": "I have read and accept the GDPR Disclosure Text",
+    "gdprInfo": "I have been informed about the processing of my personal data.",
+    "submit": "Submit",
+    "submitting": "Submitting...",
+    "success": "Form submitted successfully!",
+    "error": "An error occurred while submitting the form. Please try again.",
+    "nameMin": "Name must be at least 2 characters",
+    "phoneMin": "Please enter a valid phone number",
+    "emailInvalid": "Please enter a valid email address",
+    "subjectMin": "Subject must be at least 3 characters",
+    "messageMin": "Message must be at least 10 characters",
+    "gdprRequired": "You must provide GDPR consent"
+  },
+  "footer": {
+    "menu": "Menu",
+    "contact": "Contact",
+    "socialMedia": "Social Media",
+    "information": "Information",
+    "rightsReserved": "© {year} All rights reserved."
   }
 }
 

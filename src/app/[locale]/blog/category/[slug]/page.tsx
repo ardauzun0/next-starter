@@ -71,7 +71,7 @@ export default async function BlogCategoryPage({
             <Link href={getLocalizedPath('/blog', locale)}>← {t.blog.backToBlog}</Link>
           </Button>
           <h1 className="text-5xl font-bold text-foreground">
-            {currentCategory?.name || slug}
+            {currentCategory?.name || slug} {t.blog.category}
           </h1>
           {currentCategory?.description && (
             <p className="text-muted-foreground mt-4">
@@ -165,12 +165,12 @@ export default async function BlogCategoryPage({
                             locale
                           )}
                         >
-                          Önceki
+                          {t.blog.previous}
                         </Link>
                       </Button>
                     )}
                     <span className="flex items-center px-4 text-muted-foreground">
-                      Sayfa {currentPage} / {Math.ceil(posts.length / ITEMS_PER_PAGE)}
+                      {t.common.page} {currentPage} {t.common.of} {Math.ceil(posts.length / ITEMS_PER_PAGE)}
                     </span>
                     {currentPage < Math.ceil(posts.length / ITEMS_PER_PAGE) && (
                       <Button asChild variant="outline">
@@ -180,7 +180,7 @@ export default async function BlogCategoryPage({
                             locale
                           )}
                         >
-                          Sonraki
+                          {t.blog.next}
                         </Link>
                       </Button>
                     )}

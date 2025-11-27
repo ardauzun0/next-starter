@@ -18,23 +18,34 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-
-const formSchema = z.object({
-  name: z.string().min(2, 'İsim en az 2 karakter olmalıdır'),
-  phone: z.string().min(10, 'Geçerli bir telefon numarası girin'),
-  email: z.string().email('Geçerli bir e-posta adresi girin'),
-  subject: z.string().min(3, 'Konu en az 3 karakter olmalıdır'),
-  message: z.string().min(10, 'Mesaj en az 10 karakter olmalıdır'),
-  gdpr: z.boolean().refine((val) => val === true, {
-    message: 'KVKK onayını vermelisiniz',
-  }),
-});
-
-type ContactFormData = z.infer<typeof formSchema>;
+import { getTranslations } from '@/i18n/getTranslations';
+import { getLocaleFromPath } from '@/utils/locale-helper';
+import { usePathname } from 'next/navigation';
+import type { Locale } from '@/i18n/config';
 
 const FORM_ACTION_URL = 'https://frontend-example-panel.pentademo.com.tr/wp-admin/admin-ajax.php';
 
-export default function ContactForm() {
+interface ContactFormProps {
+  locale?: Locale;
+}
+
+export default function ContactForm({ locale: propLocale }: ContactFormProps = {}) {
+  const pathname = usePathname();
+  const locale = propLocale || getLocaleFromPath(pathname);
+  const t = getTranslations(locale);
+  
+  const formSchema = z.object({
+    name: z.string().min(2, t.contact.nameMin),
+    phone: z.string().min(10, t.contact.phoneMin),
+    email: z.string().email(t.contact.emailInvalid),
+    subject: z.string().min(3, t.contact.subjectMin),
+    message: z.string().min(10, t.contact.messageMin),
+    gdpr: z.boolean().refine((val) => val === true, {
+      message: t.contact.gdprRequired,
+    }),
+  });
+
+  type ContactFormData = z.infer<typeof formSchema>;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
@@ -87,9 +98,9 @@ export default function ContactForm() {
   return (
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle className="text-3xl">İletişim Formu</CardTitle>
+        <CardTitle className="text-3xl">{t.contact.title}</CardTitle>
         <CardDescription>
-          Bize ulaşmak için formu doldurun
+          {t.contact.description}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -100,9 +111,9 @@ export default function ContactForm() {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>İsim</FormLabel>
+                  <FormLabel>{t.contact.name}</FormLabel>
                   <FormControl>
-                    <Input placeholder="İsminiz" {...field} />
+                    <Input placeholder={t.contact.name} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -114,9 +125,9 @@ export default function ContactForm() {
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Telefon</FormLabel>
+                  <FormLabel>{t.contact.phone}</FormLabel>
                   <FormControl>
-                    <Input type="tel" placeholder="Telefon numaranız" {...field} />
+                    <Input type="tel" placeholder={t.contact.phone} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -128,9 +139,9 @@ export default function ContactForm() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>E-posta</FormLabel>
+                  <FormLabel>{t.contact.email}</FormLabel>
                   <FormControl>
-                    <Input type="email" placeholder="E-posta adresiniz" {...field} />
+                    <Input type="email" placeholder={t.contact.email} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -142,9 +153,9 @@ export default function ContactForm() {
               name="subject"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Konu</FormLabel>
+                  <FormLabel>{t.contact.subject}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Konu" {...field} />
+                    <Input placeholder={t.contact.subject} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -156,10 +167,10 @@ export default function ContactForm() {
               name="message"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Mesaj</FormLabel>
+                  <FormLabel>{t.contact.message}</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Mesajınız"
+                      placeholder={t.contact.message}
                       className="min-h-[120px]"
                       {...field}
                     />
@@ -182,10 +193,10 @@ export default function ContactForm() {
                   </FormControl>
                   <div className="space-y-1 leading-none">
                     <FormLabel>
-                      KVKK Aydınlatma Metni&apos;ni okudum ve kabul ediyorum
+                      {t.contact.gdpr}
                     </FormLabel>
                     <FormDescription>
-                      Kişisel verilerinizin işlenmesi hakkında bilgilendirildim.
+                      {t.contact.gdprInfo}
                     </FormDescription>
                     <FormMessage />
                   </div>
@@ -195,18 +206,18 @@ export default function ContactForm() {
 
             {submitStatus === 'success' && (
               <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-md text-green-500">
-                Form başarıyla gönderildi!
+                {t.contact.success}
               </div>
             )}
 
             {submitStatus === 'error' && (
               <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-md text-red-500">
-                Form gönderilirken bir hata oluştu. Lütfen tekrar deneyin.
+                {t.contact.error}
               </div>
             )}
 
             <Button type="submit" disabled={isSubmitting} className="w-full">
-              {isSubmitting ? 'Gönderiliyor...' : 'Gönder'}
+              {isSubmitting ? t.contact.submitting : t.contact.submit}
             </Button>
           </form>
         </Form>

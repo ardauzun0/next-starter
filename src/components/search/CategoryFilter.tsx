@@ -2,6 +2,9 @@
 
 import { Button } from '@/components/ui/button';
 import type { Category } from '@/types/api';
+import { getTranslations } from '@/i18n/getTranslations';
+import { getLocaleFromPath } from '@/utils/locale-helper';
+import { usePathname } from 'next/navigation';
 
 interface CategoryFilterProps {
   categories: Category[];
@@ -16,6 +19,9 @@ export default function CategoryFilter({
   onCategoryChange,
   loading = false,
 }: CategoryFilterProps) {
+  const pathname = usePathname();
+  const locale = getLocaleFromPath(pathname);
+  const t = getTranslations(locale);
   if (categories.length === 0) {
     return null;
   }
@@ -28,7 +34,7 @@ export default function CategoryFilter({
           onClick={() => onCategoryChange('all')}
           disabled={loading}
         >
-          Tümü
+          {t.common.all}
         </Button>
         {categories.map((category) => (
           <Button

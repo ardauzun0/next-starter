@@ -10,6 +10,7 @@ import CategoryFilter from '@/components/search/CategoryFilter';
 import UsageAreaCard from '@/components/search/UsageAreaCard';
 import LoadMoreButton from '@/components/search/LoadMoreButton';
 import { use } from 'react';
+import { getTranslations } from '@/i18n/getTranslations';
 
 const ITEMS_PER_PAGE = 6;
 
@@ -19,6 +20,7 @@ export default function UsagePage({
   params: Promise<{ locale: Locale }>;
 }) {
   const { locale } = use(params);
+  const t = getTranslations(locale);
   const searchParams = useSearchParams();
   const router = useRouter();
   const [usageAreas, setUsageAreas] = useState<UsageArea[]>([]);
@@ -191,14 +193,14 @@ export default function UsagePage({
     <div className="min-h-screen bg-[#0a0a0a]">
       <div className="container mx-auto px-4 py-16 max-w-7xl">
         <div className="mb-8">
-          <h1 className="text-5xl font-bold text-foreground mb-8">Kullanım Alanları</h1>
+          <h1 className="text-5xl font-bold text-foreground mb-8">{t.usage.title}</h1>
 
           <div className="flex flex-col md:flex-row gap-4 mb-8">
             <SearchForm
               initialValue={searchTerm}
               onSearch={handleSearch}
               loading={loading}
-              placeholder="Arama yapın..."
+              placeholder={t.common.searchPlaceholder}
               debounceMs={800}
             />
           </div>
@@ -217,7 +219,7 @@ export default function UsagePage({
           loading={loading}
           searched={true}
           count={filteredAreas.length}
-          emptyMessage="Aradığınız kriterlere uygun kullanım alanı bulunamadı."
+          emptyMessage={t.common.noUsageAreasFound}
         >
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {displayedAreas.map((area) => (

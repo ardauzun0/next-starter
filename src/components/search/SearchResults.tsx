@@ -1,5 +1,9 @@
 'use client';
 
+import { getTranslations } from '@/i18n/getTranslations';
+import { getLocaleFromPath } from '@/utils/locale-helper';
+import { usePathname } from 'next/navigation';
+
 interface SearchResultsProps {
   loading: boolean;
   searched: boolean;
@@ -12,9 +16,13 @@ export default function SearchResults({
   loading,
   searched,
   count,
-  emptyMessage = 'Aradığınız kriterlere uygun sonuç bulunamadı.',
+  emptyMessage,
   children,
 }: SearchResultsProps) {
+  const pathname = usePathname();
+  const locale = getLocaleFromPath(pathname);
+  const t = getTranslations(locale);
+  const finalEmptyMessage = emptyMessage || t.common.noResults;
   if (!searched) {
     return null;
   }
@@ -22,7 +30,7 @@ export default function SearchResults({
   if (loading) {
     return (
       <div className="text-center py-16">
-        <p className="text-muted-foreground">Aranıyor...</p>
+        <p className="text-muted-foreground">{t.common.searching}</p>
       </div>
     );
   }
@@ -30,14 +38,14 @@ export default function SearchResults({
   if (count === 0) {
     return (
       <div className="text-center py-16">
-        <p className="text-muted-foreground text-lg">{emptyMessage}</p>
+        <p className="text-muted-foreground text-lg">{finalEmptyMessage}</p>
       </div>
     );
   }
 
   return (
     <>
-      <p className="text-muted-foreground mb-6">{count} sonuç bulundu</p>
+      <p className="text-muted-foreground mb-6">{t.common.resultsFound.replace('{count}', count.toString())}</p>
       {children}
     </>
   );

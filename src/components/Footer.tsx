@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { getLocalizedPath } from '@/utils/locale-helper';
 import type { GlobalOptions } from '@/types/api';
 import type { Locale } from '@/i18n/config';
 
@@ -9,8 +8,7 @@ interface FooterProps {
   locale: Locale;
 }
 
-export default function Footer({ globalOptions, locale }: FooterProps) {
-  const menu_2 = globalOptions.option?.menu_2 || [];
+export default function Footer({ globalOptions }: FooterProps) {
   const footerMenu = globalOptions.option?.footer_menu || [];
   const addresses = globalOptions.option?.addresses || [];
   const socials = globalOptions.option?.socials || [];
