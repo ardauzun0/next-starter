@@ -15,10 +15,12 @@ export function getTranslations(locale: string | Locale): Messages {
 }
 
 export function getNestedTranslation(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   obj: Record<string, any>,
   path: string
 ): string {
   const keys = path.split('.');
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let result: any = obj;
   for (const key of keys) {
     result = result?.[key];
