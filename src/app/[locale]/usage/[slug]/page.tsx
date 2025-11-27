@@ -11,6 +11,8 @@ import type { Metadata } from 'next';
 import { getTranslations } from '@/i18n/getTranslations';
 import type { Locale } from '@/i18n/config';
 
+export const revalidate = 60;
+
 interface UsageAreaPageProps {
   params: Promise<{ locale: Locale; slug: string }>;
 }

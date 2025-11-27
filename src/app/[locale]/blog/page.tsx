@@ -9,6 +9,8 @@ import { getLocalizedPath } from '@/utils/locale-helper';
 import type { Locale } from '@/i18n/config';
 import BlogSearch from '@/components/BlogSearch';
 
+export const revalidate = 60;
+
 interface BlogPageProps {
   params: Promise<{ locale: Locale }>;
   searchParams: Promise<{ page?: string; q?: string }>;

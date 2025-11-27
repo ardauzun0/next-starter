@@ -8,6 +8,8 @@ import { getTranslations } from '@/i18n/getTranslations';
 import { getLocalizedPath } from '@/utils/locale-helper';
 import type { Locale } from '@/i18n/config';
 
+export const revalidate = 60;
+
 interface ProductCategoryListPageProps {
   params: Promise<{ locale: Locale; slug: string }>;
 }
