@@ -77,7 +77,7 @@ export default function BlogSearch({ locale }: BlogSearchProps) {
         onSearch={handleSearch}
         loading={loading}
         placeholder={t.common.blogSearch}
-        debounceMs={800}
+        debounceMs={0}
       />
       <div className="mt-8">
         <SearchResults

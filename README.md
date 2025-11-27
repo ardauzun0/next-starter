@@ -65,7 +65,7 @@ NEXT_PUBLIC_SITE_NAME=Proje Adı
 npm run dev
 ```
 
-Tarayıcıda `http://localhost:3001` adresini aç. 🎉
+Tarayıcıda `http://localhost:3000` adresini aç. 🎉
 
 ---
 

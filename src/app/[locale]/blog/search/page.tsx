@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -11,12 +11,7 @@ import SearchForm from '@/components/search/SearchForm';
 import SearchResults from '@/components/search/SearchResults';
 import BlogPostCard from '@/components/search/BlogPostCard';
 
-export default function BlogSearchPage({
-  params,
-}: {
-  params: Promise<{ locale: Locale }>;
-}) {
-  const { locale } = use(params);
+function BlogSearchContent({ locale }: { locale: Locale }) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
@@ -83,12 +78,7 @@ export default function BlogSearchPage({
   const query = searchParams.get('q') || '';
 
   return (
-    <>
-      <head>
-        <title>{query ? `"${query}" Arama Sonuçları - Blog` : 'Blog Arama'}</title>
-        <meta name="description" content={query ? `"${query}" için blog arama sonuçları` : 'Blog yazılarında arama yapın'} />
-      </head>
-      <div className="min-h-screen bg-[#0a0a0a]">
+    <div className="min-h-screen bg-[#0a0a0a]">
         <div className="container mx-auto px-4 py-16 max-w-7xl">
           <div className="mb-8">
             <Button asChild variant="ghost" className="mb-4">
@@ -120,6 +110,19 @@ export default function BlogSearchPage({
           </SearchResults>
         </div>
       </div>
-    </>
+  );
+}
+
+export default function BlogSearchPage({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>;
+}) {
+  const { locale } = use(params);
+
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center"><p>Yükleniyor...</p></div>}>
+      <BlogSearchContent locale={locale} />
+    </Suspense>
   );
 }

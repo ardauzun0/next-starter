@@ -5,6 +5,7 @@ import BlockRenderer from '@/components/blocks/BlockRenderer';
 import JsonLd from '@/components/seo/JsonLd';
 import { constructMetadata } from '@/utils/seo-helper';
 import { getSEOPageUrl, getSEOBaseUrl } from '@/utils/url-helper';
+import { reverseTranslatePath } from '@/i18n/url-mapping';
 import type { Metadata } from 'next';
 import type { Locale } from '@/i18n/config';
 
@@ -12,10 +13,18 @@ interface DynamicPageProps {
   params: Promise<{ locale: Locale; slug: string }>;
 }
 
+const RESERVED_PATHS = ['products', 'urunler', 'usage', 'kullanim-alanlari', 'contact', 'iletisim', 'blog', 'api'];
+
 export async function generateMetadata({
   params,
 }: DynamicPageProps): Promise<Metadata> {
   const { locale, slug } = await params;
+  
+  if (RESERVED_PATHS.includes(slug)) {
+    return {
+      title: 'Sayfa Bulunamadı',
+    };
+  }
   
   try {
     const pageData = await getPageBySlug(slug);
@@ -39,7 +48,14 @@ export async function generateMetadata({
 }
 
 export default async function DynamicPage({ params }: DynamicPageProps) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
+  const originalPath = reverseTranslatePath(`/${slug}`);
+  const pathSegments = originalPath.split('/').filter(Boolean);
+  const firstSegment = pathSegments[0] || slug;
+  
+  if (RESERVED_PATHS.includes(slug) || RESERVED_PATHS.includes(firstSegment)) {
+    notFound();
+  }
   
   const pageData = await getPageBySlug(slug);
 

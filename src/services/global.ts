@@ -1,17 +1,11 @@
 import { fetchAPI } from './core';
 import type { GlobalOptions, SEOData } from '../types/api';
 
-/**
- * Get global options (Header, Footer, Socials, Languages)
- */
 export async function getGlobalOptions(): Promise<GlobalOptions> {
   return fetchAPI<GlobalOptions>('/options/v1');
 }
 
-/**
- * Get SEO data for a specific URL
- * @returns null if API returns 404 or fails
- */
+// Belirli bir URL için SEO verilerini getirir (404 durumunda null döner)
 export async function getSEOData(url: string): Promise<SEOData | null> {
   const encodedUrl = encodeURIComponent(url);
 

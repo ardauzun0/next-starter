@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { getTranslations } from '@/i18n/getTranslations';
@@ -29,7 +28,6 @@ export default function SearchForm({
   const finalPlaceholder = placeholder || t.common.searchPlaceholder;
   const [searchTerm, setSearchTerm] = useState(initialValue);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const router = useRouter();
 
   const handleSearch = (keyword: string) => {
     if (searchTimeoutRef.current) {
@@ -41,6 +39,10 @@ export default function SearchForm({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchTerm(value);
+
+    if (debounceMs === 0) {
+      return;
+    }
 
     if (searchTimeoutRef.current) {
       clearTimeout(searchTimeoutRef.current);

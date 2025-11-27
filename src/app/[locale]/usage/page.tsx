@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import type { Locale } from '@/i18n/config';
 import type { UsageArea, Category } from '@/types/api';
@@ -14,12 +14,7 @@ import { getTranslations } from '@/i18n/getTranslations';
 
 const ITEMS_PER_PAGE = 6;
 
-export default function UsagePage({
-  params,
-}: {
-  params: Promise<{ locale: Locale }>;
-}) {
-  const { locale } = use(params);
+function UsageContent({ locale }: { locale: Locale }) {
   const t = getTranslations(locale);
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -201,7 +196,7 @@ export default function UsagePage({
               onSearch={handleSearch}
               loading={loading}
               placeholder={t.common.searchPlaceholder}
-              debounceMs={800}
+              debounceMs={0}
             />
           </div>
 
@@ -236,5 +231,19 @@ export default function UsagePage({
         </SearchResults>
       </div>
     </div>
+  );
+}
+
+export default function UsagePage({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>;
+}) {
+  const { locale } = use(params);
+
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center"><p>Yükleniyor...</p></div>}>
+      <UsageContent locale={locale} />
+    </Suspense>
   );
 }

@@ -1,9 +1,6 @@
 import type { Locale } from './config';
 
-/**
- * URL mapping configuration
- * Her path için dil bazlı URL'ler tanımlanır
- */
+// URL mapping: Her path için dil bazlı URL'ler
 export const urlMapping: Record<string, Record<Locale, string>> = {
   '/': {
     tr: '/',
@@ -55,18 +52,10 @@ export const urlMapping: Record<string, Record<Locale, string>> = {
   },
 };
 
-/**
- * Path'in base kısmını bulur (dinamik segmentler hariç)
- * Örnek: /products/detail/g-60 -> /products/detail
- */
 function getBasePath(path: string): string {
-  // Dinamik segmentleri kaldır
   const segments = path.split('/').filter(Boolean);
-  
-  // Özel path'leri kontrol et
   if (segments.length === 0) return '/';
   
-  // İlk segment'e göre base path'i belirle
   const firstSegment = segments[0];
   
   if (firstSegment === 'urunler' || firstSegment === 'products') {
@@ -115,10 +104,6 @@ function getBasePath(path: string): string {
   return `/${firstSegment}`;
 }
 
-/**
- * Path'teki dinamik segmentleri korur
- * Örnek: /products/detail/g-60 -> g-60
- */
 function getDynamicSegments(path: string, basePath: string): string {
   const pathSegments = path.split('/').filter(Boolean);
   const baseSegments = basePath.split('/').filter(Boolean);
@@ -130,36 +115,21 @@ function getDynamicSegments(path: string, basePath: string): string {
   return '/' + pathSegments.slice(baseSegments.length).join('/');
 }
 
-/**
- * Locale'e göre path'i çevirir
- */
 export function translatePath(path: string, locale: Locale): string {
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
-  
-  // Eğer path zaten locale prefix'i içeriyorsa, önce onu kaldır
   const pathWithoutLocale = cleanPath.replace(/^\/(tr|en)/, '') || '/';
-  
   const basePath = getBasePath(pathWithoutLocale);
   const dynamicSegments = getDynamicSegments(pathWithoutLocale, basePath);
   
-  // Mapping'de varsa kullan
   if (urlMapping[basePath]) {
-    const translatedBase = urlMapping[basePath][locale];
-    return translatedBase + dynamicSegments;
+    return urlMapping[basePath][locale] + dynamicSegments;
   }
   
-  // Mapping'de yoksa orijinal path'i döndür
   return pathWithoutLocale;
 }
 
-/**
- * Ters çeviri: Türkçe/İngilizce path'ten orijinal path'e
- * Örnek: /urunler -> /products, /kullanim-alanlari -> /usage
- */
 export function reverseTranslatePath(path: string): string {
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
-  
-  // Tüm mapping'leri kontrol et (en uzun eşleşmeyi bul)
   let bestMatch = { original: cleanPath, translated: '', length: 0 };
   
   for (const [originalPath, translations] of Object.entries(urlMapping)) {

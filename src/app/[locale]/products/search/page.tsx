@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,12 +14,7 @@ import SearchForm from '@/components/search/SearchForm';
 import SearchResults from '@/components/search/SearchResults';
 import { getTranslations } from '@/i18n/getTranslations';
 
-export default function ProductSearchPage({
-  params,
-}: {
-  params: Promise<{ locale: Locale }>;
-}) {
-  const { locale } = use(params);
+function ProductSearchContent({ locale }: { locale: Locale }) {
   const t = getTranslations(locale);
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -155,5 +150,19 @@ export default function ProductSearchPage({
           </SearchResults>
         </div>
       </div>
+  );
+}
+
+export default function ProductSearchPage({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>;
+}) {
+  const { locale } = use(params);
+
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center"><p>Yükleniyor...</p></div>}>
+      <ProductSearchContent locale={locale} />
+    </Suspense>
   );
 }

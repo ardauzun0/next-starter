@@ -9,12 +9,10 @@ function getAbsoluteUrl(url: string | undefined, baseUrl: string): string | unde
   return `${baseUrl}${url.startsWith('/') ? '' : '/'}${url}`;
 }
 
-/**
- * Transforms SEOData from API into Next.js Metadata object
- */
+// SEO verilerini Next.js Metadata formatına dönüştürür
 export function constructMetadata(
   seoData: SEOData | null,
-  baseUrl: string = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001'
+  baseUrl: string = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 ): Metadata {
   if (!seoData || !seoData.success || !seoData.head) {
     return {

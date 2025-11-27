@@ -38,10 +38,15 @@ export default function ProductsPage({
     const fetchProducts = async () => {
       setLoadingProducts(true);
       try {
-        const response = await fetch(`/api/products/all?per_page=100&page=1`);
+        const response = await fetch(`/api/products/all?per_page=1000&page=1`);
         const data = await response.json();
         if (data.success && data.data?.products) {
           setAllProducts(data.data.products);
+          if (!searchTerm) {
+            const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+            const endIndex = startIndex + ITEMS_PER_PAGE;
+            setProducts(data.data.products.slice(startIndex, endIndex));
+          }
         }
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -50,10 +55,8 @@ export default function ProductsPage({
       }
     };
 
-    if (!searchTerm) {
-      fetchProducts();
-    }
-  }, [searchTerm]);
+    fetchProducts();
+  }, [currentPage, searchTerm]);
 
   useEffect(() => {
     if (!searchTerm) {
@@ -129,7 +132,7 @@ export default function ProductsPage({
             onSearch={handleSearch}
             loading={loading || loadingProducts}
             placeholder={t.common.productSearch}
-            debounceMs={800}
+            debounceMs={0}
           />
         </div>
 

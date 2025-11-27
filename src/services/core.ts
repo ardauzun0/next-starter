@@ -2,9 +2,7 @@ const API_URL =
   process.env.NEXT_PUBLIC_API_URL ||
   'https://frontend-example-panel.pentademo.com.tr/wp-json';
 
-/**
- * Generic fetch wrapper for WordPress API
- */
+// WordPress API için genel fetch wrapper
 export async function fetchAPI<T>(
   endpoint: string,
   options?: RequestInit & {

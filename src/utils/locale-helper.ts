@@ -1,21 +1,12 @@
 import { defaultLocale, type Locale } from '@/i18n/config';
 import { translatePath } from '@/i18n/url-mapping';
 
-/**
- * Locale'e göre URL oluşturur
- * Path'i dile göre çevirir ve locale prefix'i ekler
- * Örnek: getLocalizedPath('/products', 'tr') -> '/tr/urunler'
- *        getLocalizedPath('/products', 'en') -> '/en/products'
- */
 export function getLocalizedPath(path: string, locale: Locale): string {
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
   const translatedPath = translatePath(cleanPath, locale);
   return `/${locale}${translatedPath}`;
 }
 
-/**
- * URL'den locale'i çıkarır
- */
 export function getLocaleFromPath(pathname: string): Locale {
   const segments = pathname.split('/').filter(Boolean);
   const firstSegment = segments[0];
@@ -27,9 +18,6 @@ export function getLocaleFromPath(pathname: string): Locale {
   return defaultLocale;
 }
 
-/**
- * URL'den locale prefix'ini kaldırır
- */
 export function removeLocaleFromPath(pathname: string): string {
   const segments = pathname.split('/').filter(Boolean);
   

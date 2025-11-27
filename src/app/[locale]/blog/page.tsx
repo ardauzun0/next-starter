@@ -11,7 +11,7 @@ import BlogSearch from '@/components/BlogSearch';
 
 interface BlogPageProps {
   params: Promise<{ locale: Locale }>;
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string; q?: string }>;
 }
 
 export async function generateMetadata({
