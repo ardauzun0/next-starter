@@ -87,6 +87,27 @@ export interface CategoriesResponse {
   data: Category[];
 }
 
+export interface Product {
+  id: number;
+  title: string;
+  slug: string;
+  description?: string;
+  thumbnail?: string;
+  category?: string;
+  category_slug?: string;
+  date?: string;
+}
+
+export interface ProductsResponse {
+  success: boolean;
+  data: {
+    products: Product[];
+    total_pages?: number;
+    current_page?: number;
+    total_products?: number;
+  };
+}
+
 export interface ProductDetail {
   success: boolean;
   data: {

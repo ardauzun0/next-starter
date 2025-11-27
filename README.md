@@ -15,6 +15,9 @@ Bu proje, Next.js 15 App Router kullanarak Headless WordPress entegrasyonu için
 - [⚙️ Yapılandırma: Değiştirilmesi Gerekenler](#️-yapılandırma-değiştirilmesi-gerekenler)
 - [📁 Proje Yapısı](#-proje-yapısı)
 - [🔌 API Yapısı ve Servisler](#-api-yapısı-ve-servisler)
+  - [İki Katman Neden Gerekli?](#-iki-katman-neden-gerekli)
+  - [Ne Zaman Hangisi?](#-ne-zaman-hangisi)
+  - [API Route Nasıl Çalışır?](#-api-route-nasıl-çalışır)
 - [🎨 Block Component'leri](#-block-componentleri)
 - [🧩 UI Component'leri ve Variant Kullanımı](#-ui-componentleri-ve-variant-kullanımı)
 - [🖼️ Next.js Image Kullanımı](#️-nextjs-image-kullanımı)
@@ -252,9 +255,304 @@ next-starter/
 
 ### 📡 API Nasıl Çalışır?
 
+Projede **iki katmanlı bir API yapısı** kullanılıyor:
+
 1. **WordPress REST API** → Veri sağlar
-2. **Service Fonksiyonları** (`src/services/`) → API'yi çağırır
-3. **Sayfa Component'leri** → Service'leri kullanır ve veriyi gösterir
+2. **Service Fonksiyonları** (`src/services/`) → WordPress API'ye direkt çağrı yapar
+3. **Next.js API Routes** (`src/app/api/`) → Client component'ler için proxy görevi görür
+4. **Sayfa Component'leri** → Service'leri veya API route'ları kullanır
+
+### 🔄 İki Katman Neden Gerekli?
+
+#### `src/services/` - Server Component'ler İçin
+
+**Ne İşe Yarar?**  
+Server Component'lerde (varsayılan) WordPress API'ye **direkt erişim** için kullanılır.
+
+**Özellikler:**
+- ✅ Server-side'da çalışır (güvenli)
+- ✅ WordPress API'ye direkt erişim
+- ✅ SEO dostu (SSR)
+- ✅ Daha hızlı (server-side rendering)
+
+**Kullanım:**
+```typescript
+// ✅ Server Component (varsayılan)
+// src/app/[locale]/blog/page.tsx
+import { getPosts } from '@/services/blog';
+
+export default async function BlogPage() {
+  // Server-side'da çalışır, direkt WordPress API'ye erişir
+  const postsData = await getPosts(1);
+  
+  return (
+    <div>
+      {postsData.data.posts.map((post) => (
+        <article key={post.id}>{post.title}</article>
+      ))}
+    </div>
+  );
+}
+```
+
+**Akış:**
+```
+Server Component → src/services/blog.ts → WordPress API
+```
+
+---
+
+#### `src/app/api/` - Client Component'ler İçin
+
+**Ne İşe Yarar?**  
+Client Component'lerde (`'use client'`) WordPress API'ye **proxy üzerinden erişim** için kullanılır.
+
+**Neden Gerekli?**
+- ❌ Client component'ler server-side kod çalıştıramaz
+- ❌ CORS sorunları (WordPress API farklı domain'de)
+- ❌ API key'leri expose olur (güvenlik riski)
+- ❌ Rate limiting sorunları
+
+**Çözüm:** Next.js API Routes bir **proxy** görevi görür.
+
+**Kullanım:**
+```typescript
+// ✅ Client Component
+// src/app/[locale]/usage/page.tsx
+'use client';
+
+import { useState, useEffect } from 'react';
+
+export default function UsagePage() {
+  const [areas, setAreas] = useState([]);
+  
+  useEffect(() => {
+    // Client-side'da çalışır, Next.js API route'unu çağırır
+    fetch('/api/usage/areas')
+      .then(res => res.json())
+      .then(data => setAreas(data.data));
+  }, []);
+  
+  return <div>{/* ... */}</div>;
+}
+```
+
+**Akış:**
+```
+Client Component → /api/usage/areas → src/services/usage.ts → WordPress API
+```
+
+---
+
+### 📁 Dosya Yapısı
+
+```
+src/
+├── services/              👉 Server Component'ler için
+│   ├── core.ts           → fetchAPI wrapper
+│   ├── blog.ts           → Blog API fonksiyonları
+│   ├── product.ts        → Ürün API fonksiyonları
+│   ├── usage.ts          → Usage API fonksiyonları
+│   └── ...
+│
+└── app/
+    └── api/              👉 Client Component'ler için
+        ├── blog/
+        │   └── search/
+        │       └── route.ts  → searchPosts() çağırır
+        ├── products/
+        │   └── search/
+        │       └── route.ts  → searchProducts() çağırır
+        └── usage/
+            ├── areas/
+            │   └── route.ts  → getUsageAreas() çağırır
+            ├── categories/
+            │   └── route.ts  → getUsageCategories() çağırır
+            └── category/
+                └── [slug]/
+                    └── route.ts  → getUsageAreasByCategory() çağırır
+```
+
+---
+
+### 🎯 Ne Zaman Hangisi?
+
+| Durum | Kullanılacak Yer | Örnek |
+|-------|------------------|-------|
+| **Server Component** (varsayılan) | `src/services/` | Blog listesi, ürün detayı, sayfa içeriği |
+| **Client Component** (`'use client'`) | `src/app/api/` | Arama, filtreleme, load more, form submit |
+
+**Örnekler:**
+
+#### ✅ Server Component → `src/services/`
+```typescript
+// src/app/[locale]/blog/page.tsx
+import { getPosts } from '@/services/blog';
+
+export default async function BlogPage() {
+  const postsData = await getPosts(1);
+  return <div>{/* ... */}</div>;
+}
+```
+
+#### ✅ Client Component → `src/app/api/`
+```typescript
+// src/app/[locale]/usage/page.tsx
+'use client';
+
+export default function UsagePage() {
+  useEffect(() => {
+    fetch('/api/usage/areas').then(/* ... */);
+  }, []);
+  return <div>{/* ... */}</div>;
+}
+```
+
+---
+
+### 🔧 API Route Nasıl Çalışır?
+
+**Örnek: `/api/usage/areas/route.ts`**
+
+```typescript
+// src/app/api/usage/areas/route.ts
+import { getUsageAreas } from '@/services/usage';
+import { NextResponse } from 'next/server';
+
+export async function GET() {
+  try {
+    // Service fonksiyonunu çağır (WordPress API'ye erişir)
+    const data = await getUsageAreas();
+    
+    // Client'a JSON döndür
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error('Error:', error);
+    return NextResponse.json(
+      { success: false, error: 'Failed to fetch' },
+      { status: 500 }
+    );
+  }
+}
+```
+
+**Akış:**
+1. Client component: `fetch('/api/usage/areas')`
+2. Next.js API route: `GET /api/usage/areas`
+3. Service fonksiyonu: `getUsageAreas()` çağrılır
+4. WordPress API: `/usage/v1` endpoint'ine istek atılır
+5. Response: Client'a JSON olarak döner
+
+---
+
+### 🆕 Yeni API Route Ekleme
+
+**Senaryo:** Client component'te kullanılacak yeni bir endpoint ekleyelim.
+
+#### 1. Service Fonksiyonu (Zaten Var)
+```typescript
+// src/services/blog.ts
+export async function searchPosts(keyword: string) {
+  return fetchAPI(`/posts/v1/search/${keyword}`);
+}
+```
+
+#### 2. API Route Oluştur
+```typescript
+// src/app/api/blog/search/route.ts
+import { searchPosts } from '@/services/blog';
+import { NextResponse } from 'next/server';
+
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const keyword = searchParams.get('keyword');
+
+  if (!keyword) {
+    return NextResponse.json(
+      { success: false, error: 'Keyword required' },
+      { status: 400 }
+    );
+  }
+
+  try {
+    const data = await searchPosts(keyword);
+    return NextResponse.json(data);
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, error: 'Search failed' },
+      { status: 500 }
+    );
+  }
+}
+```
+
+#### 3. Client Component'te Kullan
+```typescript
+// src/app/[locale]/blog/search/page.tsx
+'use client';
+
+export default function BlogSearchPage() {
+  const handleSearch = async (keyword: string) => {
+    const response = await fetch(`/api/blog/search?keyword=${keyword}`);
+    const data = await response.json();
+    // ...
+  };
+  
+  return <div>{/* ... */}</div>;
+}
+```
+
+---
+
+### ⚠️ Önemli Notlar
+
+1. **Server Component'lerde `src/app/api/` kullanmayın!**
+   ```typescript
+   // ❌ YANLIŞ
+   export default async function Page() {
+     const res = await fetch('/api/usage/areas'); // Gereksiz!
+     // ...
+   }
+   
+   // ✅ DOĞRU
+   import { getUsageAreas } from '@/services/usage';
+   export default async function Page() {
+     const data = await getUsageAreas(); // Direkt service kullan
+     // ...
+   }
+   ```
+
+2. **Client Component'lerde `src/services/` kullanmayın!**
+   ```typescript
+   // ❌ YANLIŞ
+   'use client';
+   import { getUsageAreas } from '@/services/usage';
+   // Bu çalışmaz! Client component'ler server-side kod çalıştıramaz.
+   
+   // ✅ DOĞRU
+   'use client';
+   useEffect(() => {
+     fetch('/api/usage/areas').then(/* ... */);
+   }, []);
+   ```
+
+3. **API Route'lar sadece proxy görevi görür**
+   - Ekstra iş mantığı eklemeyin
+   - Service fonksiyonlarını direkt çağırın
+   - Hata yönetimi yapın
+
+---
+
+### 📊 Özet Tablo
+
+| Özellik | `src/services/` | `src/app/api/` |
+|---------|----------------|----------------|
+| **Kullanım** | Server Component | Client Component |
+| **Çalışma Yeri** | Server-side | Server-side (proxy) |
+| **Erişim** | WordPress API'ye direkt | Service fonksiyonları üzerinden |
+| **SEO** | ✅ Evet (SSR) | ❌ Hayır (client-side) |
+| **Güvenlik** | ✅ Güvenli (server-side) | ✅ Güvenli (proxy) |
+| **Hız** | ⚡ Çok hızlı | 🐢 Biraz yavaş (ekstra katman) |
 
 ### 🛠️ Service Dosyaları ve Ne İşe Yaradıkları
 
@@ -1132,6 +1430,255 @@ export async function generateMetadata({ params }): Promise<Metadata> {
 ---
 
 ## 🔍 Arama Fonksiyonları
+
+### 📋 Arama Nasıl Çalışır?
+
+Projede arama işlemleri **modüler component'ler** kullanılarak yapılmıştır. Bu sayede:
+- ✅ Kod tekrarı önlenir
+- ✅ Bakım kolaylaşır
+- ✅ Tutarlı kullanıcı deneyimi sağlanır
+- ✅ Test edilebilirlik artar
+
+### 🧩 Arama Component'leri
+
+Arama ile ilgili tüm component'ler `src/components/search/` klasöründedir:
+
+#### `SearchForm.tsx` - Arama Formu
+
+**Ne İşe Yarar?**  
+Arama input'u ve submit butonu içeren yeniden kullanılabilir form component'i.
+
+**Özellikler:**
+- Debounce desteği (varsayılan 800ms)
+- Loading state yönetimi
+- URL senkronizasyonu
+- Otomatik form submit
+
+**Props:**
+```typescript
+interface SearchFormProps {
+  initialValue?: string;        // Başlangıç değeri
+  placeholder?: string;        // Placeholder metni
+  onSearch: (keyword: string) => void;  // Arama callback'i
+  debounceMs?: number;         // Debounce süresi (ms)
+  loading?: boolean;           // Loading durumu
+}
+```
+
+**Kullanım:**
+```typescript
+import SearchForm from '@/components/search/SearchForm';
+
+<SearchForm
+  initialValue={searchTerm}
+  onSearch={handleSearch}
+  loading={loading}
+  placeholder="Arama yapın..."
+  debounceMs={800}
+/>
+```
+
+**Neden Modüler?**  
+- Blog, Products ve Usage sayfalarında aynı form kullanılır
+- Debounce mantığı tek yerde yönetilir
+- Stil değişiklikleri tek yerden yapılır
+
+---
+
+#### `SearchResults.tsx` - Arama Sonuçları Container
+
+**Ne İşe Yarar?**  
+Arama sonuçlarını gösteren wrapper component. Loading, empty state ve sonuç sayısını yönetir.
+
+**Özellikler:**
+- Loading state gösterimi
+- Empty state mesajı
+- Sonuç sayısı gösterimi
+- Children prop ile esnek içerik
+
+**Props:**
+```typescript
+interface SearchResultsProps {
+  loading: boolean;           // Yükleniyor mu?
+  searched: boolean;          // Arama yapıldı mı?
+  count: number;              // Sonuç sayısı
+  emptyMessage?: string;      // Boş durum mesajı
+  children: React.ReactNode; // Sonuç içeriği
+}
+```
+
+**Kullanım:**
+```typescript
+import SearchResults from '@/components/search/SearchResults';
+
+<SearchResults
+  loading={loading}
+  searched={searched}
+  count={results.length}
+  emptyMessage="Sonuç bulunamadı."
+>
+  <div className="grid">
+    {results.map((item) => <ItemCard key={item.id} item={item} />)}
+  </div>
+</SearchResults>
+```
+
+**Neden Modüler?**  
+- Tüm arama sayfalarında aynı loading/empty state mantığı
+- Tutarlı kullanıcı deneyimi
+- Kod tekrarı önlenir
+
+---
+
+#### `CategoryFilter.tsx` - Kategori Filtresi
+
+**Ne İşe Yarar?**  
+Kategorilere göre filtreleme yapan buton grubu component'i.
+
+**Özellikler:**
+- "Tümü" butonu
+- Kategori butonları (isim + sayı)
+- Seçili kategori vurgulama
+- Loading state desteği
+
+**Props:**
+```typescript
+interface CategoryFilterProps {
+  categories: Category[];      // Kategori listesi
+  selectedCategory: string;    // Seçili kategori slug'ı
+  onCategoryChange: (slug: string) => void;  // Kategori değişim callback'i
+  loading?: boolean;           // Loading durumu
+}
+```
+
+**Kullanım:**
+```typescript
+import CategoryFilter from '@/components/search/CategoryFilter';
+
+<CategoryFilter
+  categories={categories}
+  selectedCategory={selectedCategory}
+  onCategoryChange={handleCategoryChange}
+  loading={loading}
+/>
+```
+
+**Neden Modüler?**  
+- Products ve Usage sayfalarında aynı filtre mantığı
+- Kategori butonları tek yerden yönetilir
+- Stil değişiklikleri kolaylaşır
+
+---
+
+#### `BlogPostCard.tsx` - Blog Yazısı Kartı
+
+**Ne İşe Yarar?**  
+Blog yazılarını gösteren kart component'i.
+
+**Özellikler:**
+- Thumbnail gösterimi
+- Başlık ve açıklama
+- Tarih formatlama
+- Hover efektleri
+- Responsive tasarım
+
+**Props:**
+```typescript
+interface BlogPostCardProps {
+  post: BlogPost;  // Blog yazısı verisi
+  locale: Locale;  // Dil bilgisi
+}
+```
+
+**Kullanım:**
+```typescript
+import BlogPostCard from '@/components/search/BlogPostCard';
+
+{results.map((post) => (
+  <BlogPostCard key={post.id} post={post} locale={locale} />
+))}
+```
+
+**Neden Modüler?**  
+- Blog listesi ve arama sayfalarında aynı kart kullanılır
+- Blog kartı tasarımı tek yerden yönetilir
+- Tekrar kullanılabilirlik
+
+---
+
+#### `UsageAreaCard.tsx` - Kullanım Alanı Kartı
+
+**Ne İşe Yarar?**  
+Kullanım alanlarını gösteren kart component'i.
+
+**Özellikler:**
+- Thumbnail gösterimi
+- Başlık ve ürün sayısı
+- Hover efektleri
+- Responsive tasarım
+
+**Props:**
+```typescript
+interface UsageAreaCardProps {
+  area: UsageArea;  // Kullanım alanı verisi
+  locale: Locale;  // Dil bilgisi
+}
+```
+
+**Kullanım:**
+```typescript
+import UsageAreaCard from '@/components/search/UsageAreaCard';
+
+{areas.map((area) => (
+  <UsageAreaCard key={area.id} area={area} locale={locale} />
+))}
+```
+
+**Neden Modüler?**  
+- Products, Usage ve arama sayfalarında aynı kart kullanılır
+- Kart tasarımı tek yerden yönetilir
+- Tutarlı görünüm
+
+---
+
+#### `LoadMoreButton.tsx` - Daha Fazla Yükle Butonu
+
+**Ne İşe Yarar?**  
+Sayfalama yerine "Load More" (daha fazla yükle) butonu gösteren component.
+
+**Özellikler:**
+- Dinamik buton metni (kaç tane yükleneceği)
+- Loading state
+- Otomatik gizleme (daha fazla yoksa)
+
+**Props:**
+```typescript
+interface LoadMoreButtonProps {
+  hasMore: boolean;      // Daha fazla var mı?
+  loading: boolean;      // Yükleniyor mu?
+  onClick: () => void;  // Tıklama callback'i
+  loadCount?: number;   // Kaç tane yüklenecek (varsayılan: 6)
+}
+```
+
+**Kullanım:**
+```typescript
+import LoadMoreButton from '@/components/search/LoadMoreButton';
+
+<LoadMoreButton
+  hasMore={displayedAreas.length < filteredAreas.length}
+  loading={loadingMore}
+  onClick={handleLoadMore}
+  loadCount={6}
+/>
+```
+
+**Neden Modüler?**  
+- Load More mantığı tek yerde yönetilir
+- Farklı sayfalarda aynı buton kullanılabilir
+- Stil ve davranış tutarlılığı
+
+---
 
 ### 🔎 Blog Arama
 

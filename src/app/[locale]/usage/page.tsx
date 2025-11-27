@@ -2,18 +2,18 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import { use } from 'react';
-import { getLocalizedPath } from '@/utils/locale-helper';
 import type { Locale } from '@/i18n/config';
 import type { UsageArea, Category } from '@/types/api';
 import SearchForm from '@/components/search/SearchForm';
 import SearchResults from '@/components/search/SearchResults';
 import CategoryFilter from '@/components/search/CategoryFilter';
 import UsageAreaCard from '@/components/search/UsageAreaCard';
+import LoadMoreButton from '@/components/search/LoadMoreButton';
+import { use } from 'react';
 
-export default function ProductSearchPage({
+const ITEMS_PER_PAGE = 6;
+
+export default function UsagePage({
   params,
 }: {
   params: Promise<{ locale: Locale }>;
@@ -24,14 +24,17 @@ export default function ProductSearchPage({
   const [usageAreas, setUsageAreas] = useState<UsageArea[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [filteredAreas, setFilteredAreas] = useState<UsageArea[]>([]);
+  const [displayedAreas, setDisplayedAreas] = useState<UsageArea[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>(searchParams.get('category') || 'all');
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
   const [loading, setLoading] = useState(true);
-  const isInitialMount = useRef(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
+      setCurrentPage(1);
       try {
         const categoryParam = searchParams.get('category');
         let areasResponse;
@@ -50,6 +53,7 @@ export default function ProductSearchPage({
         if (areasData.success && areasData.data) {
           setUsageAreas(areasData.data);
           setFilteredAreas(areasData.data);
+          setDisplayedAreas(areasData.data.slice(0, ITEMS_PER_PAGE));
         }
 
         if (categoriesData.success && categoriesData.data) {
@@ -82,6 +86,8 @@ export default function ProductSearchPage({
     }
 
     setFilteredAreas(filtered);
+    setCurrentPage(1);
+    setDisplayedAreas(filtered.slice(0, ITEMS_PER_PAGE));
   }, []);
 
   useEffect(() => {
@@ -90,9 +96,28 @@ export default function ProductSearchPage({
     }
   }, [selectedCategory, searchTerm, usageAreas, filterAndSearch]);
 
+  const handleLoadMore = useCallback(() => {
+    setLoadingMore(true);
+    
+    setTimeout(() => {
+      const nextPage = currentPage + 1;
+      const startIndex = currentPage * ITEMS_PER_PAGE;
+      const endIndex = startIndex + ITEMS_PER_PAGE;
+      const nextItems = filteredAreas.slice(startIndex, endIndex);
+      
+      if (nextItems.length > 0) {
+        setDisplayedAreas((prev) => [...prev, ...nextItems]);
+        setCurrentPage(nextPage);
+      }
+      
+      setLoadingMore(false);
+    }, 300);
+  }, [currentPage, filteredAreas]);
+
   const handleCategoryChange = async (categorySlug: string) => {
     setSelectedCategory(categorySlug);
     setLoading(true);
+    setCurrentPage(1);
     
     const params = new URLSearchParams(searchParams.toString());
     if (categorySlug === 'all') {
@@ -114,6 +139,7 @@ export default function ProductSearchPage({
       if (areasData.success && areasData.data) {
         setUsageAreas(areasData.data);
         setFilteredAreas(areasData.data);
+        setDisplayedAreas(areasData.data.slice(0, ITEMS_PER_PAGE));
       }
     } catch (error) {
       console.error('Error fetching category data:', error);
@@ -144,55 +170,52 @@ export default function ProductSearchPage({
     }
   }, [searchParams]);
 
-  const query = searchParams.get('q') || '';
+  const hasMore = displayedAreas.length < filteredAreas.length;
+  const remainingCount = Math.min(ITEMS_PER_PAGE, filteredAreas.length - displayedAreas.length);
 
   return (
-    <>
-      <head>
-        <title>{query ? `"${query}" Arama Sonuçları - Ürünler` : 'Ürün Arama'}</title>
-        <meta name="description" content={query ? `"${query}" için ürün arama sonuçları` : 'Ürünlerde arama yapın'} />
-      </head>
-      <div className="min-h-screen bg-[#0a0a0a]">
-        <div className="container mx-auto px-4 py-16 max-w-7xl">
-          <div className="mb-8">
-            <Button asChild variant="ghost" className="mb-4">
-              <Link href={getLocalizedPath('/products', locale)}>← Ürünler&apos;e Dön</Link>
-            </Button>
-            <h1 className="text-5xl font-bold text-foreground mb-8">
-              {query ? `"${query}" Arama Sonuçları` : 'Ürün Arama'}
-            </h1>
+    <div className="min-h-screen bg-[#0a0a0a]">
+      <div className="container mx-auto px-4 py-16 max-w-7xl">
+        <div className="mb-8">
+          <h1 className="text-5xl font-bold text-foreground mb-8">Kullanım Alanları</h1>
 
-            <div className="flex flex-col md:flex-row gap-4 mb-8">
-              <SearchForm
-                initialValue={searchTerm}
-                onSearch={handleSearch}
-                loading={loading}
-                placeholder="Arama yapın..."
-              />
-            </div>
-
-            <CategoryFilter
-              categories={categories}
-              selectedCategory={selectedCategory}
-              onCategoryChange={handleCategoryChange}
+          <div className="flex flex-col md:flex-row gap-4 mb-8">
+            <SearchForm
+              initialValue={searchTerm}
+              onSearch={handleSearch}
               loading={loading}
+              placeholder="Arama yapın..."
             />
           </div>
 
-          <SearchResults
+          <CategoryFilter
+            categories={categories}
+            selectedCategory={selectedCategory}
+            onCategoryChange={handleCategoryChange}
             loading={loading}
-            searched={true}
-            count={filteredAreas.length}
-            emptyMessage="Aradığınız kriterlere uygun sonuç bulunamadı."
-          >
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredAreas.map((item) => (
-                <UsageAreaCard key={item.id} area={item} locale={locale} />
-              ))}
-            </div>
-          </SearchResults>
+          />
         </div>
+
+        <SearchResults
+          loading={loading}
+          searched={true}
+          count={filteredAreas.length}
+          emptyMessage="Aradığınız kriterlere uygun kullanım alanı bulunamadı."
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {displayedAreas.map((area) => (
+              <UsageAreaCard key={area.id} area={area} locale={locale} />
+            ))}
+          </div>
+
+          <LoadMoreButton
+            hasMore={hasMore}
+            loading={loadingMore}
+            onClick={handleLoadMore}
+            loadCount={remainingCount}
+          />
+        </SearchResults>
       </div>
-    </>
+    </div>
   );
 }

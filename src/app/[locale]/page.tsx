@@ -30,6 +30,9 @@ export default async function Home({ params }: HomePageProps) {
             <Button asChild variant="outline">
               <Link href={getLocalizedPath('/products', locale)}>{t.products.title}</Link>
             </Button>
+            <Button asChild variant="outline">
+              <Link href={getLocalizedPath('/usage', locale)}>Kullanım Alanları</Link>
+            </Button>
           </div>
         </div>
 

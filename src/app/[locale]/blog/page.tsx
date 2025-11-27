@@ -42,7 +42,7 @@ export default async function BlogPage({
           <h1 className="text-5xl font-bold text-foreground">{t.blog.title}</h1>
           <div className="flex gap-2">
             <Button asChild variant="outline">
-              <Link href={getLocalizedPath('/blog/search', locale)}>{t.common.search}</Link>
+              <Link href={getLocalizedPath('/blog/search', locale)} target="_blank">{t.common.search}</Link>
             </Button>
             <Button asChild variant="outline">
               <Link href={getLocalizedPath('/blog/categories', locale)}>{t.common.categories}</Link>
