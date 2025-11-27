@@ -1,26 +1,62 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: 10 10 10;
+    --foreground: 229 229 229;
+    --card: 26 26 26;
+    --card-foreground: 229 229 229;
+    --popover: 26 26 26;
+    --popover-foreground: 229 229 229;
+    --primary: 96 165 250;
+    --primary-foreground: 10 10 10;
+    --secondary: 26 26 26;
+    --secondary-foreground: 229 229 229;
+    --muted: 42 42 42;
+    --muted-foreground: 136 136 136;
+    --accent: 42 42 42;
+    --accent-foreground: 229 229 229;
+    --destructive: 239 68 68;
+    --destructive-foreground: 229 229 229;
+    --border: 42 42 42;
+    --input: 42 42 42;
+    --ring: 96 165 250;
+    --radius: 0.5rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+    min-height: 100vh;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Prose styles for dark theme */
+.prose {
+  color: rgb(var(--foreground));
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  color: rgb(var(--foreground));
+}
+
+.prose p {
+  color: rgb(var(--muted-foreground));
+}
+
+.prose a {
+  color: rgb(var(--primary));
+}
+
+.prose a:hover {
+  color: rgb(var(--primary) / 0.8);
 }

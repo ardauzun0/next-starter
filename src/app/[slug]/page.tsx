@@ -21,12 +21,26 @@ export async function generateMetadata({
     };
   }
 
-  const url = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://your-site.com'}/${slug}`;
-  const seoData = await getSEOData(url);
+  // Construct the correct URL
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001';
+  const url = `${baseUrl}/${slug}`;
+
+  // Wrap SEO data fetch in try/catch to handle 404 errors
+  let seoData;
+  try {
+    seoData = await getSEOData(url);
+  } catch (error) {
+    // If SEO API fails, return default metadata
+    console.warn(`SEO API failed for ${url}:`, error);
+    return {
+      title: 'Sayfa',
+      description: '',
+    };
+  }
 
   return {
-    title: seoData.head.title,
-    description: seoData.head.description,
+    title: seoData.head.title || 'Sayfa',
+    description: seoData.head.description || '',
     openGraph: seoData.head.openGraph,
     alternates: {
       canonical: seoData.head.alternates?.canonical,
@@ -43,11 +57,12 @@ export default async function DynamicPage({ params }: DynamicPageProps) {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {pageData.data.content && (
-        <BlockRenderer blocks={pageData.data.content} />
-      )}
+    <div className="min-h-screen bg-[#0a0a0a]">
+      <div className="container mx-auto px-4 py-16 max-w-7xl">
+        {pageData.data.content && (
+          <BlockRenderer blocks={pageData.data.content} />
+        )}
+      </div>
     </div>
   );
 }
-
