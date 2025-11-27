@@ -26,7 +26,6 @@ export default function FeatureHighlight({
   return (
     <section className="py-16">
       <div className="container mx-auto px-4 max-w-7xl">
-        {/* Title and Exp_1 at Top */}
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold mb-4 text-foreground">{title}</h2>
           {exp_1 && (
@@ -36,9 +35,7 @@ export default function FeatureHighlight({
           )}
         </div>
 
-        {/* Main Content: Image and Icons Side by Side */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-12">
-          {/* Image Section */}
           {image && (
             <div className="relative w-full aspect-video rounded-lg overflow-hidden">
               <Image
@@ -51,11 +48,10 @@ export default function FeatureHighlight({
             </div>
           )}
 
-          {/* Icons List Section */}
           {icons && icons.length > 0 && (
             <div className="space-y-6">
               {icons.map((icon, index) => (
-                <Card key={index}>
+                <Card key={`icon-${index}-${icon.title}`}>
                   <CardHeader>
                     <div className="flex items-start gap-4">
                       {icon.icon && (
@@ -80,7 +76,6 @@ export default function FeatureHighlight({
           )}
         </div>
 
-        {/* Exp_2 at Bottom */}
         {exp_2 && (
           <Card>
             <CardContent className="pt-6">
@@ -95,4 +90,3 @@ export default function FeatureHighlight({
     </section>
   );
 }
-

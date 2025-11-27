@@ -1,4 +1,3 @@
-// Single Blog Post Detail Page
 import { getPostBySlug } from '@/services/blog';
 import { getSEOData } from '@/services/global';
 import { notFound } from 'next/navigation';
@@ -9,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import JsonLd from '@/components/seo/JsonLd';
 import { constructMetadata } from '@/utils/seo-helper';
-import { getBlogPostUrl, getBaseUrl } from '@/utils/url-helper';
+import { getSEOBlogPostUrl, getSEOBaseUrl } from '@/utils/url-helper';
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -27,14 +26,10 @@ export async function generateMetadata({
     };
   }
 
-  // Construct the full URL
-  const baseUrl = getBaseUrl();
-  const fullUrl = getBlogPostUrl(slug);
-
-  // Fetch SEO data
+  const baseUrl = getSEOBaseUrl();
+  const fullUrl = getSEOBlogPostUrl(slug);
   const seoData = await getSEOData(fullUrl);
 
-  // If SEO data is not available, use post data as fallback
   if (!seoData) {
     return {
       title: postData.data.title,
@@ -42,7 +37,6 @@ export async function generateMetadata({
     };
   }
 
-  // Construct and return metadata
   return constructMetadata(seoData, baseUrl);
 }
 
@@ -55,16 +49,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   }
 
   const post = postData.data;
-
-  // Construct the full URL for JSON-LD
-  const fullUrl = getBlogPostUrl(slug);
-
-  // Fetch SEO data (Next.js will memoize this request)
+  const fullUrl = getSEOBlogPostUrl(slug);
   const seoData = await getSEOData(fullUrl);
 
   return (
     <>
-      {/* JSON-LD Structured Data */}
       {seoData && <JsonLd data={seoData.head.jsonLd} />}
 
       <div className="min-h-screen bg-[#0a0a0a]">

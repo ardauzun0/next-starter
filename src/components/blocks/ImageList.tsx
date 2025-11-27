@@ -23,8 +23,7 @@ export default function ImageList({ images }: ImageListBlockProps) {
       <div className="container mx-auto px-4 max-w-7xl">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {images.map((item, index) => (
-            <Card key={index} className="overflow-hidden hover:scale-[1.02] transition-transform duration-300">
-              {/* Image */}
+            <Card key={`imagelist-${index}-${item.title}`} className="overflow-hidden hover:scale-[1.02] transition-transform duration-300">
               {item.image && (
                 <div className="relative w-full aspect-video">
                   <Image
@@ -37,7 +36,6 @@ export default function ImageList({ images }: ImageListBlockProps) {
                 </div>
               )}
 
-              {/* Content */}
               <CardHeader>
                 <CardTitle>{item.title}</CardTitle>
               </CardHeader>
@@ -55,4 +53,3 @@ export default function ImageList({ images }: ImageListBlockProps) {
     </section>
   );
 }
-

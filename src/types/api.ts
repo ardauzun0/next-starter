@@ -100,8 +100,7 @@ export interface ProductCategory {
   data: {
     name: string;
     description: string;
-    content: BaseBlock[]; // Can contain layout blocks like banners
-    // Note: The structure shows nested categories/products inside content or separate fields
+    content: BaseBlock[];
   };
 }
 

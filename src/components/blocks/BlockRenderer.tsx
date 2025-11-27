@@ -9,7 +9,6 @@ import Map from './Map';
 import Gallery from './Gallery';
 import FeatureHighlight from './FeatureHighlight';
 
-// Map of ACF layout names to React components
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const blockMap: Record<string, React.ComponentType<any>> = {
   hero: Hero,

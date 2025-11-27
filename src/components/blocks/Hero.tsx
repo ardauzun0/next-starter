@@ -5,7 +5,6 @@ export interface HeroBlockProps extends BaseBlock {
   acf_fc_layout: 'hero';
   title: string;
   image: string;
-  // Add other specific fields as needed based on API response
 }
 
 export default function Hero({ title, image }: HeroBlockProps) {
@@ -26,4 +25,3 @@ export default function Hero({ title, image }: HeroBlockProps) {
     </section>
   );
 }
-

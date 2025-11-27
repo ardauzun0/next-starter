@@ -1,4 +1,3 @@
-// Blog List Page
 import { getPosts, getBlogCategories } from '@/services/blog';
 import Link from 'next/link';
 import type { Metadata } from 'next';
@@ -24,10 +23,9 @@ export default async function BlogPage({
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
       <div className="container mx-auto px-4 py-16 max-w-7xl">
-        <h1 className="text-5xl font-bold mb-12 text-[#e5e5e5]">Blog</h1>
+        <h1 className="text-5xl font-bold mb-12 text-foreground">Blog</h1>
 
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar - Categories */}
           {categoriesData.success && categoriesData.data.length > 0 && (
             <aside className="lg:w-64 shrink-0">
               <Card className="sticky top-8">
@@ -57,7 +55,6 @@ export default async function BlogPage({
             </aside>
           )}
 
-          {/* Main Content - Posts Grid */}
           <main className="flex-1">
             {postsData.success && postsData.data.length > 0 ? (
               <>
@@ -103,7 +100,6 @@ export default async function BlogPage({
                   ))}
                 </div>
 
-                {/* Pagination */}
                 {postsData.pagination &&
                   postsData.pagination.total_pages > 1 && (
                     <div className="flex justify-center gap-2">
@@ -124,7 +120,7 @@ export default async function BlogPage({
               </>
             ) : (
               <div className="text-center py-16">
-                <p className="text-[#888] text-lg">
+                <p className="text-muted-foreground text-lg">
                   Henüz blog yazısı bulunmamaktadır.
                 </p>
               </div>

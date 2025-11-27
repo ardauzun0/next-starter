@@ -9,7 +9,7 @@ export interface GalleryBlockProps extends BaseBlock {
   acf_fc_layout: 'gallery';
   title?: string;
   exp?: string;
-  gallery: string[]; // URLs
+  gallery: string[];
 }
 
 export default function Gallery({ title, exp, gallery }: GalleryBlockProps) {
@@ -22,7 +22,6 @@ export default function Gallery({ title, exp, gallery }: GalleryBlockProps) {
   return (
     <section className="py-16">
       <div className="container mx-auto px-4 max-w-7xl">
-        {/* Header */}
         {(title || exp) && (
           <Card className="mb-8">
             <CardHeader>
@@ -32,11 +31,10 @@ export default function Gallery({ title, exp, gallery }: GalleryBlockProps) {
           </Card>
         )}
 
-        {/* Gallery Grid - Masonry Style */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {gallery.map((imageUrl, index) => (
             <div
-              key={index}
+              key={`gallery-${index}-${imageUrl}`}
               className="relative aspect-square overflow-hidden rounded-lg cursor-pointer group hover:scale-105 transition-transform duration-300"
               onClick={() => setSelectedImage(imageUrl)}
             >
@@ -52,7 +50,6 @@ export default function Gallery({ title, exp, gallery }: GalleryBlockProps) {
           ))}
         </div>
 
-        {/* Modal for Expanded Image */}
         {selectedImage && (
           <div
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
@@ -80,4 +77,3 @@ export default function Gallery({ title, exp, gallery }: GalleryBlockProps) {
     </section>
   );
 }
-

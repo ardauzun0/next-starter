@@ -2,12 +2,12 @@ import { BaseBlock } from '@/types/api';
 import Image from 'next/image';
 
 export interface ImageContentBlockProps extends BaseBlock {
-  acf_fc_layout: 'image_content' | ''; // Handle empty string fallback
+  acf_fc_layout: 'image_content' | '';
   select?: 'image' | 'video';
   image?: string;
   thumbnail?: string;
   video?: string;
-  content?: string; // HTML
+  content?: string;
 }
 
 export default function ImageContent({
@@ -17,14 +17,12 @@ export default function ImageContent({
   video,
   content,
 }: ImageContentBlockProps) {
-  // Determine layout: default to Image Left, Text Right
   const mediaUrl = select === 'video' ? video : image || thumbnail;
 
   return (
     <section className="py-16">
       <div className="container mx-auto px-4 max-w-7xl">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-center">
-          {/* Media Section - Left */}
           <div className="relative w-full aspect-video rounded-lg overflow-hidden">
             {select === 'video' && video ? (
               <video
@@ -44,7 +42,6 @@ export default function ImageContent({
             ) : null}
           </div>
 
-          {/* Content Section - Right */}
           {content && (
             <div
               className="prose prose-lg max-w-none prose-invert prose-headings:text-foreground prose-p:text-muted-foreground prose-a:text-primary prose-a:hover:text-primary/80 prose-strong:text-foreground"

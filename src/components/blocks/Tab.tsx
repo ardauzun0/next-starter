@@ -28,11 +28,10 @@ export default function Tab({ tabs }: TabBlockProps) {
   return (
     <section className="py-16">
       <div className="container mx-auto px-4 max-w-7xl">
-        {/* Tab Headers */}
         <div className="flex flex-wrap gap-2 mb-8 border-b border-border">
           {tabs.map((tab, index) => (
             <button
-              key={index}
+              key={`tab-${index}-${tab.title}`}
               onClick={() => setActiveTab(index)}
               className={`px-6 py-3 text-sm font-medium transition-colors border-b-2 ${
                 activeTab === index
@@ -45,12 +44,10 @@ export default function Tab({ tabs }: TabBlockProps) {
           ))}
         </div>
 
-        {/* Tab Content */}
         {activeTabData && (
           <Card>
             <CardContent className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                {/* Image */}
                 {activeTabData.image && (
                   <div className="relative w-full aspect-video rounded-lg overflow-hidden">
                     <Image
@@ -63,7 +60,6 @@ export default function Tab({ tabs }: TabBlockProps) {
                   </div>
                 )}
 
-                {/* Content */}
                 <div
                   className="prose prose-lg max-w-none prose-invert prose-headings:text-foreground prose-p:text-muted-foreground prose-a:text-primary prose-a:hover:text-primary/80"
                   dangerouslySetInnerHTML={{ __html: activeTabData.exp }}
@@ -76,4 +72,3 @@ export default function Tab({ tabs }: TabBlockProps) {
     </section>
   );
 }
-

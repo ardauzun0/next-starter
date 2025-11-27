@@ -1,11 +1,10 @@
-// Product Category Page
 import { getProductCategory } from '@/services/product';
 import { getSEOData } from '@/services/global';
 import { notFound } from 'next/navigation';
 import BlockRenderer from '@/components/blocks/BlockRenderer';
 import JsonLd from '@/components/seo/JsonLd';
 import { constructMetadata } from '@/utils/seo-helper';
-import { getProductCategoryUrl, getBaseUrl } from '@/utils/url-helper';
+import { getSEOProductCategoryUrl, getSEOBaseUrl } from '@/utils/url-helper';
 import type { Metadata } from 'next';
 
 interface ProductCategoryPageProps {
@@ -24,14 +23,10 @@ export async function generateMetadata({
     };
   }
 
-  // Construct the full URL
-  const baseUrl = getBaseUrl();
-  const fullUrl = getProductCategoryUrl(category);
-
-  // Fetch SEO data
+  const baseUrl = getSEOBaseUrl();
+  const fullUrl = getSEOProductCategoryUrl(category);
   const seoData = await getSEOData(fullUrl);
 
-  // If SEO data is not available, use category data as fallback
   if (!seoData) {
     return {
       title: categoryData.data.name,
@@ -39,7 +34,6 @@ export async function generateMetadata({
     };
   }
 
-  // Construct and return metadata
   return constructMetadata(seoData, baseUrl);
 }
 
@@ -53,15 +47,11 @@ export default async function ProductCategoryPage({
     notFound();
   }
 
-  // Construct the full URL for JSON-LD
-  const fullUrl = getProductCategoryUrl(category);
-
-  // Fetch SEO data (Next.js will memoize this request)
+  const fullUrl = getSEOProductCategoryUrl(category);
   const seoData = await getSEOData(fullUrl);
 
   return (
     <>
-      {/* JSON-LD Structured Data */}
       {seoData && <JsonLd data={seoData.head.jsonLd} />}
 
       <div className="min-h-screen bg-[#0a0a0a]">

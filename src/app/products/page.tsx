@@ -1,4 +1,3 @@
-// Products Listing Page
 import { getUsageAreas } from '@/services/usage';
 import Link from 'next/link';
 import type { Metadata } from 'next';
@@ -10,15 +9,12 @@ export const metadata: Metadata = {
 };
 
 export default async function ProductsPage() {
-  // Since we don't have a direct "all products" endpoint,
-  // we can list usage areas or product categories
-  // For now, we'll show a simple landing page
   const usageAreas = await getUsageAreas();
 
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
       <div className="container mx-auto px-4 py-16 max-w-7xl">
-        <h1 className="text-5xl font-bold mb-12 text-[#e5e5e5]">Ürünler</h1>
+        <h1 className="text-5xl font-bold mb-12 text-foreground">Ürünler</h1>
 
         {usageAreas.success && usageAreas.data.length > 0 && (
           <div className="mb-12">
@@ -48,15 +44,11 @@ export default async function ProductsPage() {
         )}
 
         <div className="text-center py-16">
-          <p className="text-[#888] text-lg mb-4">
+          <p className="text-muted-foreground text-lg mb-4">
             Ürün kategorilerini görmek için kategori sayfasını ziyaret edin.
-          </p>
-          <p className="text-[#d4d4d4] text-sm">
-            Belirli bir ürün aramak için arama özelliğini kullanabilirsiniz.
           </p>
         </div>
       </div>
     </div>
   );
 }
-

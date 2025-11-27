@@ -1,12 +1,9 @@
-// Core API fetch wrapper
-
-// Base API URL
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL ||
   'https://frontend-example-panel.pentademo.com.tr/wp-json';
 
 /**
- * Generic fetch wrapper to handle base URL and errors
+ * Generic fetch wrapper for WordPress API
  */
 export async function fetchAPI<T>(
   endpoint: string,
@@ -22,7 +19,7 @@ export async function fetchAPI<T>(
         ...options?.headers,
       },
       next: {
-        revalidate: 3600, // Revalidate every hour by default
+        revalidate: 3600,
         ...options?.next,
       },
     });
@@ -40,4 +37,3 @@ export async function fetchAPI<T>(
     throw error;
   }
 }
-

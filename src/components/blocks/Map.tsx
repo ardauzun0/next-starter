@@ -23,12 +23,11 @@ export default function Map({ title, exp, countries }: MapBlockProps) {
             {exp && <CardDescription className="text-base">{exp}</CardDescription>}
           </CardHeader>
           <CardContent>
-            {/* Countries Grid */}
             {countries && countries.length > 0 && (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mt-6">
                 {countries.map((country, index) => (
                   <div
-                    key={index}
+                    key={`country-${index}-${country.name}`}
                     className="px-4 py-3 bg-muted rounded-lg text-center hover:bg-accent transition-colors"
                   >
                     <div className="font-medium text-foreground">{country.name}</div>
@@ -47,4 +46,3 @@ export default function Map({ title, exp, countries }: MapBlockProps) {
     </section>
   );
 }
-

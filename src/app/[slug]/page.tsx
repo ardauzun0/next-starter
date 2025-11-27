@@ -1,11 +1,10 @@
-// Dynamic Catch-all Page (for Pages like "About Us", "Contact", etc.)
 import { getPageBySlug } from '@/services/page';
 import { getSEOData } from '@/services/global';
 import { notFound } from 'next/navigation';
 import BlockRenderer from '@/components/blocks/BlockRenderer';
 import JsonLd from '@/components/seo/JsonLd';
 import { constructMetadata } from '@/utils/seo-helper';
-import { getPageUrl, getBaseUrl } from '@/utils/url-helper';
+import { getSEOPageUrl, getSEOBaseUrl } from '@/utils/url-helper';
 import type { Metadata } from 'next';
 
 interface DynamicPageProps {
@@ -24,14 +23,10 @@ export async function generateMetadata({
     };
   }
 
-  // Construct the full URL
-  const baseUrl = getBaseUrl();
-  const fullUrl = getPageUrl(slug);
-
-  // Fetch SEO data
+  const baseUrl = getSEOBaseUrl();
+  const fullUrl = getSEOPageUrl(slug);
   const seoData = await getSEOData(fullUrl);
 
-  // Construct and return metadata
   return constructMetadata(seoData, baseUrl);
 }
 
@@ -43,15 +38,11 @@ export default async function DynamicPage({ params }: DynamicPageProps) {
     notFound();
   }
 
-  // Construct the full URL for JSON-LD
-  const fullUrl = getPageUrl(slug);
-
-  // Fetch SEO data (Next.js will memoize this request)
+  const fullUrl = getSEOPageUrl(slug);
   const seoData = await getSEOData(fullUrl);
 
   return (
     <>
-      {/* JSON-LD Structured Data */}
       {seoData && <JsonLd data={seoData.head.jsonLd} />}
 
       <div className="min-h-screen bg-[#0a0a0a]">
