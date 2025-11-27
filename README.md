@@ -1,421 +1,675 @@
-# 🚀 Next.js 15 Headless WordPress Starter Template
+## 📑 Hızlı Navigasyon
 
-**Hazırlayan: Arda Uzun**
-
-Bu doküman, ekibimizin Next.js 15 + Headless WordPress altyapısını **hızlı, hatasız ve sürdürülebilir şekilde** geliştirebilmesi için hazırlanmıştır.
-
-Ekibimizde Next.js bilgisi az olsa bile, bu README sayesinde:
-
-* Yapıyı 15 dakikada öğrenebilir,
-* API ve component mimarisini takip edebilir,
-* Block yapısını genişletebilir,
-* Yeni sayfa, içerik türü ve dil ekleyebilirler.
-
-Bu dosya hem **proje başlangıç rehberi**, hem de **teknik referans** niteliğindedir.
+- [🎯 Projeye Başlarken](#-projeye-başlarken)
+- [📁 Klasör Yapısı](#-klasör-yapısı-nerede-ne-var)
+- [🔌 API Yapısı](#-api-yapısı-wordpress-bağlantısı)
+- [🎨 Yeni Block Ekleme](#-yeni-block-ekleme-5-dakikada)
+- [🌍 Yeni Dil Ekleme](#-yeni-dil-ekleme)
+- [💡 Sık Sorulan Sorular](#-sık-sorulan-sorular)
+- [🆘 Hata Çözümleri](#-hata-çözümleri)
 
 ---
 
-# 📚 İçindekiler
+## 🎯 Projeye Başlarken
 
-1. [Kurulum](#kurulum)
-2. [Mimariyi Kısaca Anlamak](#mimariyi-kısaca-anlamak)
-3. [Proje Yapısı](#proje-yapısı)
-4. [WordPress API Yapısı](#wordpress-api-yapısı)
-5. [Block Component Sistemi (ACF Flexible)](#block-component-sistemi-acf-flexible)
-6. [Yeni Dil Ekleme](#yeni-dil-ekleme)
-7. [Component / Modül Ekleme](#componentmodül-ekleme)
-8. [Deployment & Build](#deployment--build)
-9. [Next.js Temelleri (Kısa Özet)](#nextjs-temelleri-kısa-özet)
-10. [Best Practices](#best-practices)
-11. [Troubleshooting](#troubleshooting)
-
----
-
-# 🔧 Kurulum
-
-### Gereksinimler
-
-* Node.js **18+**
-* npm veya yarn
-* WordPress Headless REST API (ACF kullanıyor olmalı)
-
-### Adımlar
+### 1️⃣ İlk Kurulum (5 dakika)
 
 ```bash
-git clone <repo-url>
+# Projeyi klonla
+git clone <repository-url>
 cd next-starter
 
-npm install # veya yarn
+# Bağımlılıkları yükle
+npm install
 
+# Environment dosyasını oluştur
 cp .env.example .env.local
 ```
 
-`.env.local` içerisine:
+### 2️⃣ Ayarları Yap
 
-```
-NEXT_PUBLIC_API_URL=https://example.com/wp-json
-NEXT_PUBLIC_SITE_URL=https://frontend.com
-NEXT_PUBLIC_SITE_NAME=Project Name
+`.env.local` dosyasını aç ve şu değerleri ayarla:
+
+```env
+# WordPress API'nizin adresi (ÖNEMLİ!)
+NEXT_PUBLIC_API_URL=https://your-wordpress-site.com/wp-json
+
+# Sitenizin canlı URL'i
+NEXT_PUBLIC_SITE_URL=https://your-frontend-site.com
+
+# Site adı
+NEXT_PUBLIC_SITE_NAME=Proje Adı
 ```
 
-Geliştirme:
+### 3️⃣ Çalıştır
 
 ```bash
 npm run dev
 ```
 
-Tarayıcı → [http://localhost:3001](http://localhost:3001)
+Tarayıcıda `http://localhost:3001` adresini aç. 🎉
 
 ---
 
-# 🧠 Mimariyi Kısaca Anlamak
+## 📁 Klasör Yapısı: Nerede Ne Var?
 
-Ekibin hızlı kavrayabilmesi için altyapıyı **3 büyük parçaya** ayırıyoruz:
+### 🗂️ Ana Klasörler
+
+```
+next-starter/
+├── public/              👉 Resimler, videolar, PDF'ler
+├── src/
+│   ├── app/            👉 Sayfalar (routes)
+│   ├── components/     👉 React bileşenleri
+│   ├── services/       👉 API çağrıları
+│   ├── types/          👉 TypeScript tipleri
+│   ├── utils/          👉 Yardımcı fonksiyonlar
+│   └── i18n/           👉 Çeviriler (TR/EN)
+└── middleware.ts        👉 Dil yönlendirme
+```
 
 ---
 
-## 1) **Next.js (Frontend)**
+## 🎨 Önemli Dosyalar ve Ne İşe Yaradıkları
 
-* App Router kullanır
-* Varsayılan olarak **Server Component**
-* Tüm data server-side fetch edilir
-* Her dil kendi route yapısına sahiptir `/tr/...`, `/en/...`
+### 🔧 Yapılandırma Dosyaları
 
----
+| Dosya | Ne İşe Yarar? | Değiştirilmeli mi? |
+|-------|---------------|-------------------|
+| `.env.local` | API ve site ayarları | ✅ Evet, mutlaka |
+| `next.config.ts` | Next.js ayarları, resim domain'leri | ✅ Evet, domain ekle |
+| `middleware.ts` | Dil yönlendirme (TR/EN) | ❌ Hayır |
+| `tsconfig.json` | TypeScript ayarları | ❌ Hayır |
 
-## 2) **WordPress (Backend)**
+### 📄 Sayfa Dosyaları (`src/app/`)
 
-* Custom REST API endpointleri
-* ACF Flexible Content kullanılır
-* API formatı standarttır:
+```
+src/app/
+├── [locale]/
+│   ├── page.tsx              👉 Ana sayfa (/)
+│   ├── [slug]/page.tsx       👉 Dinamik sayfalar (/hakkimizda)
+│   ├── blog/
+│   │   ├── page.tsx          👉 Blog listesi
+│   │   ├── [slug]/page.tsx   👉 Blog detay
+│   │   └── search/page.tsx   👉 Blog arama
+│   └── products/
+│       ├── page.tsx          👉 Ürünler ana sayfa
+│       └── detail/[slug]/    👉 Ürün detay
+```
 
-```json
-{
-  "success": true,
-  "data": {}
+#### 📌 Örnek: Ana Sayfa Düzenleme
+
+```typescript
+// src/app/[locale]/page.tsx
+export default async function HomePage() {
+  return (
+    <div>
+      <h1>Hoş Geldiniz! 👋</h1>
+      <p>Bu ana sayfadır, buraya istediğinizi ekleyebilirsiniz.</p>
+    </div>
+  );
 }
 ```
 
 ---
 
-## 3) **Block Renderer Sistemi**
+## 🔌 API Yapısı: WordPress Bağlantısı
 
-WordPress’te ACF Flexible Content ile oluşturulan bloklar, Next.js tarafında **otomatik olarak ilgili React component’ine dönüşür**.
+### 📡 API Nasıl Çalışır?
 
-Örnek:
+1. **WordPress'ten veri gelir** → REST API endpoint'lerinden
+2. **Next.js çeker** → `src/services/` klasöründeki fonksiyonlarla
+3. **Sayfada gösterir** → React component'lerinde
 
-```json
-{
-  "acf_fc_layout": "hero",
-  "title": "Hoş geldiniz"
+### 🛠️ API Servisleri (`src/services/`)
+
+```
+src/services/
+├── core.ts        👉 Temel fetch fonksiyonu (DOKUNMA!)
+├── blog.ts        👉 Blog API'leri
+├── product.ts     👉 Ürün API'leri
+├── page.ts        👉 Sayfa API'leri
+└── global.ts      👉 Menü, footer vb.
+```
+
+#### 📌 Örnek: Blog Yazısı Çekme
+
+```typescript
+// src/services/blog.ts
+import { fetchAPI } from './core';
+
+export async function getPostBySlug(slug: string) {
+  // WordPress'ten /posts/v1/detail/blog-yazisi-slug endpoint'ini çağırır
+  return await fetchAPI(`/posts/v1/detail/${slug}`);
 }
 ```
 
-→ `components/blocks/Hero.tsx` tarafından render edilir.
+#### 📌 Örnek: Sayfada Kullanım
 
----
+```typescript
+// src/app/[locale]/blog/[slug]/page.tsx
+import { getPostBySlug } from '@/services/blog';
 
-Bu üçlü yapı sayesinde:
-
-✔ WordPress → içerik yönetir
-✔ Next.js → render eder
-✔ Block Renderer → her şeyi otomatik bağlar
-
----
-
-# 📁 Proje Yapısı
-
-Aşağıda ekip için **yüksek seviyede anlaması kolay** bir özet yapısı bulunuyor.
-
-```
-src/
-├── app/                # Route & sayfalar
-│   ├── [locale]/       # Dil bazlı routing
-│   ├── api/            # Next.js API routes
-│   ├── layout.tsx      # Global Layout
-│   └── globals.css     # Global Tailwind
-│
-├── components/         
-│   ├── blocks/         # ACF Block Components
-│   ├── ui/             # shadcn UI
-│   ├── seo/            # JSON-LD vb.
-│   └── Header/Footer   # Global layout parçaları
-│
-├── services/           # Tüm WordPress API çağrıları
-│   ├── core.ts         # fetchAPI wrapper
-│   ├── blog.ts
-│   ├── product.ts
-│   └── page.ts
-│
-├── i18n/               # Çok dillilik sistemi
-│   ├── config.ts
-│   ├── getTranslations.ts
-│   └── messages/*.json
-│
-├── types/              # TypeScript API type'ları
-└── utils/              # Helper fonksiyonlar
-```
-
----
-
-# 🌐 WordPress API Yapısı
-
-Ekibin en çok kullandığı dosya **/services** klasörü olacak.
-
-Her şey şu basit fonksiyona dayanır:
-
-```ts
-export async function fetchAPI<T>(endpoint: string): Promise<T>
-```
-
-Tüm servisler bunu kullanır → **standart, güvenli, yönetilebilir**.
-
-Örnek yeni API oluşturma:
-
-```ts
-// services/news.ts
-export async function getNews() {
-  return fetchAPI('/news/v1');
+export default async function BlogDetailPage({ params }) {
+  const { slug } = await params;
+  const post = await getPostBySlug(slug);
+  
+  return (
+    <article>
+      <h1>{post.data.title}</h1>
+      <div>{post.data.content}</div>
+    </article>
+  );
 }
 ```
 
+### 🎯 Mevcut API Endpoint'leri
+
+| Endpoint | Ne Döner? | Kullanım |
+|----------|-----------|----------|
+| `/posts/v1` | Tüm blog yazıları | Blog listesi |
+| `/posts/v1/detail/{slug}` | Tek blog yazısı | Blog detay |
+| `/product/v1/detail/{slug}` | Tek ürün | Ürün detay |
+| `/page/v1/{slug}` | Sayfa içeriği | Dinamik sayfalar |
+| `/global/v1/options` | Menü, footer | Header/Footer |
+
 ---
 
-# 🧩 Block Component Sistemi (ACF Flexible)
+## 🎨 Yeni Block Ekleme (5 Dakikada!)
 
-Bu sistem WordPress’ten gelen blokları **otomatik olarak React component’e çevirir**.
-Projeyi büyütürken en çok kullanacağınız sistem burasıdır.
+WordPress'te ACF Flexible Content kullanarak oluşturduğunuz block'ları Next.js'te göstermek için:
 
----
+### 1️⃣ Block Component'i Oluştur
 
-## 1) Yeni Block Oluşturma
-
-`src/components/blocks/NewBlock.tsx`
-
-```tsx
-import { BaseBlock } from "@/types/api";
-
-export interface NewBlockProps extends BaseBlock {
-  acf_fc_layout: "newblock";
+```typescript
+// src/components/blocks/MyNewBlock.tsx
+export interface MyNewBlockProps {
+  acf_fc_layout: 'mynewblock'; // WordPress'teki block adı
   title: string;
   description?: string;
 }
 
-export default function NewBlock({ title, description }: NewBlockProps) {
+export default function MyNewBlock({ title, description }: MyNewBlockProps) {
   return (
-    <section className="py-10">
-      <h2 className="text-xl font-bold">{title}</h2>
-      {description && <p>{description}</p>}
+    <section className="py-16">
+      <div className="container mx-auto px-4">
+        <h2 className="text-3xl font-bold">{title}</h2>
+        {description && <p className="mt-4">{description}</p>}
+      </div>
     </section>
   );
 }
 ```
 
----
+### 2️⃣ BlockRenderer'a Ekle
 
-## 2) BlockRenderer’a Kaydet
-
-`src/components/blocks/BlockRenderer.tsx`:
-
-```ts
-import NewBlock from "./NewBlock";
+```typescript
+// src/components/blocks/BlockRenderer.tsx
+import MyNewBlock from './MyNewBlock';
 
 const blockMap = {
   hero: Hero,
-  imagecontent: ImageContent,
-  newblock: NewBlock,
+  mynewblock: MyNewBlock, // 👈 Buraya ekle
 };
 ```
 
-Bitti.
-WordPress ACF’de bir blok oluşturduğunuzda otomatik çalışır.
+### ✅ Tamam! Block artık otomatik render edilecek.
+
+#### ⚠️ Dikkat Edilmesi Gerekenler
+
+- `acf_fc_layout` değeri, `blockMap` anahtarıyla **TAM OLARAK** aynı olmalı
+- WordPress'te block adı **"mynewblock"** ise, burada da **"mynewblock"** yazılmalı
+- Büyük-küçük harf duyarlı (case-sensitive)
 
 ---
 
-# 🌍 Yeni Dil Ekleme
+## 🌍 Yeni Dil Ekleme
 
-Çok basit 3 adımdır:
+Şu an Türkçe (TR) ve İngilizce (EN) var. Almanca (DE) ekleyelim:
 
----
+### 1️⃣ Config'e Ekle
 
-## 1) Config’e ekle → `i18n/config.ts`
+```typescript
+// src/i18n/config.ts
+export const locales = ['tr', 'en', 'de'] as const; // 👈 'de' ekle
 
-```ts
-export const locales = ["tr", "en", "de"] as const;
+export const localeNames = {
+  tr: 'Türkçe',
+  en: 'English',
+  de: 'Deutsch', // 👈 İsim ekle
+};
 ```
 
----
-
-## 2) Çeviri dosyasını oluştur → `i18n/messages/de.json`
+### 2️⃣ Çeviri Dosyası Oluştur
 
 ```json
+// src/i18n/messages/de.json
 {
   "common": {
-    "back": "Zurück"
+    "back": "Zurück",
+    "search": "Suchen"
+  },
+  "blog": {
+    "title": "Blog",
+    "backToBlog": "Zurück zum Blog"
   }
 }
 ```
 
----
+### 3️⃣ Çeviri Loader'a Ekle
 
-## 3) getTranslations’a ekle
-
-```ts
+```typescript
+// src/i18n/getTranslations.ts
 import deMessages from './messages/de.json';
 
-const messages = { tr, en, de };
+const messages = {
+  tr: trMessages,
+  en: enMessages,
+  de: deMessages, // 👈 Buraya ekle
+};
 ```
 
-Bitti. `/de/...` artık çalışır.
+### ✅ Tamam! `/de/hakkimizda` gibi URL'ler çalışacak.
 
 ---
 
-# 🎨 Component/Modül Ekleme
+## 💡 Sık Sorulan Sorular
 
-## UI Component eklemek (shadcn/ui)
+### ❓ Yeni bir sayfa nasıl eklenir?
 
-```bash
-npx shadcn@latest add button
+**Cevap:** `src/app/[locale]/` klasörüne yeni klasör oluştur.
+
+```typescript
+// src/app/[locale]/about/page.tsx
+export default function AboutPage() {
+  return <div>Hakkımızda sayfası</div>;
+}
 ```
 
-Yeni UI bileşeni → `components/ui/btn.tsx` içine gelir.
+URL: `http://localhost:3001/tr/about`
 
 ---
 
-## Feature Component örneği
+### ❓ Resim nasıl eklenir?
 
-```tsx
-export default function Newsletter() {
+**Cevap 1: Statik resim** (public klasörü)
+
+```typescript
+import Image from 'next/image';
+
+<Image 
+  src="/images/logo.png" 
+  alt="Logo" 
+  width={200} 
+  height={100} 
+/>
+```
+
+**Cevap 2: WordPress'ten gelen resim**
+
+```typescript
+<Image 
+  src={post.featured_image} 
+  alt={post.title} 
+  width={800} 
+  height={600} 
+/>
+```
+
+⚠️ **Önemli:** WordPress domain'ini `next.config.ts` dosyasına ekle:
+
+```typescript
+// next.config.ts
+const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        hostname: "your-wordpress-site.com", // 👈 Buraya ekle
+      },
+    ],
+  },
+};
+```
+
+---
+
+### ❓ API endpoint'i nasıl değiştirilir?
+
+**Cevap:** İlgili service dosyasını düzenle.
+
+```typescript
+// src/services/blog.ts
+
+// Eski:
+return await fetchAPI(`/posts/v1/detail/${slug}`);
+
+// Yeni:
+return await fetchAPI(`/api/blog/${slug}`); // 👈 Endpoint'i değiştir
+```
+
+---
+
+### ❓ Çeviri nasıl kullanılır?
+
+**Cevap:** `getTranslations` fonksiyonunu kullan.
+
+```typescript
+import { getTranslations } from '@/i18n/getTranslations';
+
+export default async function Page({ params }) {
+  const { locale } = await params;
+  const t = getTranslations(locale);
+  
+  return <h1>{t.blog.title}</h1>; // "Blog" veya "Blog" (dile göre)
+}
+```
+
+---
+
+### ❓ Form nasıl oluşturulur?
+
+**Cevap:** Mevcut `ContactForm` component'ini örnek al.
+
+```typescript
+// src/components/ContactForm.tsx dosyasına bak
+// React Hook Form + Zod validation kullanıyor
+```
+
+**Kendi formunu oluşturmak için:**
+
+```typescript
+'use client';
+
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+
+export default function MyForm() {
+  const [name, setName] = useState('');
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // Form gönderme işlemi
+    const response = await fetch('/api/submit', {
+      method: 'POST',
+      body: JSON.stringify({ name }),
+    });
+  };
+  
   return (
-    <section>
-      <h2>Email Bülteni</h2>
-      <input placeholder="E-posta" />
-    </section>
+    <form onSubmit={handleSubmit}>
+      <Input 
+        value={name} 
+        onChange={(e) => setName(e.target.value)} 
+        placeholder="İsim"
+      />
+      <Button type="submit">Gönder</Button>
+    </form>
   );
 }
 ```
 
 ---
 
-## Service Modülü Örneği (Yeni API)
+## 🆘 Hata Çözümleri
 
-```ts
-// services/news.ts
-export async function getNews() {
-  return fetchAPI('/news/v1');
-}
+### 🚨 "Cannot find module '@/types'"
+
+**Neden:** Path alias'ları çalışmıyor.
+
+**Çözüm:** VS Code'u yeniden başlat veya `tsconfig.json` dosyasını kontrol et.
+
+---
+
+### 🚨 "API Error: 404 Not Found"
+
+**Neden:** API endpoint yanlış veya WordPress'te bu endpoint yok.
+
+**Çözüm:**
+1. `.env.local` dosyasındaki `NEXT_PUBLIC_API_URL` değerini kontrol et
+2. WordPress REST API'nin çalıştığından emin ol
+3. Console'da tam endpoint'i kontrol et
+
+```typescript
+// Hata ayıklama için:
+console.log('API URL:', process.env.NEXT_PUBLIC_API_URL);
+console.log('Full endpoint:', `${API_URL}/posts/v1/detail/${slug}`);
 ```
 
 ---
 
-# 🏗 Deployment & Build
+### 🚨 Block render edilmiyor
 
-## Production Build
+**Neden:** Block adı eşleşmiyor veya BlockRenderer'a eklenmemiş.
 
-```bash
-npm run build
-npm start
+**Çözüm:**
+1. WordPress'te block adını kontrol et (ACF Flexible Content)
+2. `BlockRenderer.tsx` dosyasında bu adın olduğundan emin ol
+3. Console'da uyarı var mı kontrol et
+
+```typescript
+// Console'da görmek için:
+console.log('Block type:', block.acf_fc_layout);
 ```
-
-## Önemli Notlar
-
-1. `.env.local` → production’da kullanılmaz
-2. WordPress image domain'i mutlaka `next.config.ts` içine eklenmeli
-3. API değişirse mutlaka:
-
-   * `/types/api.ts`
-   * `/services/*.ts`
-     güncellenir
 
 ---
 
-# ⚡ Next.js Temelleri (Ekibin Bilmesi Gerekenler)
+### 🚨 "Locale routing çalışmıyor"
 
-## Server Component (varsayılan)
+**Neden:** Middleware düzgün çalışmıyor.
 
-```tsx
+**Çözüm:**
+1. `middleware.ts` dosyasının **root dizinde** olduğundan emin ol (src içinde değil!)
+2. `src/i18n/config.ts` dosyasındaki locale'leri kontrol et
+3. Sunucuyu yeniden başlat: `npm run dev`
+
+---
+
+### 🚨 Resimler gösterilmiyor
+
+**Neden:** Image domain izni yok.
+
+**Çözüm:** `next.config.ts` dosyasına domain ekle.
+
+```typescript
+const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'your-wordpress-site.com',
+      },
+    ],
+  },
+};
+```
+
+---
+
+## 🎓 Next.js Temel Kavramlar
+
+### Server Component vs Client Component
+
+**Server Component** (Varsayılan)
+- Sunucuda çalışır
+- Veritabanı/API'ye direkt erişim
+- Daha hızlı, daha az JavaScript
+
+```typescript
+// Server Component (varsayılan)
 export default async function Page() {
-  const data = await getData();
+  const data = await fetchData(); // ✅ Burada API çağrısı yapabilirsin
   return <div>{data.title}</div>;
 }
 ```
 
-## Client Component
+**Client Component**
+- Tarayıcıda çalışır
+- `useState`, `useEffect` kullanılabilir
+- Etkileşimli component'ler için
 
-```tsx
-'use client';
+```typescript
+'use client'; // 👈 Bu satır önemli!
+
 import { useState } from 'react';
+
+export default function Counter() {
+  const [count, setCount] = useState(0); // ✅ useState kullanabilirsin
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+}
 ```
 
-## Parametre Alma
+#### 📌 Ne Zaman Hangisi?
 
-```tsx
-export default async function Page({ params }) {
-  const { slug } = await params;
+| Kullanım | Component Tipi |
+|----------|----------------|
+| API'den veri çekme | Server Component |
+| `useState`, `useEffect` | Client Component |
+| Form etkileşimi | Client Component |
+| Statik içerik | Server Component |
+
+---
+
+### Async/Await Kullanımı
+
+```typescript
+// ✅ Doğru kullanım
+export default async function Page() {
+  const data = await fetchData();
+  return <div>{data.title}</div>;
+}
+
+// ❌ Yanlış: Client component'te async kullanma
+'use client';
+export default async function Page() { // Hata verir!
+  // ...
 }
 ```
 
 ---
 
-# ⭐ Best Practices
+### Dynamic Routes (Dinamik Sayfalar)
 
-### 🟦 Naming
+```typescript
+// app/[locale]/blog/[slug]/page.tsx
+export default async function BlogDetailPage({ params }) {
+  const { slug } = await params;
+  // slug = "benim-blog-yazim"
+  
+  const post = await getPostBySlug(slug);
+  return <article>{post.title}</article>;
+}
+```
 
-* Dosyalar: `kebab-case`
-* Component: `PascalCase`
-* Block adları: WP’de neyse aynısı
-
-### 🟦 Co-located Types
-
-Her block kendi interface’ini **kendi dosyasında** tanımlar.
-
-### 🟦 Interactivity gerekiyorsa `'use client'`
-
-Aksi takdirde kullanmayın.
-
-### 🟦 API Her Zaman `fetchAPI()` Üzerinden Gider
-
-Tek giriş noktası → hatayı kolay yönetilebilir.
-
-### 🟦 SEO → `generateMetadata`
-
-Her dinamik sayfada olmalı.
+**URL Örneği:** `/tr/blog/benim-blog-yazim`
 
 ---
 
-# 🐞 Troubleshooting
+## 🛠️ Build ve Deployment
 
-### ❗1) Block render olmuyor
+### Development (Geliştirme)
 
-* BlockRenderer’da kayıtlı mı?
-* WordPress’te `acf_fc_layout` doğru yazıldı mı?
+```bash
+npm run dev
+```
 
-### ❗2) Dil yönlendirmesi bozuk
+### Production Build
 
-* `middleware.ts` root’ta mı?
-* `i18n/config.ts` içinde dil listesi doğru mu?
+```bash
+# Build al
+npm run build
 
-### ❗3) API 404
+# Çalıştır
+npm start
+```
 
-* `.env.local` yanlış olabilir
-* WordPress REST endpoint değişmiş olabilir
+### ⚠️ Build Alırken Dikkat Et
 
-### ❗4) TypeScript error
+1. **Environment Variables:** Production'da `.env.local` kullanılmaz, hosting platformunda ayarlanır
+2. **Image Domains:** `next.config.ts` dosyasında tüm domain'leri ekle
+3. **Type Errors:** Build sırasında TypeScript hataları varsa düzelt
 
-* API response değişmiş, `types/api.ts` güncellenmeli
-
----
-
-# 💬 Destek
-
-Ekibiniz yeni bir sayfa, block veya modül eklerken bu dokümana bakması yeterlidir.
-Altyapı tamamen **genişletilebilir**, **modüler** ve **sürdürülebilir** yapıdadır.
-
-Her geliştirmede standart süreç:
-**API → types → service → component → renderer (opsiyonel)**
+```bash
+# TypeScript hatalarını kontrol et
+npm run build
+```
 
 ---
 
-# 📌 Son Güncelleme
+## 📚 Yararlı Kaynaklar
 
-2025 – Arda Uzun
+- [Next.js Dokümantasyonu](https://nextjs.org/docs) - Resmi Next.js dökümanları
+- [TypeScript Handbook](https://www.typescriptlang.org/docs/) - TypeScript öğren
+- [Tailwind CSS](https://tailwindcss.com/docs) - CSS framework'ü
+- [shadcn/ui](https://ui.shadcn.com/) - UI component'leri
+
+---
+
+## 📋 Yeni Projeye Başlama Checklist
+
+Yeni bir proje başlatırken bu adımları takip et:
+
+### 1️⃣ Kurulum
+- [ ] Projeyi klonla/indir
+- [ ] `npm install` çalıştır
+- [ ] `.env.local` oluştur ve doldur
+
+### 2️⃣ API Yapılandırması
+- [ ] WordPress API URL'ini `.env.local` dosyasına ekle
+- [ ] `next.config.ts` dosyasına WordPress domain'ini ekle
+- [ ] API endpoint'lerini test et (Postman/browser)
+
+### 3️⃣ Block'ları Kontrol Et
+- [ ] Mevcut block'ları incele (`src/components/blocks/`)
+- [ ] Kullanmayacağın block'ları sil
+- [ ] Yeni block'lar ekle
+- [ ] `BlockRenderer.tsx` dosyasını güncelle
+
+### 4️⃣ Çevirileri Ayarla
+- [ ] `src/i18n/messages/tr.json` güncelle
+- [ ] `src/i18n/messages/en.json` güncelle
+- [ ] Gerekiyorsa yeni dil ekle
+
+### 5️⃣ Sayfaları Özelleştir
+- [ ] Ana sayfayı düzenle (`src/app/[locale]/page.tsx`)
+- [ ] Header/Footer'ı özelleştir
+- [ ] Gereksiz sayfaları sil
+- [ ] Yeni sayfalar ekle
+
+### 6️⃣ Stil ve Tema
+- [ ] `src/app/globals.css` dosyasını özelleştir
+- [ ] Tailwind config'i güncelle (gerekirse)
+- [ ] Fontları ayarla
+
+### 7️⃣ Test ve Yayınla
+- [ ] `npm run dev` ile test et
+- [ ] `npm run build` ile build al
+- [ ] Hataları düzelt
+- [ ] Production'a deploy et
+
+---
+
+## 📞 Yardım ve Destek
+
+### 🐛 Bir hata mı buldunuz?
+
+1. Console'u kontrol edin (F12)
+2. [Hata Çözümleri](#-hata-çözümleri) bölümüne bakın
+3. Hala çözemediyseniz Arda'ya ulaşın
+
+### 💬 Soru sormak için:
+
+- GitHub Issues açabilirsiniz
+- Ekip Slack/Discord kanalını kullanabilirsiniz
+- Dokümantasyonu yeniden okuyabilirsiniz
+
+---
+
+## 🎉 Son Notlar
+
+- Bu template esnek ve genişletilebilir şekilde tasarlandı
+- Her şeyi anlamak için kod okumaktan çekinmeyin
+- Kafanıza takılan yerler için console.log kullanın
+- En iyi öğrenme yöntemi: kodu değiştirip sonuçları görmek!
+
+**Başarılar! 🚀**
