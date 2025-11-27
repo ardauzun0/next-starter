@@ -1,6 +1,7 @@
 import { fetchAPI } from './core';
 import type {
   PostsResponse,
+  PostsByCategoryResponse,
   PostDetailResponse,
   CategoriesResponse,
 } from '../types/api';
@@ -22,8 +23,8 @@ export async function searchPosts(keyword: string): Promise<PostsResponse> {
 export async function getPostsByCategory(
   categorySlug: string,
   page: number = 1
-): Promise<PostsResponse> {
-  return fetchAPI<PostsResponse>(`/posts/v1/category/${categorySlug}?page=${page}`);
+): Promise<PostsByCategoryResponse> {
+  return fetchAPI<PostsByCategoryResponse>(`/posts/v1/category/${categorySlug}?page=${page}`);
 }
 
 export async function getBlogCategories(): Promise<CategoriesResponse> {

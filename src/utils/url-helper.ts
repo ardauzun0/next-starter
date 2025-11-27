@@ -70,7 +70,7 @@ export function getSEOPageUrl(slug: string): string {
 }
 
 export function getSEOBlogPostUrl(slug: string): string {
-  return constructSEOUrl('blog', slug);
+  return constructSEOUrl(slug);
 }
 
 export function getSEOProductDetailUrl(slug: string): string {

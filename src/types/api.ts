@@ -68,6 +68,11 @@ export interface PostsResponse {
   };
 }
 
+export interface PostsByCategoryResponse {
+  success: boolean;
+  data: Post[];
+}
+
 export interface PostDetailResponse {
   success: boolean;
   data: Post & {

@@ -28,10 +28,20 @@ export default async function BlogCategoryPage({
   const { slug } = await params;
   const searchParamsResolved = await searchParams;
   const currentPage = parseInt(searchParamsResolved.page || '1', 10);
-  const postsData = await getPostsByCategory(slug, currentPage);
+  
+  let postsData;
+  try {
+    postsData = await getPostsByCategory(slug, currentPage);
+  } catch (error) {
+    console.error('Error fetching posts by category:', error);
+    postsData = { success: false, data: [] };
+  }
+
   const categoriesData = await getBlogCategories();
 
   const currentCategory = categoriesData.data.find((cat) => cat.slug === slug);
+
+  const hasPosts = postsData.success && Array.isArray(postsData.data) && postsData.data.length > 0;
 
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
@@ -81,10 +91,10 @@ export default async function BlogCategoryPage({
           )}
 
           <main className="flex-1">
-            {postsData.success && postsData.data?.posts && postsData.data.posts.length > 0 ? (
+            {hasPosts ? (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-                  {postsData.data.posts.map((post) => (
+                  {postsData.data.map((post) => (
                     <Card
                       key={post.id}
                       className="group overflow-hidden hover:scale-[1.02] transition-all duration-300 cursor-pointer"
@@ -124,31 +134,17 @@ export default async function BlogCategoryPage({
                     </Card>
                   ))}
                 </div>
-
-                {postsData.data.total_pages && postsData.data.total_pages > 1 && (
-                  <div className="flex justify-center gap-2">
-                    {Array.from(
-                      { length: postsData.data.total_pages },
-                      (_, i) => i + 1
-                    ).map((page) => (
-                      <Button
-                        key={page}
-                        asChild
-                        variant={page === currentPage ? 'default' : 'outline'}
-                      >
-                        <Link href={`/blog/category/${slug}?page=${page}`}>
-                          {page}
-                        </Link>
-                      </Button>
-                    ))}
-                  </div>
-                )}
               </>
             ) : (
               <div className="text-center py-16">
                 <p className="text-muted-foreground text-lg">
                   Bu kategoride henüz blog yazısı bulunmamaktadır.
                 </p>
+                {!postsData.success && (
+                  <p className="text-muted-foreground text-sm mt-2">
+                    API hatası: Kategori verileri alınamadı.
+                  </p>
+                )}
               </div>
             )}
           </main>

@@ -17,7 +17,7 @@ export async function getSEOData(url: string): Promise<SEOData | null> {
 
   try {
     return await fetchAPI<SEOData>(`/custom-seo/v1/getHead?url=${encodedUrl}`, {
-      cache: 'no-store',
+      next: { revalidate: 0 },
     });
   } catch (error) {
     console.warn(`SEO API failed for ${url}:`, error);

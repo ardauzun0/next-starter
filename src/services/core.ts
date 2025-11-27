@@ -7,7 +7,9 @@ const API_URL =
  */
 export async function fetchAPI<T>(
   endpoint: string,
-  options?: RequestInit
+  options?: RequestInit & {
+    next?: { revalidate?: number | false } | { cache?: 'force-cache' | 'no-store' | 'no-cache' | 'reload' };
+  }
 ): Promise<T> {
   const url = `${API_URL}${endpoint}`;
 
@@ -18,9 +20,8 @@ export async function fetchAPI<T>(
         'Content-Type': 'application/json',
         ...options?.headers,
       },
-      next: {
+      next: options?.next || {
         revalidate: 3600,
-        ...options?.next,
       },
     });
 
