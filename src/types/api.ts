@@ -1,3 +1,5 @@
+import type { Locale } from '@/i18n/config';
+
 // Shared TypeScript Interfaces for WordPress Headless API
 
 export interface GlobalOptions {
@@ -32,10 +34,14 @@ export interface BaseBlock {
   [key: string]: any;
 }
 
+export type PageTranslations = Partial<Record<Locale, { slug: string }>>;
+export type PageContent = BaseBlock[] | { content?: BaseBlock[] };
+
 export interface PageData {
   success: boolean;
   data: {
-    content: BaseBlock[];
+    content?: PageContent;
+    translations?: PageTranslations;
   };
 }
 
