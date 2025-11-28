@@ -130,12 +130,50 @@ Tarayıcı:
 
 # 📂 Proje Klasör Yapısı
 
-Senin gönderdiğin klasör yapısı birebir aşağıdaki gibi dokümante edildi:
+Projeyi incelerken ihtiyaç duyacağın ana dosya ağacı:
 
 ```
 src/
+├── app/
+│   ├── layout.tsx
+│   ├── [locale]/
+│   │   ├── layout.tsx
+│   │   ├── not-found.tsx
+│   │   ├── page.tsx
+│   │   ├── [slug]/
+│   │   │   ├── page.tsx
+│   │   │   └── loading.tsx
+│   │   ├── blog/
+│   │   │   ├── [slug]/
+│   │   │   │   ├── page.tsx
+│   │   │   │   └── loading.tsx
+│   │   │   ├── category/[slug]/page.tsx
+│   │   │   ├── categories/page.tsx
+│   │   │   └── search/page.tsx
+│   │   ├── products/
+│   │   │   ├── detail/[slug]/
+│   │   │   │   ├── page.tsx
+│   │   │   │   └── loading.tsx
+│   │   │   ├── category/[slug]/page.tsx
+│   │   │   ├── categories/page.tsx
+│   │   │   └── search/page.tsx
+│   │   └── usage/
+│   │       ├── layout.tsx
+│   │       ├── page.tsx
+│   │       ├── [slug]/
+│   │       │   ├── page.tsx
+│   │       │   └── loading.tsx
+│   │       └── category/[slug]/page.tsx
+│   └── api/
+│       ├── blog/search/route.ts
+│       ├── products/all/route.ts
+│       ├── products/search/route.ts
+│       ├── usage/areas/route.ts
+│       ├── usage/categories/route.ts
+│       └── usage/category/[slug]/route.ts
 ├── components/
 │   ├── blocks/
+│   │   ├── BlockRenderer.tsx
 │   │   ├── Breadcrumb.tsx
 │   │   ├── FeatureHighlight.tsx
 │   │   ├── Gallery.tsx
@@ -144,7 +182,6 @@ src/
 │   │   ├── ImageList.tsx
 │   │   ├── Map.tsx
 │   │   └── Tab.tsx
-│   │
 │   ├── search/
 │   │   ├── BlogPostCard.tsx
 │   │   ├── CategoryFilter.tsx
@@ -152,20 +189,17 @@ src/
 │   │   ├── SearchForm.tsx
 │   │   ├── SearchResults.tsx
 │   │   └── UsageAreaCard.tsx
-│   │
 │   ├── seo/JsonLd.tsx
-│   ├── ui/* (Button, Card, Input, Checkbox...)
+│   ├── ui/* (Button, Card, Checkbox, Input, Label, Select, Textarea)
 │   ├── BlogSearch.tsx
 │   ├── ContactForm.tsx
 │   ├── Footer.tsx
 │   ├── Header.tsx
 │   └── LanguageSwitcher.tsx
-│
 ├── i18n/
 │   ├── config.ts
 │   ├── getTranslations.ts
 │   └── messages/*
-│
 ├── services/
 │   ├── blog.ts
 │   ├── core.ts
@@ -173,29 +207,15 @@ src/
 │   ├── page.ts
 │   ├── product.ts
 │   └── usage.ts
-│
-├── types/api.ts
-│
-├── utils/
-│   ├── locale-helper.ts
-│   ├── seo-helper.ts
-│   └── url-helper.ts
-│
-└── app/
-    ├── [locale]/
-    │   ├── [slug]/page.tsx
-    │   ├── blog/* (category, categories, search)
-    │   ├── products/* (category, categories, detail, search)
-    │   └── usage/* (slug, category, search)
-    │
-    ├── api/
-    │   ├── blog/search/route.ts
-    │   ├── products/all/route.ts
-    │   ├── products/search/route.ts
-    │   ├── usage/areas/route.ts
-    │   ├── usage/categories/route.ts
-    │   └── usage/category/[slug]/route.ts
+├── types/
+│   └── api.ts
+└── utils/
+    ├── locale-helper.ts
+    ├── seo-helper.ts
+    └── url-helper.ts
 ```
+
+Her dinamik slug sayfası (`[slug]`, `blog/[slug]`, `products/detail/[slug]`, `usage/[slug]`) altındaki `loading.tsx` dosyası skeleton ekranını yönetir.
 
 ---
 
@@ -406,6 +426,13 @@ const { slug } = await params;
 const page = await getPageBySlug(slug);
 return <BlockRenderer blocks={page.data.content} />;
 ```
+
+- `page.data.content` WordPress tarafından dizi veya `{ content: [] }` şeklinde dönebileceği için SSR component'i önce blokları normalize ediyor, ardından `BlockRenderer`'a aktarıyor.
+- `page.data.translations` `{ locale: { slug: '...' } }` yapısını izliyor; slug paramı bu tabloya göre canonical URL'e yönlendiriliyor.
+
+### Locale bazlı slug'lar ve loading durumu
+
+`src/app/[locale]/[slug]/page.tsx`, WordPress `translations` alanını okuyup slug'ı locale'a göre otomatik yönlendiriyor; aynı klasördeki `loading.tsx` ise veri beklerken kısa bir skeleton gösteriyor. Blog yazısı (`src/app/[locale]/blog/[slug]/loading.tsx`), ürün detayı (`src/app/[locale]/products/detail/[slug]/loading.tsx`) ve kullanım alanı detayı (`src/app/[locale]/usage/[slug]/loading.tsx`) da aynı yaklaşımı uyguluyor. Bu iskeletler, SEO verisi ve dinamik bloklar API'den gelirken sayfanın kararmasını engelliyor, dil değişimlerinde kullanıcıya anında geri bildirim sağlıyor.
 
 ---
 
