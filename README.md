@@ -8,15 +8,6 @@
 
 Bu proje, Headless WordPress üzerinden dinamik içerik, SEO verileri, blog, ürün, kullanım alanı gibi modülleri **tamamen API bazlı** şekilde yönetmenizi sağlayan, gelişmiş ve kurumsal düzeyde bir starter mimaridir.
 
-✔ Çok dilli yönlendirme
-✔ ACF Flexible Content → React Block Renderer
-✔ Client & Server Component ayrımı
-✔ Proxy API katmanı
-✔ SEO + Schema + JsonLD destekli
-✔ shadcn/ui + modern UI component seti
-✔ Gelişmiş arama, filtreleme, load more sistemleri
-✔ Form → WordPress Admin-Ajax
-
 ---
 
 # 📘 İçindekiler
@@ -41,11 +32,9 @@ Bu proje, Headless WordPress üzerinden dinamik içerik, SEO verileri, blog, ür
 
 # ⚡ Adım Adım Proje Başlangıç Rehberi
 
-## **1️⃣ Projeyi klonla ve bağımlılıkları yükle**
+## **1️⃣ Bağımlılıkları yükle**
 
 ```bash
-git clone <repo-url>
-cd next-starter
 npm install
 ```
 
@@ -224,22 +213,24 @@ Her dinamik slug sayfası (`[slug]`, `blog/[slug]`, `products/detail/[slug]`, `u
 Aşağıdaki diyagram Next.js ile WordPress arasındaki tam akışı gösterir.
 
 ```
-                    ┌───────────────────────────┐
-                    │     Kullanıcı (Browser)    │
-                    └──────────────┬────────────┘
-                                   │
-                            Server Component
-                                   │
-                                   ▼
-                        ┌───────────────────────┐
-                        │    Services Layer      │
-                        │   (src/services/*)     │
-                        └───────────┬───────────┘
-                                    │ fetchAPI()
-                                    ▼
-                           WordPress REST API
-                    (posts, products, usage, seo, options)
-                    
+  ┌───────────────────┐
+  │     Kullanıcı (Browser)   
+  └───────────────────┘
+                     │
+              Server Component
+                     │
+                     ▼
+    ┌──────────────────┐
+    │    Services Layer     
+    │   (src/services/*)     
+    └──────────────────┘
+                     │
+                     ▼
+              fetchAPI()
+                     |
+                     ▼
+        WordPress REST API
+  (posts, products, usage, seo, options)
                     
 Client Component (useState/useEffect)
 │
@@ -252,7 +243,7 @@ Client Component (useState/useEffect)
 
 # 🔌 API Servis Katmanı
 
-Her modülün kendi service dosyası vardır:
+Her fetch isteğinin kendi service dosyası vardır:
 
 | Servis       | Açıklama                                |
 | ------------ | --------------------------------------- |
