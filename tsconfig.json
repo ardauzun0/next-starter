@@ -21,14 +21,14 @@
       }
     ],
     "paths": {
-      "@lib/*": ["./lib/*"],
-      "@app/*": ["./app/*"],
-      "@hooks/*": ["./hooks/*"],
-      "@styles/*": ["./styles/*"],
-      "@components/*": ["./components/*"],
-      "@ui/*": ["./components/ui/*"],
-      "@/*": ["./*"],
-      "~/*": ["./public/*"]
+      "@lib/*": ["./src/lib/*"],
+      "@app/*": ["./src/app/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@styles/*": ["./src/styles/*"],
+      "@components/*": ["./src/components/*"],
+      "@ui/*": ["./src/components/ui/*"],
+      "@/*": ["./src/*"],
+      "~/*": ["./src/public/*"]
     }
   },
   "include": [

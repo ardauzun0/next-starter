@@ -205,7 +205,7 @@ export interface UsageCategoriesResponse {
   data: Category[];
 }
 
-export interface SEOData {
+export interface PageMeta {
   success: boolean;
   head: {
     title: string;
@@ -224,4 +224,15 @@ export interface SEOData {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     jsonLd?: any[];
   };
+}
+
+export interface PaginatedData<T> {
+  data: T[];
+  total: number;
+  pages: number;
+  current_page: number;
+}
+
+export interface Resource<T> {
+  data: T;
 }

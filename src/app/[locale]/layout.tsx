@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import Header from '@components/SiteHeader';
+import Footer from '@components/SiteFooter';
 import { getGlobalOptions } from '@/services/global';
 import { locales, type Locale } from '@/i18n/request';
 
