@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { use } from 'react';
 import { getLocalizedPath } from '@/utils/locale-helper';
-import type { Locale } from '@/i18n/config';
+import type { Locale } from '@/i18n/request';
 import SearchForm from '@/components/search/SearchForm';
 import SearchResults from '@/components/search/SearchResults';
 import BlogPostCard from '@/components/search/BlogPostCard';

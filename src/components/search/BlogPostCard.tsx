@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { getLocalizedPath } from '@/utils/locale-helper';
-import type { Locale } from '@/i18n/config';
+import type { Locale } from '@/i18n/request';
 
 interface BlogPost {
   id: number;

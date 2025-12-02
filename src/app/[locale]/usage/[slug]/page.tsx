@@ -8,8 +8,8 @@ import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/ca
 import Image from 'next/image';
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { getTranslations } from '@/i18n/getTranslations';
-import type { Locale } from '@/i18n/config';
+import { getTranslations } from '@/i18n/routing';
+import type { Locale } from '@/i18n/request';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;

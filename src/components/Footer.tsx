@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import type { GlobalOptions } from '@/types/index.d';
-import type { Locale } from '@/i18n/config';
+import type { Locale } from '@/i18n/request';
 
 interface FooterProps {
   globalOptions: GlobalOptions;

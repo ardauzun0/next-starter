@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { locales, localeNames, type Locale } from '@/i18n/config';
+import { locales, localeNames, type Locale } from '@/i18n/request';
 import { getLocaleFromPath, removeLocaleFromPath, translatePath } from '@/utils/locale-helper';
 
 export default function LanguageSwitcher() {

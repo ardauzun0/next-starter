@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { getLocalizedPath } from '@/utils/locale-helper';
 import type { GlobalOptions } from '@/types/index.d';
-import type { Locale } from '@/i18n/config';
+import type { Locale } from '@/i18n/request';
 import LanguageSwitcher from './LanguageSwitcher';
 
 interface HeaderProps {

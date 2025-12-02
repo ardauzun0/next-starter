@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { getTranslations } from '@/i18n/getTranslations';
+import { getTranslations } from '@/i18n/routing';
 import { getLocalizedPath } from '@/utils/locale-helper';
 import ContactForm from '@/components/ContactForm';
-import type { Locale } from '@/i18n/config';
+import type { Locale } from '@/i18n/request';
 
 export const dynamic = 'force-dynamic';
 

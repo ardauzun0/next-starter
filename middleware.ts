@@ -1,21 +1,11 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import createMiddleware from 'next-intl/middleware';
+import { routing } from './i18n/routing';
 
-export function middleware(request: NextRequest) {
-  const pathname = request.nextUrl.pathname;
-
-  if (
-    pathname.startsWith('/api/') ||
-    pathname.startsWith('/_next/') ||
-    pathname.startsWith('/favicon.ico') ||
-    pathname.match(/\.(ico|png|jpg|jpeg|svg|gif|webp|woff|woff2|ttf|eot)$/)
-  ) {
-    return NextResponse.next();
-  }
-}
+export default createMiddleware(routing);
 
 export const config = {
-  matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|.*\\..*|.*\\.).*)',
-  ],
+    // Match all pathnames except for
+    // - … if they start with `/api`, `/trpc`, `/_next` or `/_vercel`
+    // - … the ones containing a dot (e.g. `favicon.ico`)
+    matcher: '/((?!api|trpc|_next|_vercel|.*\\..*).*)',
 };

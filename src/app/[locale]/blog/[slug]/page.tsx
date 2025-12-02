@@ -9,9 +9,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import JsonLd from '@/components/seo/JsonLd';
 import { constructMetadata } from '@/utils/seo-helper';
 import { getSEOBlogPostUrl, getSEOBaseUrl } from '@/utils/url-helper';
-import { getTranslations } from '@/i18n/getTranslations';
+import { getTranslations } from '@/i18n/routing';
 import { getLocalizedPath } from '@/utils/locale-helper';
-import type { Locale } from '@/i18n/config';
+import type { Locale } from '@/i18n/request';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;

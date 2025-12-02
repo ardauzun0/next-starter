@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import type { Locale } from '@/i18n/config';
+import type { Locale } from '@/i18n/request';
 import type { UsageArea } from '@/types/index.d';
 
 interface UsageAreaCardProps {

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { getTranslations } from '@/i18n/getTranslations';
+import { getTranslations } from '@/i18n/routing';
 import { getLocalizedPath, getLocaleFromPath } from '@/utils/locale-helper';
 import { headers } from 'next/headers';
 

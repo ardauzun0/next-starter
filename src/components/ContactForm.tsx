@@ -18,10 +18,10 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { getTranslations } from '@/i18n/getTranslations';
+import { getTranslations } from '@/i18n/routing';
 import { getLocaleFromPath } from '@/utils/locale-helper';
 import { usePathname } from 'next/navigation';
-import type { Locale } from '@/i18n/config';
+import type { Locale } from '@/i18n/request';
 
 const FORM_ACTION_URL = 'https://frontend-example-panel.pentademo.com.tr/wp-admin/admin-ajax.php';
 

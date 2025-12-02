@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { getGlobalOptions } from '@/services/global';
-import { locales, type Locale } from '@/i18n/config';
+import { locales, type Locale } from '@/i18n/request';
 
 export const dynamic = 'force-dynamic';
 

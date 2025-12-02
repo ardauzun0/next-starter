@@ -6,7 +6,7 @@ import JsonLd from '@/components/seo/JsonLd';
 import { constructMetadata } from '@/utils/seo-helper';
 import { getSEOProductDetailUrl, getSEOBaseUrl } from '@/utils/url-helper';
 import type { Metadata } from 'next';
-import type { Locale } from '@/i18n/config';
+import type { Locale } from '@/i18n/request';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;

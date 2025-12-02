@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import type { Locale } from '@/i18n/config';
+import type { Locale } from '@/i18n/request';
 import type { UsageArea, Category } from '@/types/index.d';
 import SearchForm from '@/components/search/SearchForm';
 import SearchResults from '@/components/search/SearchResults';
@@ -10,7 +10,7 @@ import CategoryFilter from '@/components/search/CategoryFilter';
 import UsageAreaCard from '@/components/search/UsageAreaCard';
 import LoadMoreButton from '@/components/search/LoadMoreButton';
 import { use } from 'react';
-import { getTranslations } from '@/i18n/getTranslations';
+import { getTranslations } from '@/i18n/routing';
 
 const ITEMS_PER_PAGE = 6;
 

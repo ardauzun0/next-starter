@@ -1,4 +1,4 @@
-import { defaultLocale, type Locale } from '@/i18n/config';
+import { defaultLocale, type Locale } from '@/i18n/request';
 
 // Path çevirisi için mapping
 const pathTranslations: Record<string, Record<Locale, string>> = {

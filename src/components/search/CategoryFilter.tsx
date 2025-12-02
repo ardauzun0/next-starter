@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import type { Category } from '@/types/index.d';
-import { getTranslations } from '@/i18n/getTranslations';
+import { getTranslations } from '@/i18n/routing';
 import { getLocaleFromPath } from '@/utils/locale-helper';
 import { usePathname } from 'next/navigation';
 

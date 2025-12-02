@@ -6,7 +6,7 @@ import JsonLd from '@/components/seo/JsonLd';
 import { constructMetadata } from '@/utils/seo-helper';
 import { getSEOPageUrl, getSEOBaseUrl } from '@/utils/url-helper';
 import type { Metadata } from 'next';
-import type { Locale } from '@/i18n/config';
+import type { Locale } from '@/i18n/request';
 import type { PageTranslations, PageContent } from '@/types/index.d';
 
 // SSR - render on every request

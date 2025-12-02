@@ -6,8 +6,8 @@ import type { Post } from '@/types/index.d';
 import SearchForm from '@/components/search/SearchForm';
 import SearchResults from '@/components/search/SearchResults';
 import BlogPostCard from '@/components/search/BlogPostCard';
-import type { Locale } from '@/i18n/config';
-import { getTranslations } from '@/i18n/getTranslations';
+import type { Locale } from '@/i18n/request';
+import { getTranslations } from '@/i18n/routing';
 
 interface BlogSearchProps {
   locale: Locale;

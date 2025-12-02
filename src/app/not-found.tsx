@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { getTranslations } from '@/i18n/getTranslations';
-import { defaultLocale } from '@/i18n/config';
+import { getTranslations } from '@/i18n/routing';
+import { defaultLocale } from '@/i18n/request';
 
 export default async function GlobalNotFound() {
   const t = getTranslations(defaultLocale);

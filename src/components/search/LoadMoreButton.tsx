@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { getTranslations } from '@/i18n/getTranslations';
+import { getTranslations } from '@/i18n/routing';
 import { getLocaleFromPath } from '@/utils/locale-helper';
 import { usePathname } from 'next/navigation';
 
