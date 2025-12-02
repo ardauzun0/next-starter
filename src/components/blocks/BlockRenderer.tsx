@@ -1,5 +1,5 @@
 import React from 'react';
-import { BaseBlock } from '@/types/api';
+import { BaseBlock } from '@/types/index.d';
 import Hero from './Hero';
 import ImageContent from './ImageContent';
 import Breadcrumb from './Breadcrumb';

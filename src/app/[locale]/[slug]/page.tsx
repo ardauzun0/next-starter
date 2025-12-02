@@ -7,7 +7,7 @@ import { constructMetadata } from '@/utils/seo-helper';
 import { getSEOPageUrl, getSEOBaseUrl } from '@/utils/url-helper';
 import type { Metadata } from 'next';
 import type { Locale } from '@/i18n/config';
-import type { PageTranslations, PageContent } from '@/types/api';
+import type { PageTranslations, PageContent } from '@/types/index.d';
 
 // SSR - render on every request
 export const dynamic = 'force-dynamic';

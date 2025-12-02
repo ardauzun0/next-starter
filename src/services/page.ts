@@ -1,5 +1,5 @@
 import { fetchAPI } from './core';
-import type { PageData } from '../types/api';
+import type { PageData } from '../types/index.ts';
 
 export async function getPageBySlug(slug: string): Promise<PageData> {
   try {

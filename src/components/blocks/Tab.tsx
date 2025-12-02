@@ -1,6 +1,6 @@
 'use client';
 
-import { BaseBlock } from '@/types/api';
+import { BaseBlock } from '@/types/index.d';
 import { useState } from 'react';
 import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { getTranslations } from '@/i18n/getTranslations';
 import { getLocalizedPath } from '@/utils/locale-helper';
 import type { Locale } from '@/i18n/config';
-import type { Post } from '@/types/api';
+import type { Post } from '@/types/index.d';
 
 export const dynamic = 'force-dynamic';
 

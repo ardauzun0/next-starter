@@ -1,4 +1,4 @@
-import { BaseBlock } from '@/types/api';
+import { BaseBlock } from '@/types/index.d';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export interface CountryItem {

@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import type { Category } from '@/types/api';
+import type { Category } from '@/types/index.d';
 import { getTranslations } from '@/i18n/getTranslations';
 import { getLocaleFromPath } from '@/utils/locale-helper';
 import { usePathname } from 'next/navigation';

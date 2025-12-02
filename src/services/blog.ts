@@ -4,7 +4,7 @@ import type {
   PostsByCategoryResponse,
   PostDetailResponse,
   CategoriesResponse,
-} from '../types/api';
+} from '../types/index.ts';
 
 export async function getPosts(page: number = 1): Promise<PostsResponse> {
   return fetchAPI<PostsResponse>(`/posts/v1?page=${page}`);

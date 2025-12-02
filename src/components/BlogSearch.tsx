@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import type { Post } from '@/types/api';
+import type { Post } from '@/types/index.d';
 import SearchForm from '@/components/search/SearchForm';
 import SearchResults from '@/components/search/SearchResults';
 import BlogPostCard from '@/components/search/BlogPostCard';

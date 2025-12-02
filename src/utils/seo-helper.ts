@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import type { SEOData } from '@/types/api';
+import type { SEOData } from '@/types/index.d';
 
 function getAbsoluteUrl(url: string | undefined, baseUrl: string): string | undefined {
   if (!url) return undefined;

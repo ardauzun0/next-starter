@@ -8,7 +8,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { use } from 'react';
 import type { Locale } from '@/i18n/config';
-import type { Product } from '@/types/api';
+import type { Product } from '@/types/index.d';
 import SearchForm from '@/components/search/SearchForm';
 import SearchResults from '@/components/search/SearchResults';
 import { getTranslations } from '@/i18n/getTranslations';

@@ -1,5 +1,5 @@
 import { fetchAPI } from './core';
-import type { GlobalOptions, SEOData } from '../types/api';
+import type { GlobalOptions, SEOData } from '../types/index.ts';
 
 export async function getGlobalOptions(): Promise<GlobalOptions> {
   return fetchAPI<GlobalOptions>('/options/v1');

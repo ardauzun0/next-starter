@@ -1,5 +1,5 @@
 import { fetchAPI } from './core';
-import type { ProductDetail, ProductCategory, ProductsResponse } from '../types/api';
+import type { ProductDetail, ProductCategory, ProductsResponse } from '../types/index.ts';
 
 export async function getAllProducts(
   perPage: number = 10,
@@ -54,14 +54,14 @@ export async function searchProducts(keyword: string): Promise<ProductsResponse>
   }
 }
 
-export async function getProductCategories(): Promise<import('../types/api').ProductCategoriesResponse> {
+export async function getProductCategories(): Promise<import('../types/index.ts').ProductCategoriesResponse> {
   try {
-    return await fetchAPI<import('../types/api').ProductCategoriesResponse>(
+    return await fetchAPI<import('../types/index.ts').ProductCategoriesResponse>(
       '/product-category/v1/all'
     );
   } catch (error) {
     if (error instanceof Error && error.message?.includes('404')) {
-      return { success: false, data: { categories: [], total: 0 } } as import('../types/api').ProductCategoriesResponse;
+      return { success: false, data: { categories: [], total: 0 } } as import('../types/index.ts').ProductCategoriesResponse;
     }
     throw error;
   }

@@ -3,7 +3,7 @@ import type {
   UsageAreasResponse,
   UsageAreaDetail,
   UsageCategoriesResponse,
-} from '../types/api';
+} from '../types/index.ts';
 
 export async function getUsageAreas(): Promise<UsageAreasResponse> {
   return fetchAPI<UsageAreasResponse>('/usage/v1');

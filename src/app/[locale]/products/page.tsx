@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { use } from 'react';
 import type { Locale } from '@/i18n/config';
-import type { Product } from '@/types/api';
+import type { Product } from '@/types/index.d';
 import SearchForm from '@/components/search/SearchForm';
 import { getTranslations } from '@/i18n/getTranslations';
 
