@@ -28,14 +28,14 @@ export interface GlobalOptions {
   };
 }
 
-export interface BaseBlock {
+export interface Block {
   acf_fc_layout: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
 
 export type PageTranslations = Partial<Record<Locale, { slug: string }>>;
-export type PageContent = BaseBlock[] | { content?: BaseBlock[] };
+export type PageContent = Block[] | { content?: Block[] };
 
 export interface PageData {
   success: boolean;
@@ -133,7 +133,7 @@ export interface ProductsResponse {
 export interface ProductDetail {
   success: boolean;
   data: {
-    content: BaseBlock[];
+    content: Block[];
   };
 }
 
@@ -143,7 +143,7 @@ export interface ProductCategory {
     name: string;
     description: string;
     products: Product[];
-    content?: BaseBlock[];
+    content?: Block[];
   };
 }
 

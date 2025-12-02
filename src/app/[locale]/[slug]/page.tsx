@@ -1,7 +1,7 @@
 import { getPageBySlug } from '@/services/page';
 import { getSEOData } from '@/services/global';
 import { notFound, redirect } from 'next/navigation';
-import BlockRenderer from '@/components/blocks/BlockRenderer';
+import BlockRenderer from '@components/Blocks/Block';
 import JsonLd from '@/components/seo/JsonLd';
 import { constructMetadata } from '@/utils/seo-helper';
 import { getSEOPageUrl, getSEOBaseUrl } from '@/utils/url-helper';

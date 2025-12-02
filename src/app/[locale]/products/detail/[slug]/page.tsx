@@ -1,7 +1,7 @@
 import { getProductBySlug } from '@/services/product';
 import { getSEOData } from '@/services/global';
 import { notFound } from 'next/navigation';
-import BlockRenderer from '@/components/blocks/BlockRenderer';
+import BlockRenderer from '@components/Blocks/Block';
 import JsonLd from '@/components/seo/JsonLd';
 import { constructMetadata } from '@/utils/seo-helper';
 import { getSEOProductDetailUrl, getSEOBaseUrl } from '@/utils/url-helper';

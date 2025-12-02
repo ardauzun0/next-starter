@@ -1,7 +1,7 @@
-import { BaseBlock } from '@/types/index.d';
+import { Block } from '@/types/index.d';
 import Image from 'next/image';
 
-export interface HeroBlockProps extends BaseBlock {
+export interface HeroBlockProps extends Block {
   acf_fc_layout: 'hero';
   title: string;
   image: string;
