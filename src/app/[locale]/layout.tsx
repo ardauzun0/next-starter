@@ -1,41 +1,103 @@
-import type { Metadata } from 'next';
-import Header from '@components/SiteHeader';
-import Footer from '@components/SiteFooter';
-import { getGlobalOptions } from '@/services/global';
-import { locales, type Locale } from '@/i18n/request';
 
-export const dynamic = 'force-dynamic';
+import getSpecs from '@/data/getSpecs';
+import Layout from '@components/Layouts/RootLayout';
+import { cache, PropsWithChildren } from 'react';
 
-export const metadata: Metadata = {
-  title: 'Next Starter',
-  description: 'Next.js 15 Headless WordPress',
-};
+import font from 'next/font/local';
 
-export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }));
+const gilroy = font({
+    src: [
+        {
+            path: '../../public/fonts/Gilroy-Black.woff2',
+            weight: '900',
+            style: 'normal',
+        },
+        {
+            path: '../../public/fonts/Gilroy-ExtraBold.woff2',
+            weight: '800',
+            style: 'normal',
+        },
+        {
+            path: '../../public/fonts/Gilroy-Bold.woff2',
+            weight: '700',
+            style: 'normal',
+        },
+        {
+            path: '../../public/fonts/Gilroy-SemiBold.woff2',
+            weight: '600',
+            style: 'normal',
+        },
+        {
+            path: '../../public/fonts/Gilroy-Medium.woff2',
+            weight: '500',
+            style: 'normal',
+        },
+        {
+            path: '../../public/fonts/Gilroy-Regular.woff2',
+            weight: '400',
+            style: 'normal',
+        },
+        {
+            path: '../../public/fonts/Gilroy-Light.woff2',
+            weight: '300',
+            style: 'normal',
+        },
+        {
+            path: '../../public/fonts/Gilroy-Thin.woff2',
+            weight: '200',
+            style: 'normal',
+        },
+        {
+            path: '../../public/fonts/Gilroy-BlackItalic.woff2',
+            weight: '900',
+            style: 'italic',
+        },
+        {
+            path: '../../public/fonts/Gilroy-ExtraBoldItalic.woff2',
+            weight: '800',
+            style: 'italic',
+        },
+        {
+            path: '../../public/fonts/Gilroy-BoldItalic.woff2',
+            weight: '700',
+            style: 'italic',
+        },
+        {
+            path: '../../public/fonts/Gilroy-SemiBoldItalic.woff2',
+            weight: '600',
+            style: 'italic',
+        },
+        {
+            path: '../../public/fonts/Gilroy-MediumItalic.woff2',
+            weight: '500',
+            style: 'italic',
+        },
+        {
+            path: '../../public/fonts/Gilroy-RegularItalic.woff2',
+            weight: '400',
+            style: 'italic',
+        },
+        {
+            path: '../../public/fonts/Gilroy-LightItalic.woff2',
+            weight: '300',
+            style: 'italic',
+        },
+        {
+            path: '../../public/fonts/Gilroy-ThinItalic.woff2',
+            weight: '200',
+            style: 'italic',
+        },
+    ],
+});
+
+export default async function RootLayout({ children, params }: PropsWithChildren<{ params: Promise<any> }>) {
+    const { locale } = await params;
+
+    const specs = await cache(getSpecs)({ locale });
+
+    return (
+        <Layout params={params} specs={specs} className={gilroy.className}>
+            {children}
+        </Layout>
+    );
 }
-
-interface LocaleLayoutProps {
-  children: React.ReactNode;
-  params: Promise<{ locale: string }>;
-}
-
-export default async function LocaleLayout({
-  children,
-  params,
-}: LocaleLayoutProps) {
-  const resolvedParams = await params;
-  const locale = resolvedParams.locale as Locale;
-  const globalOptions = await getGlobalOptions();
-
-  return (
-    <>
-      <Header globalOptions={globalOptions} locale={locale} />
-      <main className="flex-1">
-        {children}
-      </main>
-      <Footer globalOptions={globalOptions} locale={locale} />
-    </>
-  );
-}
-
