@@ -75,7 +75,7 @@
 
 @layer components {
   .prose {
-    @apply [&:not(.prose-normal-ul)]:prose-li:hover:opacity-100 [&:not(.prose-normal-ul)]:prose-ul:!list-none [&:not(.prose-normal-ul)]:prose-ul:relative [&:not(.prose-normal-ul)]:prose-li:hover:before:bg-[url('/assets/checked-square.svg')] [&:not(.prose-normal-ul)]:prose-li:before:absolute [&:not(.prose-normal-ul)]:prose-li:before:left-0 [&:not(.prose-normal-ul)]:prose-li:before:bg-center [&:not(.prose-normal-ul)]:prose-li:before:mt-0.5 [&:not(.prose-normal-ul)]:prose-li:before:inline-block [&:not(.prose-normal-ul)]:prose-li:before:w-6 [&:not(.prose-normal-ul)]:prose-li:before:h-6 [&:not(.prose-normal-ul)]:prose-li:before:bg-[url('/assets/check-square.svg')] [&:not(.prose-normal-ul)]:prose-li:before:bg-no-repeat;
+    @apply [&:not(.prose-normal-ul)]:prose-li:hover:opacity-100 [&:not(.prose-normal-ul)]:prose-ul:list-none! [&:not(.prose-normal-ul)]:prose-ul:relative [&:not(.prose-normal-ul)]:prose-li:hover:before:bg-[url('/assets/checked-square.svg')] [&:not(.prose-normal-ul)]:prose-li:before:absolute [&:not(.prose-normal-ul)]:prose-li:before:left-0 [&:not(.prose-normal-ul)]:prose-li:before:bg-center [&:not(.prose-normal-ul)]:prose-li:before:mt-0.5 [&:not(.prose-normal-ul)]:prose-li:before:inline-block [&:not(.prose-normal-ul)]:prose-li:before:w-6 [&:not(.prose-normal-ul)]:prose-li:before:h-6 [&:not(.prose-normal-ul)]:prose-li:before:bg-[url('/assets/check-square.svg')] [&:not(.prose-normal-ul)]:prose-li:before:bg-no-repeat;
     @apply prose-strong:font-bold;
   }
 }

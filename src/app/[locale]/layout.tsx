@@ -1,6 +1,6 @@
-
-import getSpecs from '@/data/getSpecs';
+import {getGlobalOptions} from '@/data/getGlobal';
 import Layout from '@components/Layouts/RootLayout';
+import { GlobalOptions } from '@/types';
 import { cache, PropsWithChildren } from 'react';
 
 import font from 'next/font/local';
@@ -93,10 +93,10 @@ const gilroy = font({
 export default async function RootLayout({ children, params }: PropsWithChildren<{ params: Promise<any> }>) {
     const { locale } = await params;
 
-    const specs = await cache(getSpecs)({ locale });
+    const specs = await cache(getGlobalOptions)({ locale });
 
     return (
-        <Layout params={params} specs={specs} className={gilroy.className}>
+        <Layout params={params} specs={specs.option as GlobalOptions['option']} className={gilroy.className}>
             {children}
         </Layout>
     );

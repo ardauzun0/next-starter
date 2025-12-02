@@ -1,4 +1,4 @@
-import { GlobalOptions, PageMeta, SEOData } from '@/types';
+import { GlobalOptions, PageMeta, PageData } from '@/types';
 
 import axios from '@lib/axios';
 
@@ -21,7 +21,7 @@ export async function getGlobalOptions({ locale }: { locale?: string }): Promise
     }
 }
 
-export async function getSEOData({ url, locale }: { url: string; locale?: string }): Promise<(SEOData & { meta: PageMeta }) | null> {
+export async function getPageData({ url, locale }: { url: string; locale?: string }): Promise<(PageData & { meta: PageMeta }) | null> {
     const encodedUrl = encodeURIComponent(url);
 
     try {
@@ -35,7 +35,7 @@ export async function getSEOData({ url, locale }: { url: string; locale?: string
             return null;
         }
 
-        return response.data as SEOData & { meta: PageMeta };
+        return response.data as PageData & { meta: PageMeta };
     } catch (error: any) {
         console.warn(`SEO API failed for ${url}:`, error);
         return null;
